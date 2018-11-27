@@ -12,7 +12,7 @@
       / {{ pageCount }}
       
       </span>
-      <search-box-result v-for="doc in docs" :data="doc" v-bind:key="doc.id"/>
+      <solr-facet-search-result v-if="numFound" :response="result"/>
       <!-- <details v-for="doc in docs" :key="doc.id">
         <summary> {{doc.title}}</summary>
          {{doc}}
@@ -28,8 +28,9 @@ import { mapActions } from 'vuex';
 import Vue from 'vue';
 
 import { SolrCommandSocket } from '@/solr/SolrCommandSocket';
-import SearchBoxResult from './SearchBoxResult.vue';
+import SolrFacetSearchResult from './SolrFacetSearchResult.vue';
 import store from '@/store';
+
 
 import Draggable from './Draggable.vue';
 
@@ -37,14 +38,15 @@ let docs: any[];
 let pageDocs: Map<number, any[]>;
 
 export default Vue.extend({
-  name: 'SearchBox',
-  components: { Draggable, SearchBoxResult },
+  name: 'SolrFacetSearchBox',
+  components: { Draggable, SolrFacetSearchResult },
   data: () => ({
     query: 'authors.name:*Ropinski*',
     lastQuery: '',
     result: {},
     start: 0,
     docs,
+    facets: ['authors.name', 'journalName', 'venue', 'year', 'entities'],
     pageDocs: new Map(),
     currentPage: '1',
     cmd: new SolrCommandSocket(),
@@ -71,19 +73,23 @@ export default Vue.extend({
       this.lastQuery = this.query;
       // this.start = 0;
       this.numFound = 0;
-      this.getPageData(1);
+      const payload = { params: {
+            'debug': true,
+            'q': this.lastQuery,
+            'facet': 'on',
+            'rows': 0,
+            'facet.field': this.facets,
+            }};
       // const payload = {params: {q: this.lastQuery, rows: this.rows, start: this.start}};
-      // this.cmd.send_command('send_command', 'GET', '/collections/s2/select', payload)
-      //   .then((d: any) => {
-      //     this.result = d;
-      //     this.docs = d.response.docs;
-      //     this.pageDocs.set(1, d.response.docs);
-      //     this.numFound = d.response.numFound;
-      //   }).catch(console.error);
+      this.cmd.send_command('send_command', 'GET', '/collections/s2/select', payload)
+        .then((d: any) => {
+          this.result = d;
+          this.docs = d.facet_counts;
+          this.pageDocs.set(1, d.facet_counts);
+          this.numFound = d.response.numFound;
+        }).catch(console.error);
     },
     getPageData(page: number) {
-      // dis too slow, use cursors?
-      // http://lucene.apache.org/solr/guide/7_4/pagination-of-results.html#cursor-examples
       const start = (page - 1) * this.rows;
       const payload = {params: {q: this.lastQuery, rows: this.rows, start}};
       this.cmd.send_command('send_command', 'GET', '/collections/s2/select', payload)

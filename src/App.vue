@@ -4,6 +4,7 @@
     <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/> -->
     <search-box/>
     <global-log/>
+    <facet-search-box/>
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import Vue from 'vue';
 import HelloWorld from './components/HelloWorld.vue';
 import GlobalLog from './components/GlobalLog.vue';
 import SolrManagement from './components/SolrManagement.vue';
+import FacetSearchBox from './components/SolrFacetSearchBox.vue';
 import SearchBox from './components/SearchBox.vue';
 
 export default Vue.extend({
@@ -21,6 +23,7 @@ export default Vue.extend({
     SolrManagement,
     GlobalLog,
     SearchBox,
+    FacetSearchBox,
   },
 });
 </script>
