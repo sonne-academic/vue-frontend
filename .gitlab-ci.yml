@@ -1,0 +1,23 @@
+stages:
+  - build
+  - deploy
+
+buildFrontend:
+  stage: build
+  script:
+  - npm install
+  - npm run build
+  only:
+  - frontend
+  tags:
+  - mk4
+
+deployFrontend:
+  stage: deploy
+  script:
+  - env
+  only:
+  - frontend
+  tags:
+  - sonne
+
