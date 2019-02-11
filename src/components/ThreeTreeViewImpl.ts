@@ -108,8 +108,9 @@ export class RenderThing {
     el.appendChild( this.renderer.domElement );
     document.addEventListener('mousemove', (evt) => {this.onDocumentMouseMove(evt); }, false);
     window.addEventListener( 'resize', () => {this.onWindowResize(); }, false );
-    // const ctrl = new THREE.OrbitControls(this.camera, el);
-    const ctrl = new THREE.OrbitControls(this.camera);
+    // if you do not pass an element the orbitcontrols will steal focus
+    // from every other element. You can't click into a textbox etc...
+    const ctrl = new THREE.OrbitControls(this.camera, el as HTMLElement);
     ctrl.minDistance = 1000;
     ctrl.maxDistance = 3500;
     ctrl.enabled = true;
