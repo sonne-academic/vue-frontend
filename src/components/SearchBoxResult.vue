@@ -7,7 +7,7 @@
            {{ data.entities.join(', ') }}
         </details>
         <button @click="startTreeVega">vega</button>
-        <button @click="startTreeThree">three</button><img src="../assets/disc.png">
+        <button @click="startTreeThree">three</button><img src="/disc.png">
       </details>
     </div>
 </template>
