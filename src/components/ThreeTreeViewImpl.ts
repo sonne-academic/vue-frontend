@@ -72,7 +72,7 @@ export class RenderThing {
       vertexColors: THREE.VertexColors,
     };
     const pointMaterial = new THREE.PointsMaterial( materialParams );
-    const sprite = new THREE.TextureLoader().load( require('../assets/disc.png'));
+    const sprite = new THREE.TextureLoader().load('/disc.png');
     const mtlParams2: THREE.PointsMaterialParameters =  {
       size: 10,
       sizeAttenuation: false,
