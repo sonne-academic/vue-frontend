@@ -26,11 +26,9 @@ import Vue from 'vue';
 
 import SearchBoxResult from './SearchBoxResult.vue';
 
-import Draggable from './Draggable.vue';
-
 export default Vue.extend({
   name: 'Search',
-  components: { Draggable, SearchBoxResult },
+  components: { SearchBoxResult },
   data: () => ({
     query: 'authors.name:*Ropinski*',
     lastQuery: '',

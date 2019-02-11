@@ -17,7 +17,7 @@ interface Position {
 
 
 export class RenderThing {
-  private container: HTMLElement | null = null;
+  private container: Element | null = null;
   // private stats;
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene = new THREE.Scene();
@@ -102,13 +102,14 @@ export class RenderThing {
     // this.renderer.setSize( 400, 400 );
   }
 
-  public init(el: HTMLElement) {
+  public init(el: Element) {
     // this.stats = new Stats();
     this.container = el;
     el.appendChild( this.renderer.domElement );
     document.addEventListener('mousemove', (evt) => {this.onDocumentMouseMove(evt); }, false);
     window.addEventListener( 'resize', () => {this.onWindowResize(); }, false );
-    const ctrl = new THREE.OrbitControls(this.camera, el);
+    // const ctrl = new THREE.OrbitControls(this.camera, el);
+    const ctrl = new THREE.OrbitControls(this.camera);
     ctrl.minDistance = 1000;
     ctrl.maxDistance = 3500;
     ctrl.enabled = true;

@@ -41,7 +41,8 @@ export default Vue.extend({
       if (newWidth > this.parent.width - this.left) {
         const newLeft = this.parent.width - newWidth;
         this.left = newLeft < 0 ? 0 : newLeft;
-        this.$el.style.left = `${this.left}px`;
+        const element = this.$el as HTMLElement;
+        element.style.left = `${this.left}px`;
       }
     },
     height(newHeight: number, oldHeight: number) {
@@ -52,7 +53,8 @@ export default Vue.extend({
 
       if (newHeight > this.parent.height - this.top) {
         this.top = this.parent.height - this.height;
-        this.$el.style.top = `${this.top}px`;
+        const element = this.$el as HTMLElement;
+        element.style.top = `${this.top}px`;
       }
     },
   },
@@ -77,25 +79,26 @@ export default Vue.extend({
       const y = e.pageY;
       let newLeft = x - this.shift.x;
       let newTop = y - this.shift.y;
-      const newRight = x - this.shift.x + this.$el.offsetWidth;
-      const newBottom = y - this.shift.y + this.$el.offsetHeight;
+      const element = this.$el as HTMLElement;
+      const newRight = x - this.shift.x + element.offsetWidth;
+      const newBottom = y - this.shift.y + element.offsetHeight;
       if (newLeft < 0) {
         newLeft = 0;
       } else if (newRight > this.parent.width) {
-        newLeft = this.parent.width - this.$el.offsetWidth;
+        newLeft = this.parent.width - element.offsetWidth;
       } else {
         newLeft = x - this.shift.x;
       }
       if (newTop < 0) {
         newTop = 0;
       } else if (newBottom > this.parent.height) {
-        newTop = this.parent.height - this.$el.offsetHeight;
+        newTop = this.parent.height - element.offsetHeight;
       } else {
         newTop = y - this.shift.y;
       }
-      this.$el.style.left = `${newLeft}px`;
+      element.style.left = `${newLeft}px`;
       this.left = newLeft;
-      this.$el.style.top = `${newTop}px`;
+      element.style.top = `${newTop}px`;
       this.top = newTop;
     },
     calcWidth(): number {
@@ -121,16 +124,18 @@ export default Vue.extend({
       // this.$emit("activated");
       this.parent.width = this.calcWidth();
       this.parent.height =  this.calcWidth();
-      this.shift.x = e.pageX - this.$el.offsetLeft;
-      this.shift.y = e.pageY - this.$el.offsetTop;
-      this.$el.addEventListener('mousemove', this.elementMove);
+      const element = this.$el as HTMLElement;
+      this.shift.x = e.pageX - element.offsetLeft;
+      this.shift.y = e.pageY - element.offsetTop;
+      element.addEventListener('mousemove', this.elementMove);
       this.$el.addEventListener('mouseleave', this.drop);
     },
     drop() {
       // this.$emit("dropped");
       document.body.style.overflow = null;
-      this.$el.removeEventListener('mousemove', this.elementMove, false);
-      this.$el.onmouseup = null;
+      const element = this.$el as HTMLElement;
+      element.removeEventListener('mousemove', this.elementMove, false);
+      element.onmouseup = null;
     },
   },
 });
