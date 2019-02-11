@@ -13,7 +13,7 @@ buildFrontend:
   only:
   - frontend
   tags:
-  - buildfrontend
+  - mk4
 
 deployFrontend:
   stage: deploy
