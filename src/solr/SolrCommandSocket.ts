@@ -1,5 +1,7 @@
 import Worker from 'worker-loader!./cmd.worker';
 import Endpoint from './Endpoint';
+import {RpcRequest} from './RpcRequest';
+// import store from '@/store';
 
 const joinParams = (params: string[][]) => [...params].map((kv) => kv.join('=')).join('&');
 
@@ -14,8 +16,6 @@ enum State {
   CLOSING = 2,
   CLOSED = 3,
 }
-
-import store from '@/store';
 
 class SolrCommandSocket {
   private sock: WebSocket;
@@ -106,16 +106,11 @@ class SolrCommandSocket {
         this.workers.delete(id);
       };
     });
-    const rpcRequest = {
-      jsonrpc: '2.0',
-      method: command,
-      id,
-      params: { method, endpoint, payload },
-    };
-    // console.log(rpcRequest);
+    const request = new RpcRequest(command, id, {method, endpoint, payload});
+    // console.log(request);
 
-    this.log({id, content: rpcRequest});
-    this.send(JSON.stringify(rpcRequest));
+    // this.log({id, content: request});
+    this.send(JSON.stringify(request));
     return promise;
   }
 
@@ -145,9 +140,9 @@ class SolrCommandSocket {
     });
   }
 
-  private log(content: SendLog) {
-    store.dispatch('log/log', content);
-  }
+  // private log(content: SendLog) {
+  //   store.dispatch('log/log', content);
+  // }
 }
 
 export { SolrCommandSocket };

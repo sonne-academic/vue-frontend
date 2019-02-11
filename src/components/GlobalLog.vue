@@ -11,15 +11,14 @@
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex';
 import { Log } from '@/store/modules/log';
 import Vue from 'vue';
-import store from '@/store';
+
 export default Vue.extend({
   name: 'GlobalLog',
   computed: {
     logContent(): Log[] {
-      return store.getters['log/logContent'];
+      return this.$store.getters['log/logContent'];
     },
     logText(): string {
       return this.logContent.reduce((prev, next) => prev + '\n' + JSON.stringify(next), '');

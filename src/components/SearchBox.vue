@@ -12,11 +12,11 @@
       / {{ pageCount }}
       
       </span>
-      <search-box-result v-for="doc in docs" :data="doc" v-bind:key="doc.id"/>
-      <!-- <details v-for="doc in docs" :key="doc.id">
-        <summary> {{doc.title}}</summary>
-         {{doc}}
-      </details> -->
+      <search-box-result 
+      v-for="doc in docs" 
+      :data="doc" 
+      :key="doc.id"
+      @starttree="startTree"/>
     </div>
 
   </Draggable>
@@ -27,14 +27,9 @@
 import { mapActions } from 'vuex';
 import Vue from 'vue';
 
-import { SolrCommandSocket } from '@/solr/SolrCommandSocket';
 import SearchBoxResult from './SearchBoxResult.vue';
-import store from '@/store';
 
 import Draggable from './Draggable.vue';
-
-let docs: any[];
-let pageDocs: Map<number, any[]>;
 
 export default Vue.extend({
   name: 'SearchBox',
@@ -44,18 +39,18 @@ export default Vue.extend({
     lastQuery: '',
     result: {},
     start: 0,
-    docs,
-    pageDocs: new Map(),
+    docs: new Array<any>(),
+    pageDocs: new Map<number, any[]>(),
     currentPage: '1',
-    cmd: new SolrCommandSocket(),
     numFound: 0,
     rows: 10,
   }),
   watch: {
     currentPage() {
       const page = this.activePage;
-      if (this.pageDocs.has(page)) {
-        this.docs = this.pageDocs.get(page);
+      const docs = this.pageDocs.get(page);
+      if (docs) {
+        this.docs = docs;
         return;
       }
       this.pageDocs.set(page, []);
@@ -64,7 +59,7 @@ export default Vue.extend({
   },
   methods: {
     log(content: any) {
-      store.dispatch('log/log', content);
+      this.$store.dispatch('log/log', content);
     },
     submitSearch() {
       this.pageDocs = new Map();
@@ -72,21 +67,14 @@ export default Vue.extend({
       // this.start = 0;
       this.numFound = 0;
       this.getPageData(1);
-      // const payload = {params: {q: this.lastQuery, rows: this.rows, start: this.start}};
-      // this.cmd.send_command('send_command', 'GET', '/collections/s2/select', payload)
-      //   .then((d: any) => {
-      //     this.result = d;
-      //     this.docs = d.response.docs;
-      //     this.pageDocs.set(1, d.response.docs);
-      //     this.numFound = d.response.numFound;
-      //   }).catch(console.error);
     },
     getPageData(page: number) {
       // dis too slow, use cursors?
       // http://lucene.apache.org/solr/guide/7_4/pagination-of-results.html#cursor-examples
       const start = (page - 1) * this.rows;
       const payload = {params: {q: this.lastQuery, rows: this.rows, start}};
-      this.cmd.send_command('send_command', 'GET', '/collections/s2/select', payload)
+      const params = {command: 'pass_through', method: 'GET', endpoint: '/collections/s2/select', payload};
+      this.$solr.send_command('pass_through', 'GET', '/collections/s2/select', payload)
         .then((d: any) => {
           this.result = d;
           this.pageDocs.set(page, d.response.docs);
@@ -108,9 +96,9 @@ export default Vue.extend({
       this.pageDocs.set(page, []);
       this.getPageData(this.activePage);
     },
-  },
-  beforeDestroy() {
-    this.cmd.close();
+    startTree(stuff: any) {
+      this.$emit('starttree2', stuff);
+    },
   },
   computed: {
     pageCount(): number {

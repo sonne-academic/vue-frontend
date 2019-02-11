@@ -1,6 +1,4 @@
 <template>
-  <Draggable name="search">
-    <span class="dragger">&#127989;</span>
     <div>
       <input id="search-input" v-model="query" @keyup.enter="submitSearch" type="text" title="search text"/>
       <input id="search-submit" @click="submitSearch" type="button" value="search"/>
@@ -18,9 +16,6 @@
          {{doc}}
       </details> -->
     </div>
-
-  </Draggable>
-
 </template>
 
 <script lang="ts">
@@ -35,7 +30,7 @@ import store from '@/store';
 import Draggable from './Draggable.vue';
 
 export default Vue.extend({
-  name: 'SolrFacetSearchBox',
+  name: 'FacetSearch',
   components: { Draggable, SolrFacetSearchResult },
   data: () => ({
     query: 'authors.name:*Ropinski*',
@@ -46,7 +41,6 @@ export default Vue.extend({
     facets: ['authors.name', 'journalName', 'venue', 'year', 'entities'],
     pageDocs: new Map<number, any[]>(),
     currentPage: '1',
-    cmd: new SolrCommandSocket(),
     numFound: 0,
     rows: 10,
   }),
@@ -112,9 +106,6 @@ export default Vue.extend({
       this.pageDocs.set(page, []);
       this.getPageData(this.activePage);
     },
-  },
-  beforeDestroy() {
-    this.cmd.close();
   },
   computed: {
     pageCount(): number {

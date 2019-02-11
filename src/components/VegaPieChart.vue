@@ -4,10 +4,41 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {View, parse} from 'vega';
+import {View, parse, Signal} from 'vega';
 import store from '@/store';
 
 const tau = Math.PI * 2;
+
+const signals: Signal[] = [
+        {
+          name: 'startAngle', value: 0,
+          bind: {input: 'range', min: 0, max: tau, step: 0.01},
+        },
+        {
+          name: 'endAngle', value: tau,
+          bind: {input: 'range', min: 0, max: tau, step: 0.01},
+        },
+        {
+          name: 'padAngle', value: 0.005,
+          bind: {input: 'range', min: 0, max: 0.1},
+        },
+        {
+          name: 'innerRadius', value: 100,
+          bind: {input: 'range', min: 0, max: 90, step: 1},
+        },
+        {
+          name: 'cornerRadius', value: 0,
+          bind: {input: 'range', min: 0, max: 10, step: 0.5},
+        },
+        {
+          name: 'sort', value: false,
+          bind: {input: 'checkbox'},
+        },
+        {
+          name: 'color', value: '#333',
+          bind: {input: 'color'},
+        },
+      ];
 
 export default Vue.extend({
   name: 'VegaPieChart',
@@ -42,36 +73,7 @@ export default Vue.extend({
           },
         },
       },
-      signals: [
-        {
-          name: 'startAngle', value: 0,
-          bind: {input: 'range', min: 0, max: tau, step: 0.01},
-        },
-        {
-          name: 'endAngle', value: tau,
-          bind: {input: 'range', min: 0, max: tau, step: 0.01},
-        },
-        {
-          name: 'padAngle', value: 0.005,
-          bind: {input: 'range', min: 0, max: 0.1},
-        },
-        {
-          name: 'innerRadius', value: 100,
-          bind: {input: 'range', min: 0, max: 90, step: 1},
-        },
-        {
-          name: 'cornerRadius', value: 0,
-          bind: {input: 'range', min: 0, max: 10, step: 0.5},
-        },
-        {
-          name: 'sort', value: false,
-          bind: {input: 'checkbox'},
-        },
-        {
-          name: 'color', value: '#333',
-          bind: {input: 'color'},
-        },
-      ],
+      signals,
       data: [
         {
           name: 'table',

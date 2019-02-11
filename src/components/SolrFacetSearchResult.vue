@@ -20,9 +20,13 @@ function* gen_pairs(arr: any[]) {
   let size;
   while (arr.length) {
     [name, size, ...arr] = arr;
-    if (0 !== size) {
-      yield { name, size };
+    if (0 === size) {
+      continue;
     }
+    if (name === '') {
+      continue;
+    }
+    yield { name, size };
   }
 }
 
