@@ -93,7 +93,7 @@ class RpcHandler implements WebSocketHandler {
   }
 }
 
-const addr = 'ws://' + process.env.VUE_APP_SONNE_HOST + '/ws/rpc/solr/';
+const addr = process.env.VUE_APP_SONNE_HOST + '/ws/rpc/solr/';
 // const addr = 'ws://sonne.0ds.de:8001/ws/rpc/solr/';
 const socket = new RpcHandler(addr);
 // messages posted from QueryableWorker
