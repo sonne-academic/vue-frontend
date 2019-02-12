@@ -133,8 +133,13 @@ export default Vue.extend({
   },
   mounted() {
     this.renderthing.init(this.$el);
+    window.addEventListener('beforeunload', (ev) => {
+      console.log('closing WebGL context through beforeunload');
+      this.renderthing.close();
+    });
   },
   beforeDestroy() {
+    console.log('closing WebGL context');
     this.renderthing.close();
   },
 });
