@@ -19,7 +19,6 @@
 </template>
 
 <script lang="ts">
-import { mapActions } from 'vuex';
 import Vue from 'vue';
 
 import { SolrCommandSocket } from '@/solr/SolrCommandSocket';
@@ -33,12 +32,12 @@ export default Vue.extend({
   name: 'FacetSearch',
   components: { Draggable, SolrFacetSearchResult },
   data: () => ({
-    query: 'authors.name:*Ropinski*',
+    query: 'authors:*Ropinski*',
     lastQuery: '',
     result: {},
     start: 0,
     docs: new Array<any>(),
-    facets: ['authors.name', 'journalName', 'venue', 'year', 'entities'],
+    facets: ['authors', 'journalName', 'venue', 'year', 'entities'],
     pageDocs: new Map<number, any[]>(),
     currentPage: '1',
     numFound: 0,
