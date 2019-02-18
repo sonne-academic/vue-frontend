@@ -30,7 +30,7 @@ export default Vue.extend({
   components: { Search, FacetSearch},
   data: () => ({
     tabs: ['search', 'facet-search'],
-    query: 'authors.name:*Ropinski*',
+    query: 'authors:*Ropinski*',
     lastQuery: '',
     result: {},
     start: 0,

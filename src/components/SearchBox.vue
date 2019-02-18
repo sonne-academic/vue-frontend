@@ -35,7 +35,7 @@ export default Vue.extend({
   name: 'SearchBox',
   components: { Draggable, SearchBoxResult },
   data: () => ({
-    query: 'authors.name:*Ropinski*',
+    query: 'authors:*Ropinski*',
     lastQuery: '',
     result: {},
     start: 0,

@@ -30,7 +30,7 @@ export default Vue.extend({
   name: 'Search',
   components: { SearchBoxResult },
   data: () => ({
-    query: 'authors.name:*Ropinski*',
+    query: 'authors:*Ropinski*',
     lastQuery: '',
     result: {},
     start: 0,
