@@ -1,16 +1,18 @@
-import { BetterWebSocket, WebSocketHandler } from '@/solr/BetterWebsocket';
+import { HandleableWebSocket, WebSocketHandler } from '@/plugins/vue-solr/lib/HandleableWebSocket';
 import {RpcRequest} from './RpcRequest';
 import {RpcResponse} from './RpcResponse';
 
 const context: Worker = self as any;
 
 class RpcHandler implements WebSocketHandler {
-  private sock: BetterWebSocket;
+  private sock: HandleableWebSocket;
   private queue: string[] = [];
   private results: Map<number, any[]> = new Map();
+  private url: string;
   constructor(url: string) {
+    this.url = url;
     this.queue = [];
-    this.sock = new BetterWebSocket(this, url);
+    this.sock = new HandleableWebSocket(this, url);
   }
 
   public close() {
@@ -18,10 +20,20 @@ class RpcHandler implements WebSocketHandler {
   }
 
   public send(payload: string) {
-    if (!this.sock.isOpen) {
-      this.queue.push(payload);
-    } else {
+    if (this.sock.isOpen) {
       this.sock.send(payload);
+      return;
+    }
+    // not connected, store the payload for later.
+    this.queue.push(payload);
+
+    if (this.sock.isClosing) {
+      // TODO: schedule reconnect
+      return;
+    }
+    if (this.sock.isClosed) {
+      // reconnect immediately
+      this.sock = new HandleableWebSocket(this, this.url);
     }
   }
 

@@ -2,6 +2,7 @@ import Worker from 'worker-loader!./solr.worker';
 import {RpcRequest} from './RpcRequest';
 import Endpoint from './Endpoint';
 import { RpcResponse } from './RpcResponse';
+import store from '@/store';
 
 const joinParams = (params: string[][]) => [...params].map((kv) => kv.join('=')).join('&');
 
@@ -10,14 +11,14 @@ interface RpcCallback {
   onerror: (d: RpcResponse) => void;
 }
 
-export default class QueryableWorker {
+export default class WorkerWrapper {
   private worker: Worker;
   private callbacks: Map<number, RpcCallback> = new Map();
   private counter: number = 1;
   constructor() {
     this.worker = new Worker();
     this.worker.onerror = (event) => {
-      console.error(`error in worker: ${event.message}`);
+      store.dispatch('log/log', `ERR: ${event.message}`);
     };
     this.worker.onmessage = (event) => this.receiveFromWorker(event);
   }
@@ -76,7 +77,7 @@ export default class QueryableWorker {
     const data: RpcResponse = event.data;
     const cb = this.callbacks.get(data.id);
     if (!cb) {
-      console.error(`had no worker for id: ${data.id}`);
+      console.error(`had no callback for id: ${data.id}`);
       return;
     }
     if (data.error) {
