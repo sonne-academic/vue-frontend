@@ -1,10 +1,3 @@
-import Worker from 'worker-loader!./cmd.worker';
-import Endpoint from './Endpoint';
-import {RpcRequest} from './RpcRequest';
-const joinParams = (params: string[][]) => [...params].map((kv) => kv.join('=')).join('&');
-
-import store from '@/store';
-
 interface WebSocketHandler {
   onclose: ((ev: CloseEvent) => any);
   onerror: ((ev: Event) => any) ;
@@ -12,7 +5,7 @@ interface WebSocketHandler {
   onopen: ((ev: Event) => any);
 }
 
-class BetterWebSocket extends WebSocket {
+class HandleableWebSocket extends WebSocket {
   private handler: WebSocketHandler;
   constructor(handler: WebSocketHandler, url: string, protocols?: string|string[]) {
     super(url, protocols);
@@ -36,4 +29,4 @@ class BetterWebSocket extends WebSocket {
   }
 }
 
-export { BetterWebSocket, WebSocketHandler };
+export { HandleableWebSocket, WebSocketHandler };
