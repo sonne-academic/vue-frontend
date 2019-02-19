@@ -29,7 +29,7 @@
 <script lang="ts">
 import { mapActions } from 'vuex';
 import Vue from 'vue';
-
+import * as COMP from '@/plugins/vue-solr/lib/responses/CompletionResponse';
 import SearchBoxResult from './SearchBoxResult.vue';
 interface HighlitedResult {
   id: string;
@@ -63,16 +63,17 @@ export default Vue.extend({
         return;
       }
       const payload = {q: event, hl: 'true'};
-      this.$solr.send_command('pass_through_solr', 'GET', '/dblp/suggest/author', payload)
+      this.$solr.send_command('pass_through_solr', 'GET', '/s2/suggest/title', payload)
       .then((d: any) => {
+        const response = d as COMP.TitleCompletionResponse;
         this.result = d;
         this.highlights = [];
-        for(const key of Object.keys(d.highlighting)) {
-          const x: string[] = d.highlighting[key].author_ngram;
+        for (const key of Object.keys(response.highlighting)) {
+          const x = response.highlighting[key].title_ngram;
           x.forEach((val) => {
             this.highlights.push({
               id: key,
-              value: val,
+              value: val.replace(/<em>/g, '<b>').replace(/<\/em>/g, '</b>'),
             });
           });
         }
