@@ -24,12 +24,13 @@ import Vue from 'vue';
 
 import Search from './Search.vue';
 import FacetSearch from './FacetSearch.vue';
+import AutoComplete from './AutoComplete.vue';
 
 export default Vue.extend({
   name: 'Sidebar',
-  components: { Search, FacetSearch},
+  components: { Search, FacetSearch, AutoComplete},
   data: () => ({
-    tabs: ['search', 'facet-search'],
+    tabs: ['search', 'facet-search', 'auto-complete'],
     query: 'authors:*Ropinski*',
     lastQuery: '',
     result: {},
