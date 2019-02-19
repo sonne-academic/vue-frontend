@@ -1,11 +1,11 @@
-import {BetterWebSocket, WebSocketHandler} from './BetterWebsocket';
+import {HandleableWebSocket, WebSocketHandler} from '../plugins/vue-solr/lib/HandleableWebSocket';
 
 class SolrSocketHandler implements WebSocketHandler  {
-  private sock: BetterWebSocket;
+  private sock: HandleableWebSocket;
   private queue: any[];
   private workers: Map<number, Worker>;
   constructor() {
-    this.sock = new BetterWebSocket(this, 'SolrSocketHandler_FIX_ME');
+    this.sock = new HandleableWebSocket(this, 'SolrSocketHandler_FIX_ME');
     this.queue = [];
     this.workers = new Map<number, Worker>();
   }
