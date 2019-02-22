@@ -32,7 +32,7 @@ export default class WorkerWrapper {
   }
 
   private log(message: string) {
-    store.dispatch('log/log', `[WorkerWrapper] ${message}`)
+    store.dispatch('log/log', `[WorkerWrapper] ${message}`);
   }
 
   private send_command(command: string, method: string, endpoint: string, payload: any): Promise<RpcResponse> {
