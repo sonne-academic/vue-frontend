@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import * as d3 from 'd3-hierarchy';
-import OrbitControls from 'three-orbitcontrols';
+import OrbitControls from '@/helpers/OrbitControls';
 import { EllipseCurve } from 'three';
 
 export interface Node {
@@ -39,7 +39,7 @@ export class RenderThing {
 
   private raycaster: THREE.Raycaster = new THREE.Raycaster();
   private mouse: THREE.Vector2 = new THREE.Vector2();
-  private controls: OrbitControls | null = null;
+  private controls: THREE.OrbitControls | null = null;
 
   private mouseX: number = 0;
   private mouseY: number = 0;
@@ -110,7 +110,7 @@ export class RenderThing {
     window.addEventListener( 'resize', () => {this.onWindowResize(); }, false );
     // if you do not pass an element the orbitcontrols will steal focus
     // from every other element. You can't click into a textbox etc...
-    const ctrl = new OrbitControls(this.camera, el as HTMLElement);
+    const ctrl = new THREE.OrbitControls(this.camera, el as HTMLElement);
     ctrl.minDistance = 1000;
     ctrl.maxDistance = 3500;
     ctrl.enabled = true;
