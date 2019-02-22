@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import * as d3 from 'd3-hierarchy';
-import OrbitControls from '@/helpers/OrbitControls';
+import '@/helpers/OrbitControls';
 import { EllipseCurve } from 'three';
 
 export interface Node {
