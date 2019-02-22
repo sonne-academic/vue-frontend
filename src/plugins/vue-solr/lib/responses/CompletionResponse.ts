@@ -1,59 +1,41 @@
-export interface AuthorCompletionResponse {
+export interface CompletionResponse<T> {
   responseHeader: ResponseHeader;
   response: Response;
-  highlighting: { [key: string]: AuthorHighlight };
+  highlighting: { [key: string]: T };
 }
 
-export interface AuthorHighlight {
+export interface Author {
   author_lower: string[];
   author_ngram: string[];
 }
 
-export interface TitleCompletionResponse {
-  responseHeader: ResponseHeader;
-  response: Response;
-  highlighting: { [key: string]: TitleHighlight };
-}
-
-export interface TitleHighlight {
+export interface Title {
   title_lower: string[];
   title_ngram: string[];
 }
 
-export interface JournalNameCompletionResponse {
-  responseHeader: ResponseHeader;
-  response: Response;
-  highlighting: { [key: string]: JournalNameHighlight };
-}
-
-export interface JournalNameHighlight {
+export interface JournalName {
   journalName_lower: string[];
   journalName_ngram: string[];
 }
 
-export interface VenueCompletionResponse {
-  responseHeader: ResponseHeader;
-  response: Response;
-  highlighting: { [key: string]: VenueHighlight };
-}
-
-export interface VenueHighlight {
+export interface Venue {
   venue_lower: string[];
   venue_ngram: string[];
 }
 
-export interface Response {
+interface Response {
   numFound: number;
   start: number;
   maxScore: number;
   docs: Doc[];
 }
 
-export interface Doc {
+interface Doc {
   author: string[];
 }
 
-export interface ResponseHeader {
+interface ResponseHeader {
   zkConnected: boolean;
   status: number;
   QTime: number;
