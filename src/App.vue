@@ -6,7 +6,6 @@
     <global-log/>
     <!-- <facet-search-box/> -->
     
-    <!-- <vega-tree-view name="vegaTree"/> -->
   </div>
 </template>
 
@@ -14,16 +13,14 @@
 import Vue from 'vue';
 import GlobalLog from './components/GlobalLog.vue';
 import SearchBox from './components/SearchBox.vue';
-import ThreeTreeView from './components/ThreeTreeView.vue';
-import VegaTreeView from './components/VegaTreeView.vue';
+// import ThreeTreeView from './components/ThreeTreeView.vue';
 import Sidebar from './components/Sidebar.vue';
 
 export default Vue.extend({
   name: 'app',
   components: {
     GlobalLog,
-    ThreeTreeView,
-    VegaTreeView,
+    ThreeTreeView: () => import('./components/ThreeTreeView.vue'),
     Sidebar,
   },
   data: () => ({
