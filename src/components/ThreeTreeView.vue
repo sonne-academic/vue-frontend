@@ -69,16 +69,20 @@ export default Vue.extend({
         const tmp: any = data;
         const docs: any[] = tmp.response.docs;
         const newDocs = docs.filter((doc: any) => !this.nodesById.has(doc));
-        const newMaps = newDocs.map(({id, outCitations}) => ({parent: id, children: outCitations}));
+        const newMaps = newDocs.map(({id, outCitations}) => ({
+          parent: id as string,
+          children: outCitations as string[],
+          }),
+        );
         newMaps.forEach(({parent, children}) => {
           if (!children) {
             return;
           }
           const out: string[] = children;
-          out.forEach((id) => this.addNode({id, name: id, parent}));
+          children.forEach((id) => this.addNode({id, name: id, parent}));
         });
         const childs = newMaps.map((value) => value.children);
-        const toFetch: string[] = childs.flat().filter((val) => val !== undefined);
+        const toFetch: string[] = childs.flat().filter((val: any) => val !== undefined);
         // console.log(toFetch);
         this.updateData();
         return this.fetchMultiple(toFetch);
@@ -104,11 +108,11 @@ export default Vue.extend({
     },
     fetchSingle(id: string) {
       const payload = {params: {id}};
-      return this.$solr.send_command('pass_through', 'GET', '/collections/s2/get', payload);
+      return this.$solr.pass_through.get('/collections/s2/get', payload);
     },
     fetchMultiple(ids: string[]) {
       const payload = {params: {ids}};
-      return this.$solr.send_command('pass_through', 'GET', '/collections/s2/get', payload);
+      return this.$solr.pass_through.get('/collections/s2/get', payload);
     },
     stratify(): d3.HierarchyNode<Node> {
       return d3.stratify<Node>()

@@ -1,120 +1,59 @@
 <template>
-  <div name="search">
-      <input
-        ref="input"
-        type="search"
-        :class="`form-control ${inputClass}`"
-        :placeholder="placeholder"
-        :aria-label="placeholder"
-        
-        @focus="isFocused = true"
-        @blur="handleBlur"
-        @input="handleInput($event.target.value)"
-        autocomplete="off"
-      />
-      <search-box-result 
-      v-for="doc in docs" 
-      :data="doc" 
-      :key="doc.id"
-      @starttree="startTree"/>
-
-      <div v-for="k in highlights" :key='k.id'>
-        <div v-html="k.value"></div>
-      </div>
-
+  <div class="search">
+    <button v-for="tab in tabs"
+      :key="tab"
+      :class="['tab-button', { active: currentTab === tab }]"
+      @click="currentTab = tab"
+    >{{ tab }}</button>
+    <auto-complete-input 
+      :endpoint="endpoint"
+      @autocomplete="highlights = $event"/>
+  
+    <auto-complete-items :results="highlights"/>
   </div>
-
 </template>
 
 <script lang="ts">
-import { mapActions } from 'vuex';
 import Vue from 'vue';
 import * as COMP from '@/plugins/vue-solr/lib/responses/CompletionResponse';
-import SearchBoxResult from './SearchBoxResult.vue';
+import AutoCompleteInput from './AutoComplete/AutoCompleteInput.vue';
+import AutoCompleteItems from './AutoComplete/AutoCompleteItems.vue';
 interface HighlitedResult {
   id: string;
   value: string;
 }
 export default Vue.extend({
   name: 'AutoComplete',
-  components: {  },
+  components: { AutoCompleteInput, AutoCompleteItems },
   data: () => ({
-    query: 'authors:*Ropinski*',
-    inputClass: 'lol',
-    placeholder: 'lol',
-    inputValue: '',
-    result: {},
-    start: 0,
-    docs: new Array<any>(),
     highlights: new Array<HighlitedResult>(),
-    pageDocs: new Map<number, any[]>(),
-    currentPage: '1',
-    numFound: 0,
-    rows: 10,
+    tabs: ['title', 'author', 'journal', 'venue'],
+    currentTab: 'title',
+    collection: 's2',
   }),
-  watch: {
-  },
-  methods: {
-    log(content: any) {
-      this.$store.dispatch('log/log', content);
-    },
-    handleInput(event: string) {
-      if (event.length < 2) {
-        return;
-      }
-      const payload = {q: event, hl: 'true'};
-      this.$solr.send_command('pass_through_solr', 'GET', '/s2/suggest/title', payload)
-      .then((d: any) => {
-        const response = d as COMP.TitleCompletionResponse;
-        this.result = d;
-        this.highlights = [];
-        for (const key of Object.keys(response.highlighting)) {
-          const x = response.highlighting[key].title_ngram;
-          x.forEach((val) => {
-            this.highlights.push({
-              id: key,
-              value: val.replace(/<em>/g, '<b>').replace(/<\/em>/g, '</b>'),
-            });
-          });
-        }
-      })
-      .catch(console.error);
-    },
-    handleBlur(event: any) {
-      // triggered when window loses focus
-      // console.log('blurevent');
-      // console.log(event);
-    },
-    startTree(stuff: any) {
-      this.$emit('starttree', stuff);
-    },
-  },
   computed: {
-    pageCount(): number {
-      if ( this.numFound === 0) {
-        return 0;
-      }
-      const num = this.numFound / this.rows;
-      return Math.floor(num) + 1;
-    },
-    activePage(): number {
-      return Number.parseInt(this.currentPage, 10);
+    endpoint(): string {
+      return `/${this.collection}/suggest/${this.currentTab}`;
     },
   },
 });
 </script>
 
 <style scoped>
-#search-input {
-  width: inherit;
+.tab-button {
+  padding: 6px 10px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #f0f0f0;
+  margin-bottom: -1px;
+  margin-right: -1px;
 }
-
-.dragger {
-  width: inherit;
+.tab-button:hover {
+  background: #e0e0e0;
 }
-
-details {
-  text-align: left;
+.tab-button.active {
+  background: #e0e0e0;
 }
-
 </style>

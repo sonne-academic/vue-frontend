@@ -4,12 +4,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {View, parse, Signal} from 'vega';
+import * as vega from 'vega';
 import store from '@/store';
 
 const tau = Math.PI * 2;
 
-const signals: Signal[] = [
+const signals: vega.Signal[] = [
         {
           name: 'startAngle', value: 0,
           bind: {input: 'range', min: 0, max: tau, step: 0.01},
@@ -61,7 +61,7 @@ export default Vue.extend({
     },
   },
   mounted() {
-    const spec = parse({
+    const spec = vega.parse({
       $schema: 'https://vega.github.io/schema/vega/v4.json',
       width: 300,
       height: 300,
@@ -117,7 +117,7 @@ export default Vue.extend({
       ],
     });
 
-    this.view = new View(spec)
+    this.view = new vega.View(spec)
       .renderer('canvas')
       .initialize('#' + this.name)
       .hover()

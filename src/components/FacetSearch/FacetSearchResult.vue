@@ -1,19 +1,16 @@
 <template>
     <div>
-      <details v-for="field in fields" v-bind:key="field.name">
-        <summary> {{ field.name }} </summary>
-        <vega-pie-chart 
-          v-bind="field"/>
-      </details>
-        
+      <filter-box v-for="field in fields" 
+        v-bind:key="field.name" 
+        :label="field.name"
+        :items="field.values"
+      />
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-
-import store from '@/store';
-import VegaPieChart from './VegaPieChart.vue';
+import FilterBox from './FilterBox.vue';
 
 function* gen_pairs(arr: any[]) {
   let name;
@@ -37,8 +34,8 @@ function* gen_kw(input: any) {
 }
 
 export default Vue.extend({
-  name: 'SolrFacetSearchResult',
-  components: {VegaPieChart},
+  name: 'FacetSearchResult',
+  components: {FilterBox},
   props: {
     response: {
       type: Object,
@@ -49,7 +46,7 @@ export default Vue.extend({
   }),
   methods: {
     log(content: any) {
-      store.dispatch('log/log', content);
+      this.$store.dispatch('log/log', content);
     },
   },
   computed: {

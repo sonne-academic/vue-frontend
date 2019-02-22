@@ -28,21 +28,14 @@ import AutoComplete from './AutoComplete.vue';
 
 export default Vue.extend({
   name: 'Sidebar',
-  components: { Search, FacetSearch, AutoComplete},
+  components: {
+    Search,
+    FacetSearch,
+     AutoComplete},
   data: () => ({
     tabs: ['search', 'facet-search', 'auto-complete'],
-    query: 'authors:*Ropinski*',
-    lastQuery: '',
-    result: {},
-    start: 0,
-    docs: new Array<any>(),
-    pageDocs: new Map<number, any[]>(),
-    currentPage: '1',
-    numFound: 0,
-    rows: 10,
-    pageCount: 0,
     visible: 'block',
-    currentTab: 'search',
+    currentTab: 'auto-complete',
   }),
   methods: {
     toggleVisible(event: any) {

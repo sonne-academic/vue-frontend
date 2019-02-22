@@ -10,7 +10,7 @@
       / {{ pageCount }}
       
       </span>
-      <search-box-result 
+      <search-result 
       v-for="doc in docs" 
       :data="doc" 
       :key="doc.id"
@@ -24,13 +24,13 @@
 import { mapActions } from 'vuex';
 import Vue from 'vue';
 
-import SearchBoxResult from './SearchBoxResult.vue';
+import SearchResult from './SearchResult.vue';
 
 export default Vue.extend({
   name: 'Search',
-  components: { SearchBoxResult },
+  components: { SearchResult },
   data: () => ({
-    query: 'authors:*Ropinski*',
+    query: 'author:*Ropinski*',
     lastQuery: '',
     result: {},
     start: 0,
@@ -69,7 +69,7 @@ export default Vue.extend({
       const start = (page - 1) * this.rows;
       const payload = {params: {q: this.lastQuery, rows: this.rows, start}};
       const params = {command: 'pass_through', method: 'GET', endpoint: '/collections/s2/select', payload};
-      this.$solr.send_command('pass_through', 'GET', '/collections/s2/select', payload)
+      this.$solr.pass_through.get('/collections/s2/select', payload)
         .then((d: any) => {
           this.result = d;
           this.pageDocs.set(page, d.response.docs);

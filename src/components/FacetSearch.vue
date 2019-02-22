@@ -20,24 +20,18 @@
 
 <script lang="ts">
 import Vue from 'vue';
-
-import { SolrCommandSocket } from '@/solr/SolrCommandSocket';
-import SolrFacetSearchResult from './SolrFacetSearchResult.vue';
-import store from '@/store';
-
-
-import Draggable from './Draggable.vue';
+import SolrFacetSearchResult from './FacetSearch/FacetSearchResult.vue';
 
 export default Vue.extend({
   name: 'FacetSearch',
-  components: { Draggable, SolrFacetSearchResult },
+  components: { SolrFacetSearchResult },
   data: () => ({
-    query: 'authors:*Ropinski*',
+    query: 'author:*Ropinski*',
     lastQuery: '',
     result: {},
     start: 0,
     docs: new Array<any>(),
-    facets: ['authors', 'journalName', 'venue', 'year', 'entities'],
+    facets: ['author', 'journal', 'venue', 'year', 'entities'],
     pageDocs: new Map<number, any[]>(),
     currentPage: '1',
     numFound: 0,
@@ -57,7 +51,7 @@ export default Vue.extend({
   },
   methods: {
     log(content: any) {
-      store.dispatch('log/log', content);
+      this.$store.dispatch('log/log', content);
     },
     submitSearch() {
       this.pageDocs = new Map();
@@ -72,7 +66,7 @@ export default Vue.extend({
             'facet.field': this.facets,
             }};
       // const payload = {params: {q: this.lastQuery, rows: this.rows, start: this.start}};
-      this.$solr.send_command('pass_through', 'GET', '/collections/s2/select', payload)
+      this.$solr.pass_through.get('/collections/s2/select', payload)
         .then((d: any) => {
           this.result = d;
           this.docs = d.facet_counts;
@@ -83,7 +77,7 @@ export default Vue.extend({
     getPageData(page: number) {
       const start = (page - 1) * this.rows;
       const payload = {params: {q: this.lastQuery, rows: this.rows, start}};
-      this.$solr.send_command('pass_through', 'GET', '/collections/s2/select', payload)
+      this.$solr.pass_through.get('/collections/s2/select', payload)
         .then((d: any) => {
           this.result = d;
           this.pageDocs.set(page, d.response.docs);
