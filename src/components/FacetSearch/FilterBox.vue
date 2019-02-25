@@ -6,18 +6,20 @@
     :label="item.name"
     :size="item.size"
     @clicked="itemtoggle"/>
-    
+    <author-detail-view v-if="author" :author="author"/>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import FilterBoxItem from './FilterBoxItem.vue';
+import AuthorDetailView from '../DetailViews/AuthorDetails.vue';
 
 export default Vue.extend({
   name: 'FilterBox',
   components: {
     FilterBoxItem,
+    AuthorDetailView,
   },
   props: {
     label: {
@@ -29,9 +31,13 @@ export default Vue.extend({
       required: true,
     },
   },
+  data: () => ({
+    author: '',
+  }),
   methods: {
     itemtoggle(e: any) {
       console.log(`${this.label}:${e}`);
+      this.author = e;
     },
   },
 });
