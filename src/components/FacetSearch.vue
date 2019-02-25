@@ -31,7 +31,7 @@ export default Vue.extend({
     result: {},
     start: 0,
     docs: new Array<any>(),
-    facets: ['author', 'journal', 'venue', 'year', 'entities'],
+    facets: ['author', 'journal', 'venue', 'year', 'keywords'],
     pageDocs: new Map<number, any[]>(),
     currentPage: '1',
     numFound: 0,
