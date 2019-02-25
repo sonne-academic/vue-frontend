@@ -2,10 +2,7 @@
   <div id="app">
     <sidebar id="side" @starttree="startTree"/>
     <three-tree-view name="container" :rootid="rootid"/>
-    <!-- <search-box @starttree="startTree"/> -->
     <global-log/>
-    <!-- <facet-search-box/> -->
-    
   </div>
 </template>
 
