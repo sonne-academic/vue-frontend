@@ -1,6 +1,10 @@
 <template>
-  <div class="ac-container" :style="pos">
-    <div v-for="k in results" :key='k.id' v-html="k.value"/>
+  <div class="ac-container">
+    <div class="ac-result"
+      @click="clicked(k.id)"
+      v-for="k in results" 
+      :key='k.id' 
+      v-html="k.value"/>
   </div>
 </template>
 
@@ -16,10 +20,22 @@ export default Vue.extend({
     results: {
       default: new Array<HighlitedResult>(),
     },
-    pos: {},
+  },
+  methods: {
+    clicked(key: string) {
+      console.log(key);
+    },
   },
 });
 </script>
 
 <style scoped>
+.ac-result:nth-of-type(2n) {
+  background-color: bisque;
+}
+.ac-result:hover {
+  border-width: 1px;
+  border-color: red;
+  border-style: dashed;
+}
 </style>
