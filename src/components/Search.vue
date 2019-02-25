@@ -12,7 +12,7 @@
       </span>
       <search-result 
       v-for="doc in docs" 
-      :data="doc" 
+      :doc="doc" 
       :key="doc.id"
       @starttree="startTree"/>
 
@@ -64,11 +64,19 @@ export default Vue.extend({
       this.getPageData(1);
     },
     getPageData(page: number) {
-      // dis too slow, use cursors?
+      // dis too slow, sometimes.
+      // cursor implementation is solr is not faster, it's slower than normal
       // http://lucene.apache.org/solr/guide/7_4/pagination-of-results.html#cursor-examples
       const start = (page - 1) * this.rows;
-      const payload = {params: {q: this.lastQuery, rows: this.rows, start}};
-      const params = {command: 'pass_through', method: 'GET', endpoint: '/collections/s2/select', payload};
+      const payload = {params: {
+        'q': this.lastQuery,
+        'rows': this.rows,
+        start,
+        'defType': 'edismax',
+        // 'fl': 'title',
+        'qf': 'suggest_lower^10 suggest_ngram',
+        'q.op': 'AND',
+        'sort': 'inCitations_count desc'}};
       this.$solr.pass_through.get('/collections/s2/select', payload)
         .then((d: any) => {
           this.result = d;
