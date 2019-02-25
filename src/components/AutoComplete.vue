@@ -33,7 +33,7 @@ export default Vue.extend({
   }),
   computed: {
     endpoint(): string {
-      if ('suggest' == this.currentTab) {
+      if ('suggest' === this.currentTab) {
         return `/${this.collection}/suggest`;
       } else {
         return `/${this.collection}/suggest/${this.currentTab}`;
