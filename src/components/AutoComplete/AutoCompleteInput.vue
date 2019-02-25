@@ -37,7 +37,11 @@ export default Vue.extend({
       if (event.length < 2) {
         return;
       }
-      const payload = {q: event, hl: 'true'};
+      const payload = {
+        'q': event,
+        'hl': 'true',
+        'hl.simple.pre': '<strong>',
+        'hl.simple.post': '</strong>'};
       this.$solr.pass_through_solr.get(this.endpoint, payload)
       .then((d: any) => {
         const response = d as COMP.CompletionResponse<COMP.Title>;
@@ -51,7 +55,7 @@ export default Vue.extend({
             v.forEach((val: string) => {
               highlights.push({
                 id: key,
-                value: val.replace(/<em>/g, '<b>').replace(/<\/em>/g, '</b>'),
+                value: val,
               });
             });
           }
