@@ -9,7 +9,7 @@
       :endpoint="endpoint"
       @autocomplete="highlights = $event"/>
   
-    <auto-complete-items :results="highlights"/>
+    <auto-complete-items class="auto-items" :results="highlights"/>
   </div>
 </template>
 
@@ -27,13 +27,17 @@ export default Vue.extend({
   components: { AutoCompleteInput, AutoCompleteItems },
   data: () => ({
     highlights: new Array<HighlitedResult>(),
-    tabs: ['title', 'author', 'journal', 'venue'],
-    currentTab: 'title',
-    collection: 's2',
+    tabs: ['title', 'author', 'journal', 'venue', 'suggest'],
+    currentTab: 'suggest',
+    collection: 'dblp',
   }),
   computed: {
     endpoint(): string {
-      return `/${this.collection}/suggest/${this.currentTab}`;
+      if ('suggest' == this.currentTab) {
+        return `/${this.collection}/suggest`;
+      } else {
+        return `/${this.collection}/suggest/${this.currentTab}`;
+      }
     },
   },
 });
@@ -55,5 +59,15 @@ export default Vue.extend({
 }
 .tab-button.active {
   background: #e0e0e0;
+}
+.auto-items {
+  position: absolute;
+  width: 200%;
+  background-color: #fff;
+}
+.auto-items:hover {
+  position: absolute;
+  border-color: #ccc;
+  border-width: 1px;
 }
 </style>
