@@ -1,11 +1,24 @@
 <template>
-    <div>
+    <div class="doc">
       <details>
-        <summary>{{data.title}}</summary>
-        <details v-if="data.entities">
+        <summary>{{doc.title}}</summary>
+        <details v-if="doc.entities">
           <summary>entities</summary>
-           {{ data.entities.join(', ') }}
+           {{ doc.entities.join(', ') }}
         </details>
+
+      <strong v-if="doc.journal"> {{doc.journal}} </strong>
+      <strong v-else=""> {{doc.venue}} </strong>
+      , {{doc.year}}
+
+      <div v-if="doc.author">
+        <strong v-if="doc.author">Authors:</strong>
+        <span v-for="author in doc.author" :key="author"> {{author}}, </span>
+      </div>
+      
+      <div v-if="doc.inCitations"> 
+        <strong>cited: </strong>{{doc.inCitations_count}}
+      </div>
         <button @click="startTreeThree">three</button>
       </details>
     </div>
@@ -17,7 +30,7 @@ import Vue from 'vue';
 export default Vue.extend({
   name: 'SearchResult',
   props: {
-    data: {
+    doc: {
       type: Object,
       required: true,
       default: {},
@@ -30,7 +43,7 @@ export default Vue.extend({
       this.$store.dispatch('log/log', content);
     },
     startTreeThree(e: Event) {
-      this.$emit('starttree', {id: this.data.id});
+      this.$emit('starttree', {id: this.doc.id});
     },
   },
 });
