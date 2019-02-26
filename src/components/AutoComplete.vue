@@ -29,7 +29,7 @@ export default Vue.extend({
     highlights: new Array<HighlitedResult>(),
     tabs: ['title', 'author', 'journal', 'venue', 'suggest'],
     currentTab: 'suggest',
-    collection: 'dblp',
+    collection: 's2',
   }),
   computed: {
     endpoint(): string {
