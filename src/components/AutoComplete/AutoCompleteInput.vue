@@ -42,6 +42,7 @@ export default Vue.extend({
         'hl': 'true',
         'hl.simple.pre': '<strong>',
         'hl.simple.post': '</strong>',
+        'hl.fragsize': 0,
       };
       this.$solr.pass_through_solr.get(this.endpoint, payload)
       .then((d: any) => {
