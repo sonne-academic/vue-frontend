@@ -7,9 +7,9 @@
            {{ doc.entities.join(', ') }}
         </details>
 
-      <strong v-if="doc.journal"> {{doc.journal}} </strong>
-      <strong v-else=""> {{doc.venue}} </strong>
-      , {{doc.year}}
+      {{doc.year}}
+      <strong v-if="doc.journal">, {{doc.journal}}</strong>
+      <strong v-else-if="doc.venue">, {{doc.venue}}</strong>      
 
       <div v-if="doc.author">
         <strong v-if="doc.author">Authors:</strong>

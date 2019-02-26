@@ -13,8 +13,8 @@ import Vue from 'vue';
 import FilterBox from './FilterBox.vue';
 
 function* gen_pairs(arr: any[]) {
-  let name;
-  let size;
+  let name: string;
+  let size: number;
   while (arr.length) {
     [name, size, ...arr] = arr;
     if (0 === size) {

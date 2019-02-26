@@ -59,8 +59,6 @@ export default Vue.extend({
   float: right;
   /* border-radius: 50%; */
 }
-.minus {
-}
 .minus:hover {
   background: #f00;
 }

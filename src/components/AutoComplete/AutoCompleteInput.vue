@@ -41,7 +41,8 @@ export default Vue.extend({
         'q': event,
         'hl': 'true',
         'hl.simple.pre': '<strong>',
-        'hl.simple.post': '</strong>'};
+        'hl.simple.post': '</strong>',
+      };
       this.$solr.pass_through_solr.get(this.endpoint, payload)
       .then((d: any) => {
         const response = d as COMP.CompletionResponse<COMP.Title>;

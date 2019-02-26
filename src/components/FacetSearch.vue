@@ -11,10 +11,6 @@
       
       </span>
       <solr-facet-search-result v-if="numFound" :response="result"/>
-      <!-- <details v-for="doc in docs" :key="doc.id">
-        <summary> {{doc.title}}</summary>
-         {{doc}}
-      </details> -->
     </div>
 </template>
 
