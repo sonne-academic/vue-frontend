@@ -78,8 +78,4 @@ export default Vue.extend({
 details details {
   margin-left:10px;
 }
-
-details {
-  text-align: left;
-}
 </style>

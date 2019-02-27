@@ -6,12 +6,13 @@
         :aria-label="placeholder"
         
         @focus="isFocused = true"
-        @input="handleInput($event.target.value)"
+        @input="db($event.target.value)"
       />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import _ from 'lodash';
 import * as COMP from '@/plugins/vue-solr/lib/responses/CompletionResponse';
 interface HighlitedResult {
   id: string;
@@ -22,6 +23,10 @@ export default Vue.extend({
   components: {  },
   props: {
     endpoint: {
+      type: String,
+      required: true,
+    },
+    collection: {
       type: String,
       required: true,
     },
@@ -66,9 +71,9 @@ export default Vue.extend({
       })
       .catch(this.log);
     },
+    db: _.debounce(function(this: any, e: string) {
+        this.handleInput(e);
+    }, 500),
   },
 });
 </script>
-
-<style scoped>
-</style>

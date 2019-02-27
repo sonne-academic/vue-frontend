@@ -1,11 +1,12 @@
 <template>
   <div class="flex"> 
     <filter-box-item 
-    v-for="item in items"
-    :key="item.name"
-    :label="item.name"
-    :size="item.size"
-    @clicked="itemtoggle"/>
+      v-for="item in items"
+      :key="item.name"
+      :label="item.name"
+      :size="item.size"
+      @clicked="itemtoggle"
+    />
     <author-detail-view v-if="author" :author="author"/>
   </div>
 </template>

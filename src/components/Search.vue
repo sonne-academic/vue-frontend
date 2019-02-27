@@ -145,18 +145,3 @@ export default Vue.extend({
 
 });
 </script>
-
-<style scoped>
-#search-input {
-  width: inherit;
-}
-
-.dragger {
-  width: inherit;
-}
-
-details {
-  text-align: left;
-}
-
-</style>

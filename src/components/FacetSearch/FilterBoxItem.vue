@@ -44,7 +44,6 @@ export default Vue.extend({
   background: #ccc;
 }
 .btn:hover > .fltbtn {
-  /* display: inline; */
   visibility: visible;
   float: right;
 }
@@ -53,11 +52,8 @@ export default Vue.extend({
   margin: 0;
   border-style: none;
   position: relative;
-  /* display: none; */
   visibility: hidden;
-  /* display: none; */
   float: right;
-  /* border-radius: 50%; */
 }
 .minus:hover {
   background: #f00;

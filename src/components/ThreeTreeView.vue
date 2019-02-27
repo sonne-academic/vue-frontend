@@ -22,6 +22,7 @@ export default Vue.extend({
   data: () => ({
     renderthing: new RenderThing(),
     nodesById: new Map<string, Node>(),
+    collection: 's2',
   }),
   methods: {
     log(content: any) {

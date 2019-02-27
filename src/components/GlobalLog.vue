@@ -1,8 +1,6 @@
 <template>
-  <div class="log-container">
-    <textarea 
-    rows=10 
-    cols=80 
+  <div>
+    <textarea rows=10 cols=80 
     id="global-log" 
     readonly 
     title="log" 
@@ -25,16 +23,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style scoped>
-.log-container {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-}
-textarea {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-}
-</style>

@@ -2,7 +2,7 @@
   <div id="app">
     <sidebar id="side" @starttree="startTree"/>
     <!-- <three-tree-view name="container" :rootid="rootid"/> -->
-    <global-log/>
+    <global-log id="log"/>
   </div>
 </template>
 
@@ -32,23 +32,28 @@ export default Vue.extend({
 </script>
 
 <style>
+body {
+  margin: 0;
+}
+
 #app {
   font-family: sans-serif;
-  text-align: center;
+  /* text-align: center; */
   color: #2c3e50;
   margin-top: 0px;
 }
 
-body {
-  margin: 0;
+#log {
+  position: fixed;
+  bottom: 0;
+  right: 0;
 }
-/* #viz {
-  float: right;
-} */
 
 #side {
   float: left;
-  position: absolute;
+  position: fixed;
+  border: 1px solid #ccc;
+  width: 33%;
 }
 
 </style>
