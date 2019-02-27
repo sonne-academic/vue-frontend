@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <sidebar id="side" @starttree="startTree"/>
-    <three-tree-view name="container" :rootid="rootid"/>
+    <!-- <three-tree-view name="container" :rootid="rootid"/> -->
     <global-log/>
   </div>
 </template>
@@ -17,7 +17,7 @@ export default Vue.extend({
   name: 'app',
   components: {
     GlobalLog,
-    ThreeTreeView: () => import('./components/ThreeTreeView.vue'),
+    // ThreeTreeView: () => import('./components/ThreeTreeView.vue'),
     Sidebar,
   },
   data: () => ({
