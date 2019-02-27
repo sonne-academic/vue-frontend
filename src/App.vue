@@ -50,8 +50,7 @@ body {
 }
 
 #side {
-  float: left;
-  position: fixed;
+  position: absolute;
   border: 1px solid #ccc;
   width: 33%;
 }
