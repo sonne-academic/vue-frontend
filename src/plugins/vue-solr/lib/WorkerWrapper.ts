@@ -20,11 +20,17 @@ export default class WorkerWrapper {
     return this.command_sender('pass_through_solr');
   }
 
+  public get collections() {
+    return this.collects;
+  }
+
   private worker: Worker;
   private callbacks: Map<number, RpcCallback> = new Map();
   private counter: number = 1;
-  constructor() {
+  private collects: string[];
+  constructor(collections: string[]) {
     this.worker = new Worker();
+    this.collects = collections;
     this.worker.onerror = (event) => {
       this.log(`ERR: ${event.message}`);
     };

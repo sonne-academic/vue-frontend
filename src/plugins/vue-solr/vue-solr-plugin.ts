@@ -1,7 +1,7 @@
 import {PluginFunction, PluginObject} from 'vue';
 import WorkerWrapper from './lib/WorkerWrapper';
 export interface SolrPluginOptions {
-  host: string;
+  collections: string[];
 }
 const plugObject: PluginObject<SolrPluginOptions> = {
   install(Vue, options) {
@@ -30,7 +30,10 @@ const plugObject: PluginObject<SolrPluginOptions> = {
     // Vue.prototype.$myMethod = function(methodOptions:any) {
     // some logic ...
     // };
-    Vue.prototype.$solr = new WorkerWrapper();
+    if (!options) {
+      throw Error('must specify options');
+    }
+    Vue.prototype.$solr = new WorkerWrapper(options.collections);
   },
 };
 

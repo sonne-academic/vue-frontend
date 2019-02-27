@@ -1,20 +1,23 @@
 <template>
   <div name="search">
-      <input id="search-input" v-model="query" @keyup.enter="submitSearch" type="text" title="search text"/>
-      <input id="search-submit" @click="submitSearch" type="button" value="search"/>
+      <input id="search-input" type="text" title="search text"
+        v-model="query" 
+        @keyup.enter="submitSearch"
+      />
+      <collection-select @change="collection = $event"/>
+      <input id="search-submit" type="button" value="search"
+        @click="submitSearch"
+      />
       <span v-if="0 !== pageCount">
-      <input id="page-input" 
-        v-model="currentPage" 
-        min="1" :max="pageCount" type="number" title="page"
-        />
-      / {{ pageCount }}
-      
+        <input id="page-input" min="1" type="number" title="page"
+          :max="pageCount"
+          v-model="currentPage"
+        /> / {{ pageCount }}
       </span>
       <search-result 
-      v-for="doc in docs" 
-      :doc="doc" 
-      :key="doc.id"
-      @starttree="startTree"/>
+        v-for="doc in docs" 
+        :doc="doc" 
+        :key="doc.id"/>
 
   </div>
 
@@ -25,12 +28,16 @@ import { mapActions } from 'vuex';
 import Vue from 'vue';
 
 import SearchResult from './SearchResult.vue';
+import CollectionSelect from './CollectionSelect.vue';
 
 export default Vue.extend({
   name: 'Search',
-  components: { SearchResult },
+  components: { SearchResult, CollectionSelect },
   data: () => ({
     query: 'author:*Ropinski*',
+    activesort: 'outCitations_count dec',
+    sortby: ['year desc', 'outCitations_count desc'],
+    collection: 's2',
     lastQuery: '',
     result: {},
     start: 0,
@@ -40,18 +47,6 @@ export default Vue.extend({
     numFound: 0,
     rows: 10,
   }),
-  watch: {
-    currentPage() {
-      const page = this.activePage;
-      const docs = this.pageDocs.get(page);
-      if (docs) {
-        this.docs = docs;
-        return;
-      }
-      this.pageDocs.set(page, []);
-      this.getPageData(page);
-    },
-  },
   methods: {
     log(content: any) {
       this.$store.dispatch('log/log', content);
@@ -71,13 +66,25 @@ export default Vue.extend({
       const payload = {params: {
         'q': this.lastQuery,
         'rows': this.rows,
+        'debug': 'query',
         start,
         'defType': 'edismax',
         // 'fl': 'title',
         'qf': 'suggest_lower^10 suggest_ngram',
         'q.op': 'AND',
-        'sort': 'inCitations_count desc'}};
-      this.$solr.pass_through.get('/collections/s2/select', payload)
+        // 'omitHeader': 'true',
+        'sort': 'year desc'}};
+      /* using AND:
+      +(
+        +(suggest_ngram:ropinski | (suggest_lower:ropinski)^10.0)
+        +(suggest_ngram:maisch   | (suggest_lower:maisch)^10.0)
+      ) */
+      /* using OR:
+      +(
+        (suggest_ngram:ropinski | (suggest_lower:ropinski)^10.0)
+        (suggest_ngram:maisch   | (suggest_lower:maisch)^10.0)
+      ) */
+      this.$solr.pass_through.get(`/collections/${this.collection}/select`, payload)
         .then((d: any) => {
           this.result = d;
           this.pageDocs.set(page, d.response.docs);
@@ -108,13 +115,34 @@ export default Vue.extend({
       if ( this.numFound === 0) {
         return 0;
       }
-      const num = this.numFound / this.rows;
-      return Math.floor(num) + 1;
+      const quotient = Math.floor(this.numFound / this.rows);
+      const remainder = this.numFound % this.rows;
+      if (0 === remainder) {
+        return quotient;
+      } else {
+        return quotient + 1;
+      }
     },
     activePage(): number {
       return Number.parseInt(this.currentPage, 10);
     },
   },
+  watch: {
+    currentPage() {
+      if (this.activePage > this.pageCount) {
+        return;
+      }
+      const page = this.activePage;
+      const docs = this.pageDocs.get(page);
+      if (docs) {
+        this.docs = docs;
+        return;
+      }
+      this.pageDocs.set(page, []);
+      this.getPageData(page);
+    },
+  },
+
 });
 </script>
 
