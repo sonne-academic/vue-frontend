@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import _ from 'lodash';
+import debounce from 'lodash/debounce';
 import * as COMP from '@/plugins/vue-solr/lib/responses/CompletionResponse';
 interface HighlitedResult {
   id: string;
