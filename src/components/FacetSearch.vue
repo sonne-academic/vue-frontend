@@ -55,7 +55,7 @@ export default Vue.extend({
       // this.start = 0;
       this.numFound = 0;
       const payload = { params: {
-            'debug': true,
+            'debug': false,
             'q': this.lastQuery,
             'facet': 'on',
             'rows': 0,
