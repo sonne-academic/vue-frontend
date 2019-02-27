@@ -27,7 +27,7 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    placeholder: 'lol',
+    placeholder: 'title, author, year',
   }),
   methods: {
     log(content: any) {
