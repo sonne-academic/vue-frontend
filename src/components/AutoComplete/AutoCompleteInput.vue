@@ -71,7 +71,7 @@ export default Vue.extend({
       })
       .catch(this.log);
     },
-    db: _.debounce(function(this: any, e: string) {
+    db: debounce(function(this: any, e: string) {
         this.handleInput(e);
     }, 500),
   },
