@@ -83,7 +83,7 @@ export default Vue.extend({
           children.forEach((id) => this.addNode({id, name: id, parent}));
         });
         const childs = newMaps.map((value) => value.children);
-        const toFetch: string[] = childs.flat().filter((val: any) => val !== undefined);
+        const toFetch: string[] = []; // childs.flat().filter((val: any) => val !== undefined);
         // console.log(toFetch);
         this.updateData();
         return this.fetchMultiple(toFetch);

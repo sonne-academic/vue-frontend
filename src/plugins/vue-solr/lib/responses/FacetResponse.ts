@@ -21,6 +21,7 @@ export interface FacetFields {
 }
 
 export interface Facet {
+  placeholder: string;
 }
 
 export interface Response {
