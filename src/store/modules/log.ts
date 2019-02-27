@@ -1,17 +1,13 @@
 import {ActionTree, Getter, GetterTree, Module, ModuleTree, MutationTree} from 'vuex';
 
 interface LoggingState {
-  items: Log[];
-}
-
-export interface Log {
-  text: string;
+  items: string[];
 }
 
 type RootState = any;
 
 const state: LoggingState = {
-  items: [ ],
+  items: new Array<string>(),
 };
 
 const getters: GetterTree<LoggingState, RootState> = {
@@ -19,7 +15,7 @@ const getters: GetterTree<LoggingState, RootState> = {
 };
 
 const actions: ActionTree<LoggingState, RootState> = {
-  log: (ctx, lg) => ctx.commit('addItem', lg),
+  log: (ctx, lg: string) => ctx.commit('addItem', lg),
   clear: (ctx) => ctx.commit('setItems', {items: []}),
 };
 

@@ -11,17 +11,16 @@
 </template>
 
 <script lang="ts">
-import { Log } from '@/store/modules/log';
 import Vue from 'vue';
 
 export default Vue.extend({
   name: 'GlobalLog',
   computed: {
-    logContent(): Log[] {
+    logContent(): string[] {
       return this.$store.getters['log/logContent'];
     },
     logText(): string {
-      return this.logContent.reduce((prev, next) => prev + '\n' + JSON.stringify(next), '');
+      return this.logContent.reduce((prev, next) => prev + '\n' + next, '');
     },
   },
 });
