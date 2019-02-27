@@ -16,7 +16,7 @@ const getters: GetterTree<LoggingState, RootState> = {
 
 const actions: ActionTree<LoggingState, RootState> = {
   log: (ctx, lg: string) => ctx.commit('addItem', lg),
-  clear: (ctx) => ctx.commit('setItems', {items: []}),
+  clear: (ctx) => ctx.commit('setItems', []),
 };
 
 const mutations: MutationTree<LoggingState> = {
