@@ -64,9 +64,8 @@ export default class WorkerWrapper {
     });
     return promise;
   }
-
-  private get(command: string) {
-    return (endpoint: string, payload: any) => this.send_command(command, 'GET', endpoint, payload);
+  private build_method(method: string, command: string) {
+    return (endpoint: string, payload: any) => this.send_command(command, method, endpoint, payload);
   }
 
   private put(command: string) {
@@ -81,10 +80,10 @@ export default class WorkerWrapper {
   }
   private command_sender(command: string) {
     return {
-      get: this.get(command),
-      put: this.put(command),
-      post: this.post(command),
-      delete: this.delete(command),
+      get: this.build_method('GET', command),
+      put: this.build_method('PUT', command),
+      post: this.build_method('POST', command),
+      delete: this.build_method('DELETE', command),
     };
   }
   private submitToWorker(request: RpcRequest) {
