@@ -68,16 +68,6 @@ export default class WorkerWrapper {
     return (endpoint: string, payload: any) => this.send_command(command, method, endpoint, payload);
   }
 
-  private put(command: string) {
-    return (endpoint: string, payload: any) => this.send_command(command, 'PUT', endpoint, payload);
-  }
-
-  private post(command: string) {
-    return (endpoint: string, payload: any) => this.send_command(command, 'POST', endpoint, payload);
-  }
-  private delete(command: string) {
-    return (endpoint: string, payload: any) => this.send_command(command, 'DELETE', endpoint, payload);
-  }
   private command_sender(command: string) {
     return {
       get: this.build_method('GET', command),
