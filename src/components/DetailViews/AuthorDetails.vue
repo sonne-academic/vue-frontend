@@ -84,7 +84,7 @@ export default Vue.extend({
             'rows': 0,
             'facet.field': this.facets,
             }};
-      this.$solr.pass_through.get('/collections/s2/select', payload)
+      this.$solr.select({collection: this.collection, payload})
         .then((d: any) => {
           const tmp = d as FacetResponse;
           this.facetResponse = d;

@@ -1,5 +1,5 @@
 import Worker from 'worker-loader!./solr.worker';
-import { RpcRequest, RpcResponse } from './RpcInterface';
+import { RpcRequest, RpcResponse, SelectRequestParams } from './RpcInterface';
 import store from '@/store';
 
 interface RpcCallback {
@@ -35,6 +35,30 @@ export default class WorkerWrapper {
       this.log(`ERR: ${event.message}`);
     };
     this.worker.onmessage = (event) => this.receiveFromWorker(event);
+  }
+
+  public select(payload: SelectRequestParams) {
+    const id = this.counter++;
+    // create promise before sending the message, so there is a worker to handle responses.
+    const promise = new Promise<RpcResponse>((resolve, reject) => {
+      this.callbacks.set(id, {
+        onmessage: (d: RpcResponse) => {
+          resolve(d);
+          this.callbacks.delete(id);
+        },
+        onerror: (d: RpcResponse) => {
+          reject(d);
+          this.callbacks.delete(id);
+        },
+      });
+    });
+    this.submitToWorker({
+      jsonrpc: '2.0',
+      method: 'select',
+      id,
+      params: payload,
+    });
+    return promise;
   }
 
   private log(message: string) {

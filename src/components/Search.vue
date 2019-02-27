@@ -84,7 +84,7 @@ export default Vue.extend({
         (suggest_ngram:ropinski | (suggest_lower:ropinski)^10.0)
         (suggest_ngram:maisch   | (suggest_lower:maisch)^10.0)
       ) */
-      this.$solr.pass_through.get(`/collections/${this.collection}/select`, payload)
+      this.$solr.select({collection: this.collection, payload})
         .then((d: any) => {
           this.result = d;
           this.pageDocs.set(page, d.response.docs);

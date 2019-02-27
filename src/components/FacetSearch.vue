@@ -1,15 +1,8 @@
 <template>
     <div>
       <input id="search-input" v-model="query" @keyup.enter="submitSearch" type="text" title="search text"/>
+      <collection-select @change="collection = $event"/>
       <input id="search-submit" @click="submitSearch" type="button" value="search"/>
-      <span v-if="0 !== pageCount">
-      <input id="page-input" 
-        v-model="currentPage" 
-        min="1" :max="pageCount" type="number" title="page"
-        />
-      / {{ pageCount }}
-      
-      </span>
       <solr-facet-search-result v-if="numFound" :response="result"/>
     </div>
 </template>
@@ -17,13 +10,15 @@
 <script lang="ts">
 import Vue from 'vue';
 import SolrFacetSearchResult from './FacetSearch/FacetSearchResult.vue';
+import CollectionSelect from './CollectionSelect.vue';
 
 export default Vue.extend({
   name: 'FacetSearch',
-  components: { SolrFacetSearchResult },
+  components: { SolrFacetSearchResult, CollectionSelect },
   data: () => ({
     query: 'author:*Ropinski*',
     lastQuery: '',
+    collection: 's2',
     result: {},
     start: 0,
     docs: new Array<any>(),
@@ -62,7 +57,7 @@ export default Vue.extend({
             'facet.field': this.facets,
             }};
       // const payload = {params: {q: this.lastQuery, rows: this.rows, start: this.start}};
-      this.$solr.pass_through.get('/collections/s2/select', payload)
+      this.$solr.select({collection: this.collection, payload})
         .then((d: any) => {
           this.result = d;
           this.docs = d.facet_counts;
@@ -73,7 +68,7 @@ export default Vue.extend({
     getPageData(page: number) {
       const start = (page - 1) * this.rows;
       const payload = {params: {q: this.lastQuery, rows: this.rows, start}};
-      this.$solr.pass_through.get('/collections/s2/select', payload)
+      this.$solr.select({collection: this.collection, payload})
         .then((d: any) => {
           this.result = d;
           this.pageDocs.set(page, d.response.docs);

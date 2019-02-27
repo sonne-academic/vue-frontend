@@ -7,7 +7,9 @@
     >{{ tab }}</button>
     <auto-complete-input 
       :endpoint="endpoint"
+      :collection="collection"
       @autocomplete="highlights = $event"/>
+    <collection-select @change="collection = $event"/>
   
     <auto-complete-items class="auto-items" :results="highlights"/>
   </div>
@@ -18,13 +20,14 @@ import Vue from 'vue';
 import * as COMP from '@/plugins/vue-solr/lib/responses/CompletionResponse';
 import AutoCompleteInput from './AutoComplete/AutoCompleteInput.vue';
 import AutoCompleteItems from './AutoComplete/AutoCompleteItems.vue';
+import CollectionSelect from './CollectionSelect.vue';
 interface HighlitedResult {
   id: string;
   value: string;
 }
 export default Vue.extend({
   name: 'AutoComplete',
-  components: { AutoCompleteInput, AutoCompleteItems },
+  components: { AutoCompleteInput, AutoCompleteItems, CollectionSelect },
   data: () => ({
     highlights: new Array<HighlitedResult>(),
     tabs: ['title', 'author', 'journal', 'venue', 'suggest'],

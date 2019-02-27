@@ -2,14 +2,19 @@
 interface RpcRequestParams {
   method: string;
   endpoint: string;
-  payload: string;
+  payload: any;
+}
+
+export interface SelectRequestParams {
+  collection: string;
+  payload: any;
 }
 
 export interface RpcRequest {
   jsonrpc: string;
   method: string;
   id: number;
-  params: RpcRequestParams;
+  params: RpcRequestParams | SelectRequestParams;
 }
 
 interface Error {
