@@ -38,27 +38,7 @@ export default class WorkerWrapper {
   }
 
   public select(payload: SelectRequestParams) {
-    const id = this.counter++;
-    // create promise before sending the message, so there is a worker to handle responses.
-    const promise = new Promise<RpcResponse>((resolve, reject) => {
-      this.callbacks.set(id, {
-        onmessage: (d: RpcResponse) => {
-          resolve(d);
-          this.callbacks.delete(id);
-        },
-        onerror: (d: RpcResponse) => {
-          reject(d);
-          this.callbacks.delete(id);
-        },
-      });
-    });
-    this.submitToWorker({
-      jsonrpc: '2.0',
-      method: 'select',
-      id,
-      params: payload,
-    });
-    return promise;
+    return this.send('select', payload);
   }
 
   private log(message: string) {
@@ -66,8 +46,11 @@ export default class WorkerWrapper {
   }
 
   private send_command(command: string, method: string, endpoint: string, payload: any): Promise<RpcResponse> {
+    return this.send(command, { method, endpoint, payload });
+  }
+
+  private send(command: string, params: any) {
     const id = this.counter++;
-    // create promise before sending the message, so there is a worker to handle responses.
     const promise = new Promise<RpcResponse>((resolve, reject) => {
       this.callbacks.set(id, {
         onmessage: (d: RpcResponse) => {
@@ -76,6 +59,10 @@ export default class WorkerWrapper {
         },
         onerror: (d: RpcResponse) => {
           reject(d);
+          if (d.error) {
+            const e = d.error;
+            this.log(`ERR: ${e.message}: \n ${JSON.stringify(d.error, undefined, 2)}`);
+          }
           this.callbacks.delete(id);
         },
       });
@@ -84,7 +71,7 @@ export default class WorkerWrapper {
       jsonrpc: '2.0',
       method: command,
       id,
-      params: { method, endpoint, payload },
+      params,
     });
     return promise;
   }
