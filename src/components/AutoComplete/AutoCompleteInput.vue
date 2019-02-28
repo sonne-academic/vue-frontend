@@ -6,7 +6,7 @@
         :aria-label="placeholder"
         
         @focus="isFocused = true"
-        @input="db($event.target.value)"
+        @input="handleInput($event.target.value)"
       />
 </template>
 

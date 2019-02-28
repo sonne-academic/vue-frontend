@@ -1,6 +1,6 @@
 <template>
-  <div class="author-container">
-    <h1> {{author}} </h1>
+  <div class="author-container" v-if="currentAuthor">
+    <h1> {{currentAuthor}} </h1>
     <dl> 
       <dt>index</dt>
       <dd v-for="index in result" :key="index.idx"> {{index.idx}}: {{index['count(*)']}} </dd>
@@ -24,7 +24,7 @@ interface AuthorIndex {
 }
 import Vue from 'vue';
 import {FacetResponse, FacetFields} from '@/plugins/vue-solr/lib/responses/FacetResponse';
-
+import {FacetNode, NodeKind, Node} from '@/store/modules/navgraph';
 function* gen_pairs(arr: any[]) {
   let name: string;
   let count: number;
@@ -42,10 +42,10 @@ function* gen_pairs(arr: any[]) {
 
 export default Vue.extend({
   props: {
-    author: {
-      type: String,
-      required: true,
-    },
+    // author: {
+    //   type: String,
+    //   required: true,
+    // },
     collection: {
       type: String,
       default: 's2',
@@ -61,7 +61,10 @@ export default Vue.extend({
   }),
   methods: {
     authorIndexGroup() {
-      const author = this.author;
+      if (null === this.currentAuthor) {
+        return;
+      }
+      const author = this.currentAuthor;
       const idx = 'idx';
       const escaped = author.replace(/ /g, '\\ ');
       const search = `search(${this.collection}, q="author:${escaped}", fl="author, id", sort="id desc", qt=/export)`;
@@ -76,7 +79,12 @@ export default Vue.extend({
         }).catch(console.error);
     },
     getFacets() {
-      const escaped = this.author.replace(/ /g, '\\ ');
+      if (null === this.currentAuthor) {
+        return;
+      }
+      const author = this.currentAuthor;
+
+      const escaped = author.replace(/ /g, '\\ ');
       const payload = { params: {
             'debug': false,
             'q': `author:${escaped}`,
@@ -100,8 +108,24 @@ export default Vue.extend({
     },
   },
   watch: {
-    author() {
+    currentAuthor() {
       this.update();
+    },
+  },
+  computed: {
+    currentAuthor(): string | null {
+      const c: Node = this.$store.getters.current;
+      if (null === c) {
+        return null;
+      }
+      if (NodeKind.FACET !== c.kind) {
+        return null;
+      }
+      const d = c.data as FacetNode;
+      if ('author' !== d.facetField) {
+        return null;
+      }
+      return d.facetValue;
     },
   },
   mounted() {

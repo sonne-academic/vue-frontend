@@ -15,6 +15,7 @@
 import Vue from 'vue';
 import FilterBoxItem from './FilterBoxItem.vue';
 import AuthorDetailView from '../DetailViews/AuthorDetails.vue';
+import {FacetNode} from '@/store/modules/navgraph';
 
 export default Vue.extend({
   name: 'FilterBox',
@@ -36,9 +37,13 @@ export default Vue.extend({
     author: '',
   }),
   methods: {
+    commitFacet(node: FacetNode) {
+      this.$store.dispatch('navigateToFacet', node);
+    },
     itemtoggle(e: any) {
       console.log(`${this.label}:${e}`);
       this.author = e;
+      this.commitFacet({facetField: this.label, facetValue: e});
     },
   },
 });

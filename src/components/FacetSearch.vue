@@ -9,6 +9,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions } from 'vuex';
+import {SearchNode} from '@/store/modules/navgraph';
 import FacetSearchResult from './FacetSearch/FacetSearchResult.vue';
 import CollectionSelect from './CollectionSelect.vue';
 
@@ -21,6 +23,9 @@ export default Vue.extend({
     result: null,
   }),
   methods: {
+    commitSearch(node: SearchNode) {
+      this.$store.dispatch('changeSearchRoot', node);
+    },
     log(content: any) {
       this.$store.dispatch('log/log', content);
     },
@@ -37,7 +42,9 @@ export default Vue.extend({
       this.$solr.select({collection: this.collection, payload})
         .then((d: any) => {
           this.result = d;
+          this.commitSearch({collection: this.collection, query: this.query});
         }).catch(console.error);
+
     },
   },
   computed: {
