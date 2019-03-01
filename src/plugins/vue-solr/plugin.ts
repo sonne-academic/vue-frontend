@@ -1,5 +1,6 @@
 import {PluginFunction, PluginObject} from 'vue';
 import WorkerWrapper from './lib/WorkerWrapper';
+import SolrAutoCompleteInput from './components/SolrAutoCompleteInput.vue';
 export interface SolrPluginOptions {
   collections: string[];
 }
@@ -34,6 +35,7 @@ const plugObject: PluginObject<SolrPluginOptions> = {
       throw Error('must specify options');
     }
     Vue.prototype.$solr = new WorkerWrapper(options.collections);
+    Vue.component('solr-autocomplete-input', SolrAutoCompleteInput);
   },
 };
 

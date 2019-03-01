@@ -1,7 +1,7 @@
 <template>
   <div>
     <tabs :tabs="tabs" @changed="currentTab = $event"/>
-    <auto-complete-input 
+    <solr-autocomplete-input 
       :endpoint="endpoint"
       :collection="collection"
       @autocomplete="highlights = $event"/>
@@ -16,7 +16,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import * as COMP from '@/plugins/vue-solr/lib/responses/CompletionResponse';
-import AutoCompleteInput from './AutoComplete/AutoCompleteInput.vue';
 import AutoCompleteItems from './AutoComplete/AutoCompleteItems.vue';
 import CollectionSelect from './CollectionSelect.vue';
 import Tabs from './Tabs.vue';
@@ -27,7 +26,6 @@ interface HighlitedResult {
 export default Vue.extend({
   name: 'AutoComplete',
   components: {
-    AutoCompleteInput,
     AutoCompleteItems,
     CollectionSelect,
     Tabs,

@@ -4,9 +4,7 @@
         type="search"
         :placeholder="placeholder"
         :aria-label="placeholder"
-        
-        @focus="isFocused = true"
-        @input="handleInput($event.target.value)"
+        @input="complete($event.target.value)"
       />
 </template>
 
@@ -19,7 +17,7 @@ interface HighlitedResult {
   value: string;
 }
 export default Vue.extend({
-  name: 'AutoCompleteInput',
+  name: 'SolrAutoCompleteInput',
   components: {  },
   props: {
     endpoint: {
@@ -30,46 +28,54 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    placeholder: {
+      type: String,
+      default: 'title, author, year',
+    },
+    debounce: {
+      type: Boolean,
+      default: false,
+    },
+    options: {
+      type: Object,
+      default: () => ({
+        'hl.simple.pre': '<strong>',
+        'hl.simple.post': '</strong>',
+        'hl.fragsize': 0,
+      }),
+    },
   },
-  data: () => ({
-    placeholder: 'title, author, year',
-  }),
   methods: {
     log(content: any) {
       this.$store.dispatch('log/log', content);
     },
-    handleInput(event: string) {
+    complete(input: string) {
+      if (this.debounce) {
+        this.db(input);
+      } else {
+        this.handleInput(input);
+      }
+    },
+    autocomplete(result: HighlitedResult[]) {
+      this.$emit('autocomplete', result);
+    },
+    async handleInput(event: string) {
       if (event.length < 2) {
-        return;
+        return this.autocomplete([]);
       }
       const payload = {
-        'q': event,
-        'hl': 'true',
-        'hl.simple.pre': '<strong>',
-        'hl.simple.post': '</strong>',
-        'hl.fragsize': 0,
+        q: event,
+        hl: 'true',
+        ...this.options,
       };
-      this.$solr.pass_through_solr.get(this.endpoint, payload)
-      .then((d: any) => {
-        const response = d as COMP.CompletionResponse<COMP.Title>;
-        const highlights = new Array<HighlitedResult>();
-        for (const key of Object.keys(response.highlighting)) {
-          const title = response.highlighting[key];
-          for (const [k, v] of Object.entries(title)) {
-            if (! k.endsWith('ngram')) {
-              continue;
-            }
-            v.forEach((val: string) => {
-              highlights.push({
-                id: key,
-                value: val,
-              });
-            });
-          }
-        }
-        this.$emit('autocomplete', highlights);
-      })
-      .catch(this.log);
+      const d: any = await this.$solr.pass_through_solr.get(this.endpoint, payload);
+      const response = d as COMP.CompletionResponse<COMP.Title>;
+      const endsWithNgram = ([k, v]: [string, any]) => k.endsWith('ngram');
+      const thing: HighlitedResult[] = Object
+        .entries(response.highlighting)
+        .flatMap(([id, entry]) => Object.entries(entry)
+          .filter(endsWithNgram).map(([k, value]) => ({id, value})));
+      this.autocomplete(thing);
     },
     db: debounce(function(this: any, e: string) {
         this.handleInput(e);
