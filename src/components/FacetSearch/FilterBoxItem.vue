@@ -1,5 +1,5 @@
 <template>
-  <button class="btn" @click="clicked">{{label}}
+  <button class="btn" @click="clicked">{{label}} ({{size}})
     <button @click="filter" class="fltbtn plus">+</button>
     <button @click="filter" class="fltbtn minus">-</button>
   </button>
