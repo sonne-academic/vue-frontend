@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <sidebar id="side" @starttree="startTree"/>
-    <cy id='cy'/>
+    <cy id='cy'
+      @tap="log"/>
     <!-- <three-tree-view name="container" :rootid="rootid"/> -->
     <global-log id="log"/>
   </div>
@@ -27,6 +28,9 @@ export default Vue.extend({
     rootid: 'none',
   }),
   methods: {
+    log(e: any) {
+      console.log(e);
+    },
     startTree(stuff: any) {
       this.rootid = stuff.id;
     },
