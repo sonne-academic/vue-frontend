@@ -5,7 +5,7 @@
       :key="item.name"
       :label="item.name"
       :size="item.size"
-      @clicked="itemtoggle"
+      @clicked="addfacet"
     />
     <author-detail-view v-if="author" :author="author"/>
   </div>
@@ -15,8 +15,8 @@
 import Vue from 'vue';
 import FilterBoxItem from './FilterBoxItem.vue';
 import AuthorDetailView from '../DetailViews/AuthorDetails.vue';
-import {FacetNode, Link, Node} from '@/store/modules/navgraph';
-interface FacetCommit {next: Node; link: Link; }
+import {SearchNodeData} from '@/plugins/vue-cy/nodes/search';
+
 export default Vue.extend({
   name: 'FilterBox',
   components: {
@@ -35,27 +35,20 @@ export default Vue.extend({
   },
   data: () => ({
     author: '',
-    // context: '',
   }),
   inject: ['getContext'],
   methods: {
-    commitFacet(args: {context: string, node: FacetNode}): Promise<FacetCommit> {
-      return this.$store.dispatch('navigateToFacet', args);
-    },
-    async itemtoggle(e: string) {
-      this.author = e;
-      const args = {
-        context: this.context,
-        node: {facetField: this.label, facetValue: e},
-      };
-      const cmt = await this.commitFacet(args);
+    async addfacet(value: string) {
+      this.author = value;
       const cy = await this.$cy.instance;
-      cy.add({ group: 'nodes', data: cmt.next });
-      cy.add({group: 'edges', data: cmt.link});
+      const [nd, ld] = this.context.facet(this.label, value);
+      cy.add({group: 'nodes', data: nd});
+      cy.add({group: 'edges', data: ld});
+      cy.layout({name: 'circle'}).run();
     },
   },
   computed: {
-    context() {
+    context(): SearchNodeData {
       return (this as any).getContext();
     },
   },

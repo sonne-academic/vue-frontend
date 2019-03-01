@@ -3,7 +3,6 @@
       <input id="search-input" v-model="query" @keyup.enter="submitSearch" type="text" title="search text"/>
       <collection-select @change="collection = $event"/>
       <input id="search-submit" @click="submitSearch" type="button" value="search"/>
-      <button @click="layout"/>
       <facet-search-result v-if="result" :response="result"/>
     </div>
 </template>
@@ -11,9 +10,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions } from 'vuex';
-import {SearchNode, Node} from '@/store/modules/navgraph';
+// import {SearchNode, Node} from '@/store/modules/navgraph';
 import FacetSearchResult from './FacetSearch/FacetSearchResult.vue';
 import CollectionSelect from './CollectionSelect.vue';
+import {SearchNodeData} from '@/plugins/vue-cy/nodes/search';
 
 export default Vue.extend({
   name: 'FacetSearch',
@@ -22,7 +22,7 @@ export default Vue.extend({
     query: 'author:*Ropinski*',
     collection: 's2',
     result: null,
-    context: '',
+    context: {} as SearchNodeData,
   }),
   provide(this: any) {
     return {
@@ -30,15 +30,10 @@ export default Vue.extend({
     };
   },
   methods: {
-    layout() {
-      this.$cy.instance.then((cy) => {
-        cy.layout({name: 'grid'}).run();
-      });
-    },
     getContext() {return this.context; },
-    commitSearch(node: SearchNode): Promise<Node> {
-      return this.$store.dispatch('changeSearchRoot', node);
-    },
+    // commitSearch(node: SearchNode): Promise<Node> {
+    //   return this.$store.dispatch('changeSearchRoot', node);
+    // },
     log(content: any) {
       this.$store.dispatch('log/log', content);
     },
@@ -53,8 +48,9 @@ export default Vue.extend({
         'q.op': 'AND',
         }};
       this.result = await this.$solr.select({collection: this.collection, payload}) as any;
-      const data = await this.commitSearch({collection: this.collection, query: this.query});
-      this.context = data.id;
+      const data = new SearchNodeData(this.query, this.collection);
+      // const data = await this.commitSearch({collection: this.collection, query: this.query});
+      this.context = data;
       const cy = await this.$cy.instance;
       cy.add({group: 'nodes', data});
     },
