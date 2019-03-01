@@ -16,7 +16,7 @@ const config: cytoscape.CytoscapeOptions = {
     style: {
       'background-color': '#eee',
       'label': 'data(query)',
-      'background-image': '/close.svg',
+      'background-image': '/close.min.svg',
       'background-fit': 'contain',
     },
   },
