@@ -1,5 +1,6 @@
 <template>
   <div class="flex"> 
+    <author-detail-view v-if="author" :author="author"/>
     <filter-box-item 
       v-for="item in items"
       :key="item.name"
@@ -7,7 +8,6 @@
       :size="item.size"
       @clicked="addfacet"
     />
-    <author-detail-view v-if="author" :author="author"/>
   </div>
 </template>
 
@@ -39,7 +39,9 @@ export default Vue.extend({
   inject: ['getContext'],
   methods: {
     async addfacet(value: string) {
-      this.author = value;
+      if (this.label === 'author') {
+        this.author = value;
+      }
       const cy = await this.$cy.instance;
       const [nd, ld] = this.context.facet(this.label, value);
       cy.add({group: 'nodes', data: nd});

@@ -1,8 +1,8 @@
 <template>
-  <div class="author-container" v-if="currentAuthor">
+  <div class="author-container" v-if="author">
     <h1> {{currentAuthor}} </h1>
     <dl> 
-      <dt>index</dt>
+      <dt>author position in paper</dt>
       <dd v-for="index in result" :key="index.idx"> {{index.idx}}: {{index['count(*)']}} </dd>
       <dt>co-authors</dt>
       <dd v-for="facet in coAuthors" :key="facet.name"> {{facet.name}}: {{facet.count}} </dd>
@@ -42,10 +42,10 @@ function* gen_pairs(arr: any[]) {
 
 export default Vue.extend({
   props: {
-    // author: {
-    //   type: String,
-    //   required: true,
-    // },
+    author: {
+      type: String,
+      required: true,
+    },
     collection: {
       type: String,
       default: 's2',
@@ -61,10 +61,10 @@ export default Vue.extend({
   }),
   methods: {
     authorIndexGroup() {
-      if (null === this.currentAuthor) {
+      if (null === this.author) {
         return;
       }
-      const author = this.currentAuthor;
+      const author = this.author;
       const idx = 'idx';
       const escaped = author.replace(/ /g, '\\ ');
       const search = `search(${this.collection}, q="author:${escaped}", fl="author, id", sort="id desc", qt=/export)`;
@@ -79,10 +79,10 @@ export default Vue.extend({
         }).catch(console.error);
     },
     getFacets() {
-      if (null === this.currentAuthor) {
+      if (null === this.author) {
         return;
       }
-      const author = this.currentAuthor;
+      const author = this.author;
 
       const escaped = author.replace(/ /g, '\\ ');
       const payload = { params: {
@@ -108,7 +108,7 @@ export default Vue.extend({
     },
   },
   watch: {
-    currentAuthor() {
+    author() {
       this.update();
     },
   },
