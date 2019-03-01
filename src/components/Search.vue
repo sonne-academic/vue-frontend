@@ -24,7 +24,6 @@
 </template>
 
 <script lang="ts">
-import { mapActions } from 'vuex';
 import Vue from 'vue';
 
 import SearchResult from './SearchResult.vue';
