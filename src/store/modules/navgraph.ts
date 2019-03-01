@@ -2,6 +2,8 @@ import {ActionTree, Getter, GetterTree, Module, ModuleTree, MutationTree} from '
 import uuid from 'uuid/v5';
 import { AssertionError } from 'assert';
 const UUID_NS = 'a171cd2a-ca10-4cc7-8782-733db8d61ccb';
+
+export const uuidgen = (name: string) => uuid(name, UUID_NS);
 export enum NodeKind {
   SEARCH,
   AUTHOR,
@@ -29,6 +31,7 @@ export interface Node {
   data: SearchNode | FacetNode;
 }
 export interface Link {
+  id: string;
   source: string;
   target: string;
   mtime: Date;
@@ -62,20 +65,44 @@ const actions: ActionTree<NavState, RootState> = {
   mountcy: (ctx, e: HTMLElement) => ctx.commit('mount', e),
   unmountcy: (ctx) => ctx.commit('unmount'),
   changeSearchRoot(ctx, node: SearchNode) {
-
     const time: Date = new Date();
+    const id = uuid(node.query, UUID_NS);
     const root = {
       ctime: time,
       mtime: time,
-      id: uuid(node.query, UUID_NS),
+      id,
       name: node.query,
       kind: NodeKind.SEARCH,
       data: node,
     };
     ctx.commit('setSearchRoot', root);
+    return root;
   },
   changeCurrentNode: (ctx, node: Node) => ctx.commit('setCurrentNode', node.id),
-  navigateToFacet: (ctx, node: FacetNode) => ctx.commit('appendFacet', node),
+  navigateToFacet(ctx, args: {context: string, node: FacetNode}) {
+    const time = new Date();
+    const str = `${args.node.facetField}:${args.node.facetValue}`;
+    const id = uuidgen(str);
+    const next: Node = {
+      ctime: time,
+      mtime: time,
+      id,
+      name: str,
+      kind: NodeKind.FACET,
+      data: args.node,
+    };
+    const linkid = uuidgen(args.context + str);
+    const link: Link = {
+      id: linkid,
+      source: args.context,
+      target: id,
+      mtime: time,
+      ctime: time,
+    };
+
+    ctx.commit('appendFacet', {next, link});
+    return {next, link};
+  },
 };
 
 const mutations: MutationTree<NavState> = {
@@ -97,7 +124,7 @@ const mutations: MutationTree<NavState> = {
       expected: stat.nodes.map((node) => node.id),
     });
   },
-  appendFacet(stat, facet: FacetNode) {
+  appendFacet(stat, args: {next: Node, link: Link}) {
     if (!stat.currentNode) {
       throw new AssertionError({
         message: 'currentNode is invalid',
@@ -105,25 +132,9 @@ const mutations: MutationTree<NavState> = {
         expected: Node,
       });
     }
-    const time = new Date();
-    const str = `${facet.facetField}:${facet.facetValue}`;
-    const node: Node = {
-      ctime: time,
-      mtime: time,
-      id: uuid(str, UUID_NS),
-      name: str,
-      kind: NodeKind.FACET,
-      data: facet,
-    };
-    stat.nodes.push(node);
-    const link: Link = {
-      source: stat.currentNode.id,
-      target: node.id,
-      mtime: time,
-      ctime: time,
-    };
-    stat.links.push(link);
-    stat.currentNode = node;
+    stat.nodes.push(args.next);
+    stat.links.push(args.link);
+    stat.currentNode = args.next;
   },
 };
 
