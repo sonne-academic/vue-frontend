@@ -18,7 +18,12 @@ export default Vue.extend({
       required: true,
       default: new Array<string>(),
     },
+    starton: {
+      type: String,
+      default: undefined,
+    },
   },
+
   data: () => ({
     currentTab: '',
   }),
@@ -29,7 +34,14 @@ export default Vue.extend({
     },
   },
   created() {
-    this.currentTab = this.tabs[this.tabs.length - 1];
+    if (this.starton) {
+      this.currentTab = this.starton;
+    } else {
+      this.currentTab = this.tabs[this.tabs.length - 1];
+    }
+  },
+  mounted() {
+    this.changeTab(this.currentTab);
   },
 });
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div name="search">
-      <input id="search-input" type="text" title="search text"
+      <input placeholder="author, title, year" id="search-input" type="text" title="search text"
         v-model="query" 
         @keyup.enter="submitSearch"
       />
@@ -33,7 +33,7 @@ export default Vue.extend({
   name: 'Search',
   components: { SearchResult, CollectionSelect },
   data: () => ({
-    query: 'author:*Ropinski*',
+    query: '',
     activesort: 'outCitations_count dec',
     sortby: ['year desc', 'outCitations_count desc'],
     collection: 's2',

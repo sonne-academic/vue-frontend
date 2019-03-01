@@ -1,6 +1,9 @@
 <template>
   <div>
-    <tabs :tabs="tabs" @changed="currentTab = $event"/>
+    <tabs 
+      :tabs="tabs" 
+      :starton="starton"
+      @changed="currentTab = $event"/>
     <keep-alive>
       <component :is="currentTabComponent"/>
     </keep-alive>
@@ -25,7 +28,8 @@ export default Vue.extend({
   },
   data: () => ({
     tabs: ['search', 'facet-search', 'auto-complete'],
-    currentTab: 'auto-complete',
+    starton: 'facet-search',
+    currentTab: '',
   }),
   computed: {
     currentTabComponent(): string {

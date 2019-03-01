@@ -1,6 +1,6 @@
 <template>
     <div>
-      <input id="search-input" v-model="query" @keyup.enter="submitSearch" type="text" title="search text"/>
+      <input placeholder="author, title, year" id="search-input" v-model="query" @keyup.enter="submitSearch" type="text" title="search text"/>
       <collection-select @change="collection = $event"/>
       <input id="search-submit" @click="submitSearch" type="button" value="search"/>
       <facet-search-result v-if="result" :response="result"/>
@@ -19,7 +19,7 @@ export default Vue.extend({
   name: 'FacetSearch',
   components: { FacetSearchResult, CollectionSelect },
   data: () => ({
-    query: 'author:*Ropinski*',
+    query: '',
     collection: 's2',
     result: null,
     context: {} as SearchNodeData,
