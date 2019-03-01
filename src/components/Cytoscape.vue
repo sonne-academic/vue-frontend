@@ -3,12 +3,43 @@
 </template>
 
 <script lang="ts">
-const style = [ // the stylesheet for the graph
-  {
+const config: cytoscape.CytoscapeOptions = {
+  style: [{
     selector: 'node',
     style: {
       'background-color': '#666',
       'label': 'data(id)',
+    },
+  },
+  {
+    selector: 'node[kind=\"search\"]',
+    style: {
+      'background-color': '#eee',
+      'label': 'data(query)',
+      'background-image': '/close.svg',
+      'background-fit': 'contain',
+    },
+  },
+  {
+    selector: 'node[kind=\"facet\"][field=\"author\"]',
+    style: {
+      'background-color': '#eee',
+      'label': 'data(value)',
+      'background-image': '/author.svg',
+      'background-width': '75%',
+      'background-height': '75%',
+      // 'background-fit': 'contain',
+    },
+  },
+  {
+    selector: 'node[kind=\"facet\"][field=\"journal\"]',
+    style: {
+      'background-color': '#eee',
+      'label': 'data(value)',
+      // 'background-image': '/author.svg',
+      // 'background-width': '75%',
+      // 'background-height': '75%',
+      // 'background-fit': 'contain',
     },
   },
 
@@ -16,18 +47,19 @@ const style = [ // the stylesheet for the graph
     selector: 'edge',
     style: {
       'width': 3,
-      'line-color': '#ccc',
+      'line-color': '#eee',
       'target-arrow-color': '#ccc',
       'target-arrow-shape': 'triangle',
     },
   },
-];
+],
+};
 import Vue from 'vue';
 import cfg from './Cytoscape';
 export default Vue.extend({
   mounted() {
     const r = this.$refs;
-    this.$cy.setConfig({style});
+    this.$cy.setConfig(config);
     this.$cy.instance.then((cy) => {
       console.log('mounting');
       cy.mount(r.cy as Element);
