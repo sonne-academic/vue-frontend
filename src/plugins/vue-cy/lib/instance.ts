@@ -30,15 +30,18 @@
 //   return state;
 // };
 
-type resolvType = (value?: cytoscape.Core) => void;
-type cyFunc = (cytoscape: cytoscape.CytoscapeOptions) => cytoscape.Core;
-interface CyMod { default: cyFunc; use(module: any): void; }
-type ptype = Promise<CyMod>;
+// type resolvType = ;
+type cyOption = cytoscape.CytoscapeOptions;
+type cyExtensionLoader = (extensionName: string, foo: string, bar: any) => cytoscape.Core;
+type cyConstruct = (cytoscape: cyOption) => cytoscape.Core;
+interface CyModule { default: cyConstruct|cyExtensionLoader; use(module: any): void; }
+type preConfCall = (cm: CyModule) => void;
 type callback = (cy: cytoscape.Core) => void;
+
 export class Instance {
-  private pmodule: ptype;
+  private pmodule: Promise<CyModule>;
   private pinstance: Promise<cytoscape.Core>;
-  private resolv?: resolvType;
+  private resolv?: (value?: cytoscape.Core) => void;
   private cy?: cytoscape.Core;
   constructor() {
     this.pinstance = new Promise((resolve, reject) => {
@@ -52,13 +55,13 @@ export class Instance {
   public get instance() {
     return this.pinstance;
   }
-  public setConfig(config: cytoscape.CytoscapeOptions, preConfig?: (cm: cyFunc) => void, afterCreated?: callback) {
+  public setConfig(config: cyOption, preConfig?: preConfCall, afterCreated?: callback) {
     this.pmodule.then((mod) => {
       if (preConfig) {
-        preConfig(mod.default);
+        preConfig(mod);
       }
 
-      this.cy = mod.default(config);
+      this.cy = (mod.default as cyConstruct)(config);
       if (afterCreated) {
         afterCreated(this.cy);
       }
@@ -70,5 +73,4 @@ export class Instance {
   }
 
 }
-const CyInstance = new Instance();
-export default CyInstance;
+export default Instance;
