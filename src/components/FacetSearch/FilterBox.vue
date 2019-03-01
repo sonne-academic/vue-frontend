@@ -15,8 +15,8 @@
 import Vue from 'vue';
 import FilterBoxItem from './FilterBoxItem.vue';
 import AuthorDetailView from '../DetailViews/AuthorDetails.vue';
-import {FacetNode} from '@/store/modules/navgraph';
-
+import {FacetNode, Link, Node} from '@/store/modules/navgraph';
+interface FacetCommit {next: Node; link: Link; }
 export default Vue.extend({
   name: 'FilterBox',
   components: {
@@ -35,15 +35,28 @@ export default Vue.extend({
   },
   data: () => ({
     author: '',
+    // context: '',
   }),
+  inject: ['getContext'],
   methods: {
-    commitFacet(node: FacetNode) {
-      this.$store.dispatch('navigateToFacet', node);
+    commitFacet(args: {context: string, node: FacetNode}): Promise<FacetCommit> {
+      return this.$store.dispatch('navigateToFacet', args);
     },
-    itemtoggle(e: any) {
-      console.log(`${this.label}:${e}`);
+    async itemtoggle(e: string) {
       this.author = e;
-      this.commitFacet({facetField: this.label, facetValue: e});
+      const args = {
+        context: this.context,
+        node: {facetField: this.label, facetValue: e},
+      };
+      const cmt = await this.commitFacet(args);
+      const cy = await this.$cy.instance;
+      cy.add({ group: 'nodes', data: cmt.next });
+      cy.add({group: 'edges', data: cmt.link});
+    },
+  },
+  computed: {
+    context() {
+      return (this as any).getContext();
     },
   },
 });
