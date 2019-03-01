@@ -1,6 +1,6 @@
 <template>
   <div class="author-container" v-if="author">
-    <h1> {{currentAuthor}} </h1>
+    <h1> {{author}} </h1>
     <dl> 
       <dt>author position in paper</dt>
       <dd v-for="index in result" :key="index.idx"> {{index.idx}}: {{index['count(*)']}} </dd>
