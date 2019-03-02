@@ -1,4 +1,4 @@
-const config: cytoscape.CytoscapeOptions = {
+const cfg: cytoscape.CytoscapeOptions = {
   style: [{
     selector: 'node',
     style: {
@@ -49,4 +49,4 @@ const config: cytoscape.CytoscapeOptions = {
   },
 ],
 };
-export default config;
+export default cfg;

@@ -3,9 +3,8 @@
 </template>
 
 <script lang="ts">
-
 import Vue from 'vue';
-import config from './Cytoscape';
+import config from './Cytoscape.cfg';
 import cxtmenu from 'cytoscape-cxtmenu';
 export default Vue.extend({
   data: () => ({
@@ -18,6 +17,7 @@ export default Vue.extend({
   },
   mounted() {
     const r = this.$refs;
+    console.log(config);
     this.$cy.setConfig(config, this.preconfig);
     this.$cy.instance.then((cy) => {
       console.log('mounting');
