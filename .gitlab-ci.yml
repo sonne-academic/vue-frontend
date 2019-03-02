@@ -5,8 +5,7 @@ stages:
 buildFrontend:
   stage: build
   script:
-  - npm install
-  - npm run build
+  - npm run ci:build
   artifacts:
     paths:
     - dist/
