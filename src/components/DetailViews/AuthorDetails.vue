@@ -137,20 +137,21 @@ export default Vue.extend({
 <style scoped>
 .author-container {
   position: fixed;
-  overflow:auto;
-  display: block;
   top: 0;
   right: 0;
-  width: 25%;
-  height:100%;
+  height: 100%;
+  width: 33%;
+}
+dl {
+  height: 90%;
+  overflow-y: auto;
 }
 dt {
   background-color: black;
   color: white;
-  padding: 10px;
+  padding: 0.5em;
   position: sticky;
   top: 0;
-  left: 0;
   margin: 1em 0;
 }
 </style>
