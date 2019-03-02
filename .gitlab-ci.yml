@@ -18,7 +18,7 @@ buildFrontend:
 deployFrontend:
   stage: deploy
   script:
-  - rm -r /srv/http/static/*
+  - rm -rf /srv/http/static/*
   - cp -r dist/* /srv/http/static
   only:
   - frontend
