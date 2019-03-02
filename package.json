@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --modern --no-unsafe-inline",
     "lint": "vue-cli-service lint",
-    "postinstall": "scripts/patch_cy.sh"
+    "postinstall_skip": "scripts/patch_cy.sh"
   },
   "dependencies": {
     "@types/d3-hierarchy": "^1.1.6",
