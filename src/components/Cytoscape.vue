@@ -3,12 +3,17 @@
 </template>
 
 <script lang="ts">
-const config: cytoscape.CytoscapeOptions = {
-  style: [{
-    selector: 'node',
-    style: {
-      'background-color': '#666',
-      'label': 'data(id)',
+
+import Vue from 'vue';
+import config from './Cytoscape';
+import cxtmenu from 'cytoscape-cxtmenu';
+export default Vue.extend({
+  data: () => ({
+    menu: {} as cxtmenu.Destructor,
+  }),
+  methods: {
+    preconfig(mod: {default: any, use: (c: any) => void}) {
+      mod.use(cxtmenu);
     },
   },
   {
