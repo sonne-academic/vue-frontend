@@ -4,21 +4,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import config from './Cytoscape.cfg';
-import cxtmenu from 'cytoscape-cxtmenu';
 export default Vue.extend({
   data: () => ({
-    menu: {} as cxtmenu.Destructor,
+    menu: {destroy: () => {return; }},
   }),
-  methods: {
-    preconfig(mod: {default: any, use: (c: any) => void}) {
-      mod.use(cxtmenu);
-    },
-  },
   mounted() {
     const r = this.$refs;
-    console.log(config);
-    this.$cy.setConfig(config, this.preconfig);
     this.$cy.instance.then((cy) => {
       console.log('mounting');
       cy.mount(r.cy as Element);

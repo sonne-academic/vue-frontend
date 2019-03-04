@@ -7,7 +7,7 @@ const cfg: cytoscape.CytoscapeOptions = {
     },
   },
   {
-    selector: 'node[kind=\"search\"]',
+    selector: 'node[kind="search"]',
     style: {
       'background-color': '#eee',
       'label': 'data(query)',
@@ -16,10 +16,11 @@ const cfg: cytoscape.CytoscapeOptions = {
     },
   },
   {
-    selector: 'node[kind=\"facet\"][field=\"author\"]',
+    selector: 'node[kind="facet"][field="author"]',
     style: {
       'background-color': '#eee',
       'label': 'data(value)',
+      // 'shape': 'pentagon',
       'background-image': '/author.svg',
       'background-width': '75%',
       'background-height': '75%',
@@ -27,7 +28,7 @@ const cfg: cytoscape.CytoscapeOptions = {
     },
   },
   {
-    selector: 'node[kind=\"facet\"][field=\"journal\"]',
+    selector: 'node[kind="facet"][field="journal"]',
     style: {
       'background-color': '#eee',
       'label': 'data(value)',
