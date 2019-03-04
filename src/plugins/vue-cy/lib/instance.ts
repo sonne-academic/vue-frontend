@@ -30,51 +30,29 @@
 //   return state;
 // };
 
-// type resolvType = ;
 type cyOption = cytoscape.CytoscapeOptions;
-type cyExtensionLoader = (extensionName: string, foo: string, bar: any) => cytoscape.Core;
 type cyConstruct = (cytoscape: cyOption) => cytoscape.Core;
-interface CyModule { default: cyConstruct|cyExtensionLoader; use(module: any): void; }
-type preConfCall = (cm: CyModule) => void;
-type callback = (cy: cytoscape.Core) => void;
 interface ModuleImport {default: any; }
 
 import cfg from './Cytoscape.cfg';
 
-
 export class Instance {
-  private pimports: Promise<[CyModule, ...ModuleImport[]]>;
   private pinstance: Promise<cytoscape.Core>;
-  private resolv?: (value?: cytoscape.Core, ...exts: ModuleImport[]) => void;
   private cy?: cytoscape.Core;
   constructor() {
     this.pinstance = new Promise((resolve, reject) => {
-      this.resolv = resolve;
+      Promise.all([
+        import('cytoscape'),
+        import('cytoscape-cxtmenu'),
+      ]).then(([mod, ...exts]) => {
+        exts.forEach((ext: ModuleImport) => {mod.use(ext.default); });
+        this.cy = (mod.default as cyConstruct)(cfg);
+        resolve(this.cy);
+      }).catch(reject);
     });
-    this.pimports = Promise.all([
-      import('cytoscape'),
-      import('cytoscape-cxtmenu'),
-    ]);
-    this.pimports.then(() => {this.setConfig(cfg); });
-  }
-  public reset() {
-    this.cy = undefined;
   }
   public get instance() {
     return this.pinstance;
   }
-  public setConfig(config: cyOption) {
-    this.pimports.then(([mod, ...exts]) => {
-
-      exts.forEach((ext) => {mod.use(ext.default); });
-
-      this.cy = (mod.default as cyConstruct)(config);
-
-      if (this.resolv) {
-        this.resolv(this.cy);
-      }
-    });
-  }
-
 }
 export default Instance;
