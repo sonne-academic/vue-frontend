@@ -42,7 +42,7 @@ export default Vue.extend({
       this.rootid = stuff.id;
     },
     setActive(opts: {component: string, props: any}) {
-      // this.activeComponent = opts.component;
+      this.activeComponent = opts.component;
       this.props = opts.props;
       console.log(opts);
     },
