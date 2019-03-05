@@ -1,8 +1,7 @@
-import {NodeKind, NodeData, Node, uuidgen} from './base';
-import {FacetSearchData} from './facet';
+import {NodeKind, NodeData} from './base';
 
 export class SearchNodeData extends NodeData {
-  public kind: NodeKind = NodeKind.SEARCH;
+  public component: NodeKind = NodeKind.SEARCH;
 
   public readonly query: string;
   public readonly collection: string;
@@ -10,15 +9,5 @@ export class SearchNodeData extends NodeData {
     super(`${collection}:${query}`);
     this.query = query;
     this.collection = collection;
-  }
-
-  public facet(field: string, value: string): [FacetSearchData, cytoscape.EdgeDataDefinition] {
-    const ndata = new FacetSearchData(field, value);
-    const ldata = {
-        id: uuidgen(this.id + ndata.id),
-        source: this.id,
-        target: ndata.id,
-    };
-    return [ndata, ldata];
   }
 }

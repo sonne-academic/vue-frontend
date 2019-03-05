@@ -19,7 +19,7 @@ export interface Node<T extends NodeData> extends cytoscape.NodeDefinition {
 }
 
 export abstract class NodeData {
-  public abstract readonly kind: NodeKind;
+  public abstract readonly component: NodeKind;
   public readonly id: string;
   public readonly name: string;
   public readonly ctime: Date;

@@ -7,7 +7,7 @@ const cfg: cytoscape.CytoscapeOptions = {
     },
   },
   {
-    selector: 'node[kind="search"]',
+    selector: 'node[component="search"]',
     style: {
       'background-color': '#eee',
       'label': 'data(query)',
@@ -16,7 +16,7 @@ const cfg: cytoscape.CytoscapeOptions = {
     },
   },
   {
-    selector: 'node[kind="facet"][field="author"]',
+    selector: 'node[component="facet"][field="author"]',
     style: {
       'background-color': '#eee',
       'label': 'data(value)',
@@ -28,7 +28,7 @@ const cfg: cytoscape.CytoscapeOptions = {
     },
   },
   {
-    selector: 'node[kind="facet"][field="journal"]',
+    selector: 'node[component="facet"][field="journal"]',
     style: {
       'background-color': '#eee',
       'label': 'data(value)',
@@ -38,7 +38,13 @@ const cfg: cytoscape.CytoscapeOptions = {
       // 'background-fit': 'contain',
     },
   },
-
+  {
+    selector: 'node:selected',
+    style: {
+      'border-color': '#e00',
+      'border-width': 3,
+    },
+  },
   {
     selector: 'edge',
     style: {
