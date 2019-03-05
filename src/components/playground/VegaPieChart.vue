@@ -57,7 +57,7 @@ export default Vue.extend({
   }),
   methods: {
     log(content: any) {
-      store.dispatch('log/log', content);
+      store.dispatch('log', content);
     },
   },
   mounted() {

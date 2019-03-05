@@ -4,6 +4,7 @@ import { RpcResponse } from './RpcInterface';
 export default class RpcHandler implements WebSocketHandler {
   private sock: HandleableWebSocket;
   private queue: string[] = [];
+  private outputDebug?: string = process.env.VUE_APP_DEBUG;
   private results: Map<number, any[]> = new Map();
   private url: string;
   private context: Worker;
@@ -33,15 +34,16 @@ export default class RpcHandler implements WebSocketHandler {
     if (this.sock.isClosed) {
       // reconnect immediately
       this.sock = new HandleableWebSocket(this, this.url);
+      this.debug('socket was closed, reconnecting');
     }
   }
 
   public onopen(event: Event) {
-    console.log('websocket connected');
+    this.debug('websocket connected');
     const content = this.queue.slice(0, this.queue.length);
     this.queue = [];
     if (content.length) {
-      console.log('sending queue');
+      this.debug('sending queue');
       content.map((d) => this.send(d));
     }
   }
@@ -58,12 +60,12 @@ export default class RpcHandler implements WebSocketHandler {
     const data = message.result;
     if (data) {
       if (data.responseHeader && data.responseHeader.status === 'accept') {
-        console.debug('confirm with id: ' + message.id);
+        this.debug('confirm with id: ' + message.id);
         this.results.set(message.id, []);
         return;
       }
       if (data.responseHeader && data.responseHeader.status === 'finished') {
-        console.debug('finished with id: ' + message.id);
+        this.debug('finished with id: ' + message.id);
         const finished = this.results.get(message.id);
         this.results.delete(message.id);
         if (!finished) {
@@ -84,8 +86,8 @@ export default class RpcHandler implements WebSocketHandler {
       }
       const res = this.results.get(message.id);
       if ( !res ) {
-        console.error('did not receive [accept] message, but got message');
-        console.error(JSON.stringify(message));
+        this.error('did not receive [accept] message, but got message');
+        this.error(JSON.stringify(message));
         return;
       }
       res.push(message.result);
@@ -97,16 +99,31 @@ export default class RpcHandler implements WebSocketHandler {
 
   public onclose(event: CloseEvent) {
     if (!event.wasClean) {
-      console.error('socket closed unexpectedly: ' + event.reason);
+      this.error('socket closed unexpectedly: ' + event.reason);
     }
     if (this.results.size !== 0) {
-      console.log('had active requests!');
+      this.log('had active requests!');
     }
   }
 
   public onerror(event: Event) {
     event.preventDefault();
     throw new Error(`Error in Websocket ${JSON.stringify(event)}`);
+  }
+
+  private log(message: string) {
+    // onlt works in vue components!
+    // store.dispatch('log', `[RpcHandler] ${message}`).then(console.log).catch(console.error);
+    console.log(`[RpcHandler] ${message}`);
+  }
+
+  private debug(message: string) {
+    if (this.outputDebug) {
+      this.log(`[DBG] ${message}`);
+    }
+  }
+  private error(message: string) {
+    this.log(`[ERR] ${message}`);
   }
 
   private postToHandler(message: RpcResponse) {

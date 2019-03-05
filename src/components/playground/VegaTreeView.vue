@@ -20,7 +20,7 @@ export default Vue.extend({
   }),
   methods: {
     log(content: any) {
-      this.$store.dispatch('log/log', content);
+      this.$store.dispatch('log', content);
     },
   },
   computed: {

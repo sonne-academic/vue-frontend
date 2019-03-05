@@ -32,7 +32,7 @@ export default Vue.extend({
   methods: {
     getContext() { return this.context; },
     log(content: any) {
-      this.$store.dispatch('log/log', content);
+      this.$store.dispatch('log', content);
     },
     async submitSearch() {
       const payload = { params: {

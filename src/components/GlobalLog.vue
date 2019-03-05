@@ -16,12 +16,12 @@ export default Vue.extend({
   name: 'GlobalLog',
   methods: {
     clear() {
-      this.$store.dispatch('log/clear');
+      this.$store.dispatch('clear');
     },
   },
   computed: {
     logContent(): string[] {
-      return this.$store.getters['log/logContent'];
+      return this.$store.getters.logContent;
     },
     logText(): string {
       return this.logContent.reduce((prev, next) => prev + '\n' + next, '');

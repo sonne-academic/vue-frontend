@@ -106,6 +106,9 @@ export default Vue.extend({
           this.keywords = [...gen_pairs(flds.keywords)];
         }).catch(console.error);
     },
+    log(msg: string) {
+      this.$store.dispatch('log', `[AuthorDetails] ${msg}`);
+    },
     update() {
       this.authorIndexGroup();
       this.getFacets();
