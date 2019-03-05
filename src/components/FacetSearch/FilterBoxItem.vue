@@ -1,5 +1,5 @@
 <template>
-  <button class="btn" @click="clicked">{{label}} ({{size}})
+  <button class="btn" @click.exact="clicked" @click.ctrl="cclicked">{{label}} ({{size}})
     <button @click="filter" class="fltbtn plus">+</button>
     <button @click="filter" class="fltbtn minus">-</button>
   </button>
@@ -24,6 +24,10 @@ export default Vue.extend({
     clicked(e: MouseEvent) {
       this.$emit('clicked', this.label);
     },
+    cclicked(e: MouseEvent) {
+      this.$emit('cclicked', this.label);
+    },
+
     filter(e: MouseEvent) {
       e.stopPropagation();
       e.preventDefault();

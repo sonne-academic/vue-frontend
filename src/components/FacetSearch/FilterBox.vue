@@ -6,7 +6,8 @@
       :key="item.name"
       :label="item.name"
       :size="item.size"
-      @clicked="addfacet"
+      @clicked="addfacetActive"
+      @cclicked="addfacet"
     />
   </div>
 </template>
@@ -39,14 +40,18 @@ export default Vue.extend({
   inject: ['getContext'],
   methods: {
     async addfacet(value: string) {
+      const cy = await this.$cy.instance;
+      // const [nd, ld] = this.context.facet(this.label, value);
+      if (this.$cy.controller) {
+        this.$cy.controller.addFacet(this.label, value);
+      }
+      cy.layout({name: 'circle'}).run();
+    },
+    async addfacetActive(value: string) {
       if (this.label === 'author') {
         this.author = value;
       }
-      const cy = await this.$cy.instance;
-      const [nd, ld] = this.context.facet(this.label, value);
-      cy.add({group: 'nodes', data: nd});
-      cy.add({group: 'edges', data: ld});
-      cy.layout({name: 'circle'}).run();
+      await this.addfacet(value);
     },
   },
   computed: {

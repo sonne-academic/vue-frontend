@@ -24,7 +24,6 @@ interface AuthorIndex {
 }
 import Vue from 'vue';
 import {FacetResponse, FacetFields} from '@/plugins/vue-solr/lib/responses/FacetResponse';
-import {FacetNode, NodeKind, Node} from '@/store/modules/navgraph';
 function* gen_pairs(arr: any[]) {
   let name: string;
   let count: number;
@@ -59,6 +58,11 @@ export default Vue.extend({
     journals: new Array<FacetDetail>(),
     keywords: new Array<FacetDetail>(),
   }),
+  provide(this: any) {
+    return {
+      getContext: this.getContext,
+    };
+  },
   methods: {
     authorIndexGroup() {
       if (null === this.author) {
@@ -71,7 +75,7 @@ export default Vue.extend({
       const select = `select(${search}, indexOf(author, "${author}") as ${idx})`;
       const sort = `sort(${select}, by="${idx} asc")`;
       const rollup = `rollup(${sort}, over="${idx}", count(*))`;
-      console.log(rollup);
+      // console.log(rollup);
       this.$solr.pass_through_solr.get(`/${this.collection}/stream`, {expr: rollup})
         .then((data: any) => {
           console.log(data);
@@ -114,18 +118,7 @@ export default Vue.extend({
   },
   computed: {
     currentAuthor(): string | null {
-      const c: Node = this.$store.getters.current;
-      if (null === c) {
-        return null;
-      }
-      if (NodeKind.FACET !== c.kind) {
-        return null;
-      }
-      const d = c.data as FacetNode;
-      if ('author' !== d.facetField) {
-        return null;
-      }
-      return d.facetValue;
+      return null;
     },
   },
   mounted() {

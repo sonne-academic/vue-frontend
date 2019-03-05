@@ -30,10 +30,7 @@ export default Vue.extend({
     };
   },
   methods: {
-    getContext() {return this.context; },
-    // commitSearch(node: SearchNode): Promise<Node> {
-    //   return this.$store.dispatch('changeSearchRoot', node);
-    // },
+    getContext() { return this.context; },
     log(content: any) {
       this.$store.dispatch('log/log', content);
     },
@@ -49,10 +46,11 @@ export default Vue.extend({
         }};
       this.result = await this.$solr.select({collection: this.collection, payload}) as any;
       const data = new SearchNodeData(this.query, this.collection);
-      // const data = await this.commitSearch({collection: this.collection, query: this.query});
       this.context = data;
       const cy = await this.$cy.instance;
-      cy.add({group: 'nodes', data});
+      if (this.$cy.controller) {
+        this.$cy.controller.addSearch(this.query, this.collection);
+      }
     },
   },
   computed: {

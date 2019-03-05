@@ -1,9 +1,12 @@
 <template>
   <div id="app">
-    <sidebar id="side" @starttree="startTree"/>
+    <!-- <sidebar id="side" @starttree="startTree"/> -->
     <cy id='cy'
-      @tap="log"/>
+      @single="setActive"
+      /> 
+      <!-- @tap="log" -->
     <!-- <three-tree-view name="container" :rootid="rootid"/> -->
+    <component id="side" :params="props" :is="activeComponent"/>
     <global-log id="log"/>
   </div>
 </template>
@@ -14,18 +17,22 @@ import GlobalLog from './components/GlobalLog.vue';
 import SearchBox from './components/SearchBox.vue';
 // import ThreeTreeView from './components/ThreeTreeView.vue';
 import Sidebar from './components/Sidebar.vue';
+import Search from './components/Search.vue';
 import cy from './components/Cytoscape.vue';
 
 export default Vue.extend({
   name: 'app',
   components: {
     GlobalLog,
-   cy,
+    Search,
+    cy,
     // ThreeTreeView: () => import('./components/ThreeTreeView.vue'),
     Sidebar,
   },
   data: () => ({
     rootid: 'none',
+    activeComponent: 'sidebar',
+    props: {},
   }),
   methods: {
     log(e: any) {
@@ -33,6 +40,11 @@ export default Vue.extend({
     },
     startTree(stuff: any) {
       this.rootid = stuff.id;
+    },
+    setActive(opts: {component: string, props: any}) {
+      // this.activeComponent = opts.component;
+      this.props = opts.props;
+      console.log(opts);
     },
   },
 });

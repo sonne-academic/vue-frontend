@@ -1,10 +1,10 @@
 <template>
   <div name="search">
       <input placeholder="author, title, year" id="search-input" type="text" title="search text"
-        v-model="query" 
+        v-model="query2" 
         @keyup.enter="submitSearch"
       />
-      <collection-select @change="collection = $event"/>
+      <collection-select @change="activeCollection = $event"/>
       <input id="search-submit" type="button" value="search"
         @click="submitSearch"
       />
@@ -32,27 +32,42 @@ import CollectionSelect from './CollectionSelect.vue';
 export default Vue.extend({
   name: 'Search',
   components: { SearchResult, CollectionSelect },
-  data: () => ({
-    query: '',
-    activesort: 'outCitations_count dec',
-    sortby: ['year desc', 'outCitations_count desc'],
-    collection: 's2',
-    lastQuery: '',
-    result: {},
-    start: 0,
-    docs: new Array<any>(),
-    pageDocs: new Map<number, any[]>(),
-    currentPage: '1',
-    numFound: 0,
-    rows: 10,
-  }),
+  props: {
+    collection: {
+      type: String,
+      default: 's2',
+    },
+    query: {
+      type: String,
+      default: '',
+    },
+  },
+  data() {
+    return {
+      query2: '',
+      activesort: 'outCitations_count dec',
+      sortby: ['year desc', 'outCitations_count desc'],
+      sortdir: 'desc',
+      sortdirs: ['desc', 'asc'],
+      activeCollection: this.collection,
+      lastQuery: '',
+      result: {},
+      start: 0,
+      docs: new Array<any>(),
+      pageDocs: new Map<number, any[]>(),
+      currentPage: '1',
+      numFound: 0,
+      rows: 10,
+    };
+  },
   methods: {
     log(content: any) {
       this.$store.dispatch('log/log', content);
     },
     submitSearch() {
       this.pageDocs = new Map();
-      this.lastQuery = this.query;
+      this.lastQuery = this.query2;
+      this.currentPage = '1';
       // this.start = 0;
       this.numFound = 0;
       this.getPageData(1);
@@ -72,7 +87,7 @@ export default Vue.extend({
         'qf': 'suggest_lower^10 suggest_ngram',
         'q.op': 'AND',
         // 'omitHeader': 'true',
-        'sort': 'year desc'}};
+        'sort': `year ${this.sortdir}`}};
       /* using AND:
       +(
         +(suggest_ngram:ropinski | (suggest_lower:ropinski)^10.0)
@@ -83,7 +98,7 @@ export default Vue.extend({
         (suggest_ngram:ropinski | (suggest_lower:ropinski)^10.0)
         (suggest_ngram:maisch   | (suggest_lower:maisch)^10.0)
       ) */
-      this.$solr.select({collection: this.collection, payload})
+      this.$solr.select({collection: this.activeCollection, payload})
         .then((d: any) => {
           this.result = d;
           this.pageDocs.set(page, d.response.docs);
@@ -104,9 +119,6 @@ export default Vue.extend({
       }
       this.pageDocs.set(page, []);
       this.getPageData(this.activePage);
-    },
-    startTree(stuff: any) {
-      this.$emit('starttree', stuff);
     },
   },
   computed: {
