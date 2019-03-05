@@ -24,4 +24,8 @@ deployFrontend:
   - frontend
   tags:
   - sonne
+  when: manual
+  environment:
+    name: sonne
+    url: https://sonne.0ds.de
 
