@@ -26,7 +26,7 @@ const mutations: MutationTree<LoggingState> = {
 
 const log: Module<LoggingState, RootState> = {
   state,
-  namespaced: true,
+  namespaced: false,
   getters,
   actions,
   mutations,
