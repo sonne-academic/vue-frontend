@@ -4,9 +4,9 @@
     <solr-autocomplete-input 
       :endpoint="endpoint"
       :collection="collection"
-      @autocomplete="highlights = $event"/>
+      @autocomplete="completion"/>
     <collection-select @change="collection = $event"/>
-  
+    found: {{count}}
     <auto-complete-items class="auto-items" 
       :results="highlights"
     />
@@ -32,10 +32,17 @@ export default Vue.extend({
   },
   data: () => ({
     highlights: new Array<HighlitedResult>(),
+    count: 0,
     tabs: ['title', 'author', 'journal', 'venue', 'suggest'],
     currentTab: 'suggest',
     collection: 's2',
   }),
+  methods: {
+    completion(cmp: {count: number, result: HighlitedResult[]}) {
+      this.highlights = cmp.result;
+      this.count = cmp.count;
+    },
+  },
   computed: {
     endpoint(): string {
       if ('suggest' === this.currentTab) {

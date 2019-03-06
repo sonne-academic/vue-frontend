@@ -1,6 +1,8 @@
 <template>
   <div>
-    <img src="/close.min.svg" @click="clear">
+    <img id="clear" src="/close.min.svg" @click="clear">
+    <!-- <svg id="save"><use href="/symbols.svg#save"/></svg> -->
+    <img id="save" src="/save.svg" @click="store">
     <textarea rows=10 cols=80 
     id="global-log" 
     readonly 
@@ -18,6 +20,11 @@ export default Vue.extend({
     clear() {
       this.$store.dispatch('clear');
     },
+    store() {
+      if (this.$cy.controller) {
+        this.$cy.controller.saveGraph();
+      }
+    },
   },
   computed: {
     logContent(): string[] {
@@ -30,12 +37,23 @@ export default Vue.extend({
 });
 </script>
 <style scoped>
-img {
+#save {
   position: absolute;
-  right: 0.5em;
+  stroke-width: 1;
+  stroke: gray;
+  right: 2.5em;
+  top: 0.5em;
+  height: 1.5em;
+  width: 1.5em;
+}
+img {
   top: 0.5em;
   height: 1.5em;
   opacity: 0.5;
+}
+#clear {
+  position: absolute;
+  right: 0.5em;
 }
 img:hover {
   opacity: 1;

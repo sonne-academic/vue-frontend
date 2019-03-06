@@ -1,7 +1,7 @@
 <template>
-  <button class="btn" @click.exact="clicked" @click.ctrl="cclicked">{{label}} ({{size}})
-    <button @click="filter" class="fltbtn plus">+</button>
-    <button @click="filter" class="fltbtn minus">-</button>
+  <button class="btn" @click.exact="clicked" @click.shift="cclicked">{{label}} ({{size}})
+    <!-- <button @click="filter" class="fltbtn plus">+</button> -->
+    <!-- <button @click="filter" class="fltbtn minus">-</button> -->
   </button>
 </template>
 
@@ -9,7 +9,7 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'FilterBoxItem',
+  name: 'FacetBoxItem',
    props: {
     label: {
       type: String,

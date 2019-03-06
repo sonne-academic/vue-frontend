@@ -12,5 +12,8 @@
 import Vue from 'vue';
 export default Vue.extend({
   name: 'CollectionSelect',
+  mounted() {
+    this.$emit('change', this.$solr.collections[0]);
+  },
 });
 </script>

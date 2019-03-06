@@ -1,9 +1,10 @@
-<template>  
-  <div ref="cy"/>
+<template>
+    <div ref="cy"/>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+const activeComponents = ['search-results'];
 export default Vue.extend({
   data: () => ({
     nodeMenu: {destroy: () => {return; }},
@@ -12,7 +13,6 @@ export default Vue.extend({
   mounted() {
     const r = this.$refs;
     this.$cy.instance.then((cy) => {
-      console.log('mounting');
       cy.mount(r.cy as Element);
       this.nodeMenu = cy.cxtmenu({
         selector: 'node',
@@ -22,6 +22,7 @@ export default Vue.extend({
             content: 'remove',
             select(ele) {
               console.log( ele.id() );
+              ele.unselect();
               ele.remove();
             },
           },
@@ -48,7 +49,8 @@ export default Vue.extend({
         commands: [
           {
             content: 'search',
-            select: (e) => {this.$emit('newsearch'); },
+            select: (e) => {
+              this.$emit('newsearch'); },
           },
 
           {
@@ -74,9 +76,24 @@ export default Vue.extend({
         // select fires multiple times when box-selecting.
         // const t: cytoscape.CollectionReturnValue = ev.target;
         const t = ev.cy.$('node:selected');
+        console.log('Cy: select triggered');
         if (1 === t.length) {
-          this.$emit('single', {component: t.data('component'), props: t.data('props')});
+          const component = t.data('component');
+          this.$emit('setactive', {component, id: t.data('id')});
           console.log(`single element selected ${t.data('component')}`);
+        }
+        if (1 < t.length) {
+          this.$emit('setactive', {component: '', id: ''});
+        }
+      });
+      cy.on('unselect', (ev) => {
+        const t = ev.cy.$('node:selected');
+        if (1 === t.length) {
+          this.$emit('setactive', {component: t.data('component'), id: t.data('id')});
+          console.log(`single element selected ${t.data('component')}`);
+        }
+        if (0 === t.length) {
+          this.$emit('setactive', {component: '', id: ''});
         }
       });
       cy.on('data', (ev) => {
@@ -87,8 +104,8 @@ export default Vue.extend({
   },
   beforeDestroy() {
     this.$cy.instance.then((cy) => {
-      console.log('umounting');
       cy.off('select');
+      cy.off('unselect');
       cy.off('data');
       cy.unmount();
       this.nodeMenu.destroy();

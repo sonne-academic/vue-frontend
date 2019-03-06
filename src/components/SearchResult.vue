@@ -1,74 +1,37 @@
 <template>
-  <details>
-    <summary>{{doc.title}}</summary>
-    <details v-if="doc.keywords">
+  <div>
+    <h4><span>{{doc.title}}</span></h4>
+    <div>
+      <i v-if="doc.journal">{{doc.journal}}</i>
+      <i v-else-if="doc.venue">{{doc.venue}}</i>
+    </div>
+    {{doc.year}} - <span v-for="(author, index) in doc.author" :key="author">
+      <author-emitter field="author" :name="author"/><span v-if="index+1 < doc.author.length">, </span></span>
+    <!-- <details v-if="doc.keywords">
       <summary>keywords</summary>
         {{ doc.keywords.join(', ') }}
-    </details>
-    {{doc.id}}
+    </details> -->
+    <!-- {{doc.id}} -->
 
-    {{doc.year}}
-    <strong v-if="doc.journal">, {{doc.journal}}</strong>
-    <strong v-else-if="doc.venue">, {{doc.venue}}</strong>      
-    <span v-for="url in doc.pdfUrls" :key="url"> &nbsp;<a :href="url">PDF</a> </span>
-    <div v-if="doc.author">
-      <strong v-if="doc.author">Authors:</strong>
-      <span v-for="author in doc.author" :key="author"> {{author}}, </span>
-    </div>
     
+    <!-- <span v-for="url in doc.pdfUrls" ey="url"> i;<a :href="url">PDF</a> </span>     -->
     <div v-if="doc.inCitations"> 
       <strong>cited: </strong>{{doc.inCitations_count}}
     </div>
-  </details>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-interface Doc {
-  id: string;
-  year: number;
-  title: string;
-  pmid: string;
-  s2Url: string;
-  s2PdfUrl: string;
-  paperAbstract: string;
-  pdfUrls?: string[];
-  doi: string;
-  doiUrl: string;
-  venue: string;
-  author: string[];
-  journal: string;
-  pages: string;
-  volume: string;
-  keywords?: string[];
-  inCitations?: string[];
-  outCitations?: string[];
+import {AuthorEmitter} from './Emitters';
 
-  inCitations_count: number;
-  outCitations_count: number;
-  keywords_count: number;
-  author_count: number;
-  suggest: string;
-  _version_: number;
-  sources?: string[];
-  suggest_lower: string[];
-  suggest_ngram: string[];
-  title_lower: string[];
-  title_ngram: string[];
-  venue_lower: string[];
-  venue_ngram: string[];
-  author_lower: string[];
-  author_ngram: string[];
-  journal_lower: string[];
-  journal_ngram: string[];
-}
 export default Vue.extend({
   name: 'SearchResult',
+  components: {AuthorEmitter},
   props: {
     doc: {
       type: Object,
       required: true,
-      default: {} as Doc,
     },
   },
 });
@@ -77,5 +40,8 @@ export default Vue.extend({
 <style scoped>
 details details {
   margin-left:10px;
+}
+h4 {
+  margin-bottom: 0;
 }
 </style>

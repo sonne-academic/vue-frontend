@@ -1,7 +1,7 @@
 <template>
-  <div class="flex"> 
-    <author-detail-view v-if="author" :author="author"/>
-    <filter-box-item 
+  <div> 
+    <div>{{label}}</div>
+    <facet-box-item
       v-for="item in items"
       :key="item.name"
       :label="item.name"
@@ -14,15 +14,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import FilterBoxItem from './FilterBoxItem.vue';
-import AuthorDetailView from '../DetailViews/AuthorDetails.vue';
+import FacetBoxItem from './FacetBoxItem.vue';
 import {SearchNodeData} from '@/plugins/vue-cy/nodes/search';
 
 export default Vue.extend({
-  name: 'FilterBox',
+  name: 'FacetBox',
   components: {
-    FilterBoxItem,
-    AuthorDetailView,
+    FacetBoxItem,
   },
   props: {
     label: {
@@ -43,12 +41,13 @@ export default Vue.extend({
       const cy = await this.$cy.instance;
       // const [nd, ld] = this.context.facet(this.label, value);
       if (this.$cy.controller) {
-        this.$cy.controller.addFacet(this.label, value);
+        this.$cy.controller.addFacet(this.context.id, this.label, value);
       }
       cy.layout({name: 'circle'}).run();
     },
     async addfacetActive(value: string) {
       if (this.label === 'author') {
+        // TODO emit?
         this.author = value;
       }
       await this.addfacet(value);

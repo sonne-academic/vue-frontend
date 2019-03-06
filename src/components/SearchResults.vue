@@ -1,23 +1,17 @@
 <template>
   <div name="search">
-      <input placeholder="author, title, year" id="search-input" type="text" title="search text"
-        v-model="query2" 
-        @keyup.enter="submitSearch"
-      />
-      <collection-select @change="activeCollection = $event"/>
-      <input id="search-submit" type="button" value="search"
-        @click="submitSearch"
-      />
-      <span v-if="0 !== pageCount">
-        <input id="page-input" min="1" type="number" title="page"
-          :max="pageCount"
-          v-model="currentPage"
-        /> / {{ pageCount }} ({{numFound}} hits)
-      </span>
-      <search-result 
-        v-for="doc in docs" 
-        :doc="doc" 
-        :key="doc.id"/>
+    <span v-if="0 !== pageCount">
+      <input id="page-input" min="1" type="number" title="page"
+        :max="pageCount"
+        v-model="currentPage"
+      /> / {{ pageCount }} ({{numFound}} hits)
+    </span>
+    <search-result 
+      v-for="doc in docs" 
+      :doc="doc" 
+      :key="doc.id"/>
+    <span v-if="searchInProgress.get(activePage)">searching...</span>
+    <span v-else-if="docs.length==0"> nothing (0 hits) </span>
 
   </div>
 
@@ -30,31 +24,27 @@ import SearchResult from './SearchResult.vue';
 import CollectionSelect from './CollectionSelect.vue';
 
 export default Vue.extend({
-  name: 'Search',
-  components: { SearchResult, CollectionSelect },
+  name: 'SearchResults',
+  components: { SearchResult },
   props: {
-    collection: {
+    nodeid: {
       type: String,
-      default: 's2',
-    },
-    query: {
-      type: String,
-      default: '',
+      required: true,
     },
   },
   data() {
     return {
-      query2: '',
       activesort: 'outCitations_count dec',
       sortby: ['year desc', 'outCitations_count desc'],
       sortdir: 'desc',
       sortdirs: ['desc', 'asc'],
-      activeCollection: this.collection,
-      lastQuery: '',
+      collection: '',
+      query: '',
       result: {},
       start: 0,
       docs: new Array<any>(),
       pageDocs: new Map<number, any[]>(),
+      searchInProgress: new Map<number, boolean>(),
       currentPage: '1',
       numFound: 0,
       rows: 10,
@@ -66,7 +56,6 @@ export default Vue.extend({
     },
     submitSearch() {
       this.pageDocs = new Map();
-      this.lastQuery = this.query2;
       this.currentPage = '1';
       // this.start = 0;
       this.numFound = 0;
@@ -77,8 +66,9 @@ export default Vue.extend({
       // cursor implementation is solr is not faster, it's slower than normal
       // http://lucene.apache.org/solr/guide/7_4/pagination-of-results.html#cursor-examples
       const start = (page - 1) * this.rows;
+      this.searchInProgress.set(page, true);
       const payload = {params: {
-        'q': this.lastQuery,
+        'q': this.query,
         'rows': this.rows,
         'debug': 'query',
         start,
@@ -98,7 +88,7 @@ export default Vue.extend({
         (suggest_ngram:ropinski | (suggest_lower:ropinski)^10.0)
         (suggest_ngram:maisch   | (suggest_lower:maisch)^10.0)
       ) */
-      this.$solr.select({collection: this.activeCollection, payload})
+      this.$solr.select({collection: this.collection, payload})
         .then((d: any) => {
           this.result = d;
           this.pageDocs.set(page, d.response.docs);
@@ -106,6 +96,7 @@ export default Vue.extend({
           if (this.activePage === page) {
             this.docs = d.response.docs;
           }
+          this.searchInProgress.set(page, false);
         }).catch(console.error);
     },
     pageChanged() {
@@ -119,6 +110,21 @@ export default Vue.extend({
       }
       this.pageDocs.set(page, []);
       this.getPageData(this.activePage);
+    },
+    update() {
+      this.$cy.instance.then((cy) => {
+        const node = cy.$id(this.nodeid);
+        if (0 === node.length) {
+          throw new Error(`[ERR] no node with ID ${this.nodeid}`);
+        }
+        return [node.data('collection'), node.data('query')];
+      })
+      .then(([coll, query]) => {
+        this.query = query;
+        this.collection = coll;
+        this.submitSearch();
+      })
+      .catch((reason: any) => this.log(reason));
     },
   },
   computed: {
@@ -139,6 +145,9 @@ export default Vue.extend({
     },
   },
   watch: {
+    nodeid() {
+      this.update();
+    },
     currentPage() {
       if (this.activePage > this.pageCount) {
         return;
@@ -149,9 +158,13 @@ export default Vue.extend({
         this.docs = docs;
         return;
       }
+      this.docs = [];
       this.pageDocs.set(page, []);
       this.getPageData(page);
     },
+  },
+  mounted() {
+    this.update();
   },
 
 });

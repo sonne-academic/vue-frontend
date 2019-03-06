@@ -49,7 +49,7 @@ export default Vue.extend({
       this.context = data;
       const cy = await this.$cy.instance;
       if (this.$cy.controller) {
-        this.$cy.controller.addSearch(this.query, this.collection);
+        this.$cy.controller.addFacetSearch(this.query, this.collection);
       }
     },
   },

@@ -1,6 +1,6 @@
 <template>
     <div>
-      <filter-box v-for="field in fields" 
+      <facet-box v-for="field in fields" 
         v-bind:key="field.name" 
         :label="field.name"
         :items="field.values"
@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import FilterBox from './FilterBox.vue';
+import FacetBox from './FacetBox.vue';
 
 function* gen_pairs(arr: any[]) {
   let name: string;
@@ -35,7 +35,7 @@ function* gen_kw(input: any) {
 
 export default Vue.extend({
   name: 'FacetSearchResult',
-  components: {FilterBox},
+  components: {FacetBox},
   props: {
     response: {
       type: Object,
