@@ -4,8 +4,9 @@ import uuid from 'uuid/v5';
 export const uuidgen = (name: string) => uuid(name, UUID_NS);
 
 export enum NodeKind {
-  SEARCH = 'search',
-  AUTHOR = 'author',
+  SEARCH = 'search-results',
+  FACETSEARCH = 'facet-search-result',
+  AUTHOR = 'author-details',
   JOURNAL = 'journal',
   PAPER = 'paper',
   VENUE = 'venue',

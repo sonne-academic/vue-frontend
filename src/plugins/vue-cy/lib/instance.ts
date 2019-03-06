@@ -15,11 +15,24 @@ export class Instance {
       ]).then(([mod, ...exts]) => {
         exts.forEach((ext: ModuleImport) => {mod.use(ext.default); });
         this.cy = mod.default(cfg);
+        const datas = localStorage.getItem('graph');
+        if (datas) {
+          const data = JSON.parse(datas);
+
+        }
         if (this.cy) {
 
           resolve(this.cy);
           this.ctrl = new CyController(this.cy);
-          this.ctrl.addSearch('maisch ropinski', 's2');
+          const deeplink = window.location.search;
+          if (deeplink) {
+            const split = deeplink.replace('?', '').split('=');
+            if (split.length === 2) {
+              const collection = decodeURI(split[0]);
+              const query = decodeURI(split[1]);
+              this.ctrl.addSearch(query, collection);
+            }
+          }
         } else {
           reject('could not load cytoscape');
         }

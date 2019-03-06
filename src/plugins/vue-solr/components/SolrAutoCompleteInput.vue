@@ -5,6 +5,7 @@
         :placeholder="placeholder"
         :aria-label="placeholder"
         @input="complete($event.target.value)"
+        @keyup.enter="enter($event.target.value)"
       />
 </template>
 
@@ -45,23 +46,35 @@ export default Vue.extend({
       }),
     },
   },
+  data: () => ({
+    active: true,
+  }),
   methods: {
     log(content: any) {
       this.$store.dispatch('log', content);
     },
+    enter(query: string) {
+      this.$emit('enter', query);
+      (this.$refs.input as any).value = '';
+      this.complete('');
+      this.active = false;
+    },
     complete(input: string) {
+      this.active = true;
       if (this.debounce) {
         this.db(input);
       } else {
         this.handleInput(input);
       }
     },
-    autocomplete(result: HighlitedResult[]) {
-      this.$emit('autocomplete', result);
+    autocomplete(count: number, result: HighlitedResult[]) {
+      if (this.active) {
+        this.$emit('autocomplete', {count, result});
+      }
     },
     async handleInput(event: string) {
       if (event.length < 2) {
-        return this.autocomplete([]);
+        return this.autocomplete(0, []);
       }
       const payload = {
         q: event,
@@ -75,7 +88,7 @@ export default Vue.extend({
         .entries(response.highlighting)
         .flatMap(([id, entry]) => Object.entries(entry)
           .filter(endsWithNgram).map(([k, value]) => ({id, value})));
-      this.autocomplete(thing);
+      this.autocomplete(response.response.numFound, thing);
     },
     db: debounce(function(this: any, e: string) {
         this.handleInput(e);
