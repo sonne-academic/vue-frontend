@@ -6,7 +6,7 @@
       <i v-else-if="doc.venue">{{doc.venue}}</i>
     </div>
     {{doc.year}} - <span v-for="(author, index) in doc.author" :key="author">
-      <author-emitter field="author" :name="author"/><span v-if="index+1 < doc.author.length">, </span></span>
+      <simple-emitter field="author" :name="author"/><span v-if="index+1 < doc.author.length">, </span></span>
     <!-- <details v-if="doc.keywords">
       <summary>keywords</summary>
         {{ doc.keywords.join(', ') }}
@@ -23,11 +23,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {AuthorEmitter} from './Emitters';
+import {SimpleEmitter} from './Emitters';
 
 export default Vue.extend({
   name: 'SearchResult',
-  components: {AuthorEmitter},
+  components: {SimpleEmitter},
   props: {
     doc: {
       type: Object,

@@ -1,4 +1,4 @@
-import AuthorEmitter from './Author.vue';
+import SimpleEmitter from './Simple.vue';
 
 
-export {AuthorEmitter};
+export {SimpleEmitter};

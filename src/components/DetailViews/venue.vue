@@ -7,7 +7,7 @@
         <dt>{{fdata[0]}}</dt>
         <table>
           <tr v-for="data in fdata[1]" :key="data.name" >
-            <td><author-emitter :field="fdata[0]" :name="data.name"/></td><td class="right">{{data.count}}</td>
+            <td><simple-emitter :field="fdata[0]" :name="data.name"/></td><td class="right">{{data.count}}</td>
           </tr>
         </table>
       </span>
@@ -68,7 +68,7 @@ interface FacetDetail {
 
 import Vue from 'vue';
 import {FacetResponse, FacetFields} from '@/plugins/vue-solr/lib/responses/FacetResponse';
-import {AuthorEmitter} from '../Emitters';
+import {SimpleEmitter} from '../Emitters';
 
 function* gen_pairs(arr: any[]) {
   let name: string;
@@ -87,7 +87,7 @@ function* gen_pairs(arr: any[]) {
 
 export default Vue.extend({
   name: 'VenueDetails',
-  components: {AuthorEmitter},
+  components: {SimpleEmitter},
   props: {
     nodeid: {
       required: true,
