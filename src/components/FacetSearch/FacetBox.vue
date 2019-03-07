@@ -15,7 +15,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import FacetBoxItem from './FacetBoxItem.vue';
-import {SearchNodeData} from '@/plugins/vue-cy/nodes/search';
+import {Data} from '@/plugins/vue-cy/nodes/search';
 
 export default Vue.extend({
   name: 'FacetBox',
@@ -54,7 +54,7 @@ export default Vue.extend({
     },
   },
   computed: {
-    context(): SearchNodeData {
+    context(): Data {
       return (this as any).getContext();
     },
   },

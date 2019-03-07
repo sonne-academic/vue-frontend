@@ -13,7 +13,7 @@ import { mapActions } from 'vuex';
 // import {SearchNode, Node} from '@/store/modules/navgraph';
 import FacetSearchResult from './FacetSearch/FacetSearchResult.vue';
 import CollectionSelect from './CollectionSelect.vue';
-import {SearchNodeData} from '@/plugins/vue-cy/nodes/search';
+import {Data} from '@/plugins/vue-cy/nodes/search';
 
 export default Vue.extend({
   name: 'FacetSearch',
@@ -22,7 +22,7 @@ export default Vue.extend({
     query: '',
     collection: 's2',
     result: null,
-    context: {} as SearchNodeData,
+    context: {} as Data,
   }),
   provide(this: any) {
     return {
@@ -45,7 +45,7 @@ export default Vue.extend({
         'q.op': 'AND',
         }};
       this.result = await this.$solr.select({collection: this.collection, payload}) as any;
-      const data = new SearchNodeData(this.query, this.collection);
+      const data = new Data(this.query, this.collection);
       this.context = data;
       const cy = await this.$cy.instance;
       if (this.$cy.controller) {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img id="clear" src="/close.min.svg" @click="clear">
+    <img id="clear" src="/close.svg" @click="clear">
     <!-- <svg id="save"><use href="/symbols.svg#save"/></svg> -->
     <img id="save" src="/save.svg" @click="store">
     <textarea rows=10 cols=80 
@@ -49,7 +49,7 @@ export default Vue.extend({
 img {
   top: 0.5em;
   height: 1.5em;
-  opacity: 0.5;
+  opacity: 0.25;
 }
 #clear {
   position: absolute;
