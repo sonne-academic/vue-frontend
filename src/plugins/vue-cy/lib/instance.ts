@@ -12,6 +12,9 @@ export class Instance {
       Promise.all([
         import('cytoscape'),
         import('cytoscape-cxtmenu'),
+        import('cytoscape-dagre'),
+        // import('cytoscape-cola'),
+        // import('cytoscape-cose-bilkent'),
       ]).then(([mod, ...exts]) => {
         exts.forEach((ext: ModuleImport) => {mod.use(ext.default); });
         this.cy = mod.default(cfg);
