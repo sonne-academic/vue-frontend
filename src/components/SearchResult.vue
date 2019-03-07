@@ -2,8 +2,8 @@
   <div>
     <h4><span>{{doc.title}}</span></h4>
     <div>
-      <i v-if="doc.journal">{{doc.journal}}</i>
-      <i v-else-if="doc.venue">{{doc.venue}}</i>
+      <i v-if="doc.journal"><simple-emitter field="journal" :name="doc.journal"/></i>
+      <i v-else-if="doc.venue"><simple-emitter field="venue" :name="doc.venue"/></i>
     </div>
     {{doc.year}} - <span v-for="(author, index) in doc.author" :key="author">
       <simple-emitter field="author" :name="author"/><span v-if="index+1 < doc.author.length">, </span></span>
