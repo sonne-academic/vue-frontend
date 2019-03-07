@@ -7,9 +7,9 @@ export enum NodeKind {
   SEARCH = 'search-results',
   FACETSEARCH = 'facet-search-result',
   AUTHOR = 'author-details',
-  JOURNAL = 'journal',
-  PAPER = 'paper',
-  VENUE = 'venue',
+  JOURNAL = 'journal-details',
+  PAPER = 'paper-details',
+  VENUE = 'venue-details',
   FILTER = 'filter',
   ALIAS = 'alias',
   FACET = 'facet',
@@ -20,16 +20,18 @@ export interface Node<T extends NodeData> extends cytoscape.NodeDefinition {
 }
 
 export abstract class NodeData {
-  public abstract readonly component: NodeKind;
+  public readonly component: NodeKind;
   public readonly id: string;
   public readonly name: string;
   public readonly ctime: Date;
   public readonly mtime: Date;
-  constructor(name: string) {
+  constructor(component: NodeKind, name: string) {
     const time = new Date();
     this.mtime = time;
     this.ctime = time;
     this.name = name;
-    this.id = uuidgen(name);
+    this.component = component;
+    this.id = uuidgen(`${component}:${name}`);
   }
 }
+

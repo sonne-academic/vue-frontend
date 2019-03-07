@@ -1,7 +1,6 @@
-import { SearchNodeData } from './nodes/search';
 import { NodeData, uuidgen, NodeKind } from './nodes/base';
 import { FacetSearchData } from './nodes/facet';
-import { AuthorData } from './nodes/author';
+import {DataNodes as nodes} from './nodes';
 
 interface LocalStore {version: number; elements: cytoscape.ElementDefinition; }
 
@@ -27,8 +26,8 @@ export default class CyController {
   }
 
   public addSearch(query: string, collection: string): string {
-    this.addNodeActive(new SearchNodeData(query, collection));
-    const id = this.addNode(new SearchNodeData(query, collection));
+    this.addNodeActive(new nodes.search(query, collection));
+    const id = this.addNode(new nodes.search(query, collection));
     this.primary = id;
     return id;
   }
@@ -40,7 +39,7 @@ export default class CyController {
   }
 
   public addFacetSearch(query: string, collection: string): string {
-    const id = this.addNode(new SearchNodeData(query, collection));
+    const id = this.addNode(new nodes.search(query, collection));
     this.primary = id;
     return id;
   }
@@ -72,7 +71,9 @@ export default class CyController {
 
   private detailFactory(field: string, value: string): NodeData {
     switch (field) {
-      case 'author': return new AuthorData(value);
+      case 'author': return new nodes.author(value);
+      case 'journal': return new nodes.journal(value);
+      case 'venue': return new nodes.venue(value);
       default: return new FacetSearchData(field, value);
     }
   }
@@ -116,6 +117,12 @@ export default class CyController {
   private addNode(data: NodeData): string {
     if (0 === this.cy.getElementById(data.id).length) {
       this.cy.add({group: 'nodes', data});
+    } // TODO: what to do when node exists? Blink it? Focus on it?
+    return data.id;
+  }
+  private addNodeParent(data: NodeData, parent: string): string {
+    if (0 === this.cy.getElementById(data.id).length) {
+      this.cy.add({group: 'nodes', data: {...data, parent}});
     } // TODO: what to do when node exists? Blink it? Focus on it?
     return data.id;
   }
