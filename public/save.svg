@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" stroke="#6c6c6c" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" stroke="#000" fill="none">
 <path d="m1,7 0,2 8,0 0,-2"/>
 <path d="m5,2 0,6"/>
 <path d="m3,6 2,2 2,-2"/>
