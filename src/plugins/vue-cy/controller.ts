@@ -66,7 +66,7 @@ export default class CyController {
     this.cy.$id(nodeid).scratch(scratchname, value);
   }
   private layout() {
-    this.cy.layout({name: 'dagre', rankDir: 'LR'}).run();
+    this.cy.layout({name: 'dagre', rankDir: 'LR', nodeDimensionsIncludeLabels: true}).run();
   }
 
   private detailFactory(field: string, value: string): NodeData {
