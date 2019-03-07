@@ -19,16 +19,15 @@ import SearchBox from './components/SearchBox.vue';
 import Sidebar from './components/Sidebar.vue';
 import SearchResults from './components/SearchResults.vue';
 import cy from './components/Cytoscape.vue';
-import AuthorDetails from './components/DetailViews/AuthorDetails.vue';
 import FacetSearch from './components/FacetSearch.vue';
-
+import {detailComponents} from './components/DetailViews';
 export default Vue.extend({
   name: 'app',
   components: {
     GlobalLog,
     SearchResults,
     SearchBox,
-    AuthorDetails,
+    ...detailComponents,
     FacetSearch,
     cy,
     // ThreeTreeView: () => import('./components/ThreeTreeView.vue'),
@@ -88,15 +87,18 @@ details:nth-of-type(2n) {
   border: 1px solid #ccc;
   width: 33%;
   height: 100%;
+  background-color: white;
   overflow: auto;
+  z-index: 1;
 }
 #cy {
-  position: absolute;
-  border: 1px solid #ccc;
-  width: 33%;
-  height: 99%;
-  left: 33%;
-  top: 0;
+  position: fixed;
+  /* border: 1px solid #ccc; */
+  width: 100%;
+  height: 100%;
+  /* left: 33%;
+  top: 0; */
+  z-index: 0;
 }
 #search {
   position: fixed;
