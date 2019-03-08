@@ -86,16 +86,12 @@ function* gen_pairs(arr: any[]) {
 }
 
 export default Vue.extend({
-  name: 'JournalDetails',
+  name: 'PaperDetails',
   components: {SimpleEmitter},
   props: {
     nodeid: {
       required: true,
       type: String,
-    },
-    collection: {
-      type: String,
-      default: 's2',
     },
   },
   data: () => ({
@@ -104,6 +100,8 @@ export default Vue.extend({
     facetResponse: {} as FacetResponse,
     facetdata: new Map<string, FacetDetail[]>(),
     docCount: 0,
+    collection: '',
+    id: '',
   }),
   provide(this: any) {
     return {
@@ -141,11 +139,11 @@ export default Vue.extend({
         .forEach(([key, arr]) => (this.facetdata.set(key, [...gen_pairs(arr)])));
     },
     log(msg: string) {
-      this.$store.dispatch('log', `[JournalDetails] ${msg}`);
+      this.$store.dispatch('log', `[PaperDetails] ${msg}`);
     },
     emitNode(kind: string, value: string) {
       if (this.$cy.controller) {
-        this.$cy.controller.addFacet(this.nodeid, kind, value);
+        this.$cy.controller.addFacet(this.nodeid, this.collection, kind, value);
       }
     },
     update() {
@@ -154,10 +152,11 @@ export default Vue.extend({
         if (0 === node.length) {
           throw new Error(`[ERR] no node with ID ${this.nodeid}`);
         }
-        return node.data('name');
+        return node.data('collection'), node.data('pid');
       })
-      .then((author: string) => {
-        this.author = author;
+      .then(([collection, id]) => {
+        this.collection = collection;
+        this.id = id;
         return Promise.all([
           this.getFacets()]);
       })
