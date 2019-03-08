@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1> {{author}} </h1>
+    <h1> <img src="/author.svg"/> {{author}} </h1>
     Publications: {{docCount}}
     <span>
       <details @toggle="clog($event.target.open)"> 

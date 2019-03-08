@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1> {{value}} </h1>
+    <h1> <img src="/journal.svg"/> {{value}} </h1>
     Publications: {{docCount}}
     <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
       :field="facet"

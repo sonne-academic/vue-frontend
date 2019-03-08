@@ -59,6 +59,9 @@ export default Vue.extend({
 body {
   margin: 0;
 }
+h1>img {
+  height: 1em;
+}
 .emitter:hover {
   background-color: black;
   color: white;
