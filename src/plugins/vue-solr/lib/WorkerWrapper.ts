@@ -1,6 +1,7 @@
 import Worker from 'worker-loader!./solr.worker';
 import { RpcRequest, RpcResponse, SelectRequestParams } from './RpcInterface';
 import store from '@/store';
+import { GetResponse } from './responses/GetResponse';
 
 interface RpcCallback {
   onmessage: (d: RpcResponse) => void;
@@ -39,6 +40,10 @@ export default class WorkerWrapper {
 
   public select(payload: SelectRequestParams) {
     return this.send('select', payload);
+  }
+
+  public get(collection: string, id: string): Promise<GetResponse> {
+    return this.send('get', {collection, id}) as any;
   }
 
   private log(message: string) {
