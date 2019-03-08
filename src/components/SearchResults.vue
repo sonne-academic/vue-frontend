@@ -9,7 +9,9 @@
     <search-result 
       v-for="doc in docs" 
       :doc="doc" 
-      :key="doc.id"/>
+      :key="doc.id"
+      :collection="collection"
+      />
     <span v-if="searchInProgress.get(activePage)">searching...</span>
     <span v-else-if="docs.length==0"> nothing (0 hits) </span>
 

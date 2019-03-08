@@ -33,6 +33,10 @@ export default Vue.extend({
       type: Object,
       required: true,
     },
+    collection: {
+      required: true,
+      type: String,
+    },
   },
 });
 </script>

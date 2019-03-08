@@ -15,11 +15,15 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    collection: {
+      type: String,
+      required: true,
+    },
   },
   methods: {
     emit() {
       if (this.$cy.controller) {
-        this.$cy.controller.emitDetailFromActiveNode(this.field, this.name);
+        this.$cy.controller.emitDetailFromActiveNode(this.collection, this.field, this.name);
       }
     },
   },

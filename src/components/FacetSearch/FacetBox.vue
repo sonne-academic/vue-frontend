@@ -41,7 +41,7 @@ export default Vue.extend({
       const cy = await this.$cy.instance;
       // const [nd, ld] = this.context.facet(this.label, value);
       if (this.$cy.controller) {
-        this.$cy.controller.addFacet(this.context.id, this.label, value);
+        this.$cy.controller.addFacet(this.context.id, this.context.collection, this.label, value);
       }
       cy.layout({name: 'circle'}).run();
     },
