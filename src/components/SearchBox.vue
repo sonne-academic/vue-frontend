@@ -15,8 +15,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import CollectionSelect from './CollectionSelect.vue';
-import AutoCompleteItems from './AutoComplete/AutoCompleteItems.vue';
+import {CollectionSelect, AutoCompleteItems} from './util';
 interface HighlitedResult {
   id: string;
   value: string;
