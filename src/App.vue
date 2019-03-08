@@ -64,9 +64,7 @@ body {
   color: white;
   cursor: pointer;
 }
-details:nth-of-type(2n) {
-  background-color: beige;
-}
+
 #app {
   font-family: sans-serif;
   color: #2c3e50;
