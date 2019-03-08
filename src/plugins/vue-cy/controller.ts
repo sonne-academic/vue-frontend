@@ -43,17 +43,17 @@ export default class CyController {
     this.primary = id;
     return id;
   }
-  public emitDetailFromActiveNode(field: string, value: string) {
+  public emitDetailFromActiveNode(collection: string, field: string, value: string) {
     const node = this.cy.$(':selected');
     if (node.length !== 1) {
       throw new Error('No active node to emit from');
     }
     const parent = node.id();
-    this.addFacet(parent, field, value);
+    this.addFacet(parent, collection, field, value);
   }
-  public addFacet(parent: string, field: string, value: string) {
+  public addFacet(parent: string, collection: string, field: string, value: string) {
     // const parent: string = this.getNodeTyped(this.activeNode, NodeKind.SEARCH).data('id');
-    const child = this.addNode(this.detailFactory(field, value));
+    const child = this.addNode(this.detailFactory(collection, field, value));
     this.addEdge(parent, child);
     this.layout();
   }
@@ -69,12 +69,12 @@ export default class CyController {
     this.cy.layout({name: 'dagre', rankDir: 'LR', nodeDimensionsIncludeLabels: true}).run();
   }
 
-  private detailFactory(field: string, value: string): NodeData {
+  private detailFactory(collection: string, field: string, value: string): NodeData {
     switch (field) {
-      case 'author': return new nodes.author(value);
-      case 'journal': return new nodes.journal(value);
-      case 'venue': return new nodes.venue(value);
-      default: return new FacetSearchData(field, value);
+      case 'author': return new nodes.author(collection, value);
+      case 'journal': return new nodes.journal(collection, value);
+      case 'venue': return new nodes.venue(collection, value);
+      default: return new FacetSearchData(collection, field, value);
     }
   }
 
