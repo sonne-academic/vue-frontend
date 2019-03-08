@@ -43,7 +43,18 @@ export default class CyController {
     localStorage.setItem('graph', JSON.stringify({version: 1, elements: data.elements}));
   }
 
-  public emitDetailFromActiveNode(collection: string, field: string, value: string) {
+  public emitPaper(collection: string, paperid: string, name: string) {
+    const node = this.activeNodes;
+    if (node.length !== 1) {
+      throw new Error('No active node to emit from');
+    }
+    const parent = node.id();
+    const child = this.addNode(new nodes.paper(collection, paperid, name));
+    this.addEdge(parent, child);
+    this.layout();
+  }
+
+  public emitFromActive(collection: string, field: string, value: string) {
     const node = this.activeNodes;
     if (node.length !== 1) {
       throw new Error('No active node to emit from');
