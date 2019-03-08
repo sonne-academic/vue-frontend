@@ -138,7 +138,7 @@ export default Vue.extend({
     },
     numFound() {
       this.$emit('numfound', this.numFound);
-    }
+    },
   },
   mounted() {
     this.update();
