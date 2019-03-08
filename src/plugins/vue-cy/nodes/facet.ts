@@ -7,9 +7,11 @@ const style: cytoscape.Stylesheet = {
 export class FacetSearchData extends NodeData {
   public readonly field: string;
   public readonly value: string;
-  constructor(field: string, value: string) {
+  public readonly collection: string;
+  constructor(collection: string, field: string, value: string) {
     super(NodeKind.FACET, `${field}:${value}`);
     this.field = field;
     this.value = value;
+    this.collection = collection;
   }
 }

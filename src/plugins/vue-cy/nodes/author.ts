@@ -12,8 +12,10 @@ const style: cytoscape.Stylesheet = {
   },
 };
 class Data extends NodeData {
-  constructor(name: string) {
+  public readonly collection: string;
+  constructor(collection: string, name: string) {
     super(kind, name);
+    this.collection = collection;
   }
 }
 export {style, Data};
