@@ -63,18 +63,10 @@ export default Vue.extend({
   methods: {
     async getFacets() {
       const scratchspace = `_facets_${this.field}`;
-      const cy = await this.$cy.instance;
-      const node = cy.$(':selected');
+      const node = this.$cy.controller.activeNodes;
       let result = node.scratch(scratchspace);
       if (!result) {
-        const payload = { params: {
-              'debug': false,
-              'q': `${this.queryField}:"${this.queryValue}"`,
-              'facet': 'on',
-              'rows': 0,
-              'facet.field': this.field,
-              }};
-        const d: any = await this.$solr.select({collection: this.collection, payload});
+        const d: any = await this.$solr.select({collection: this.collection, payload: this.payload});
         result = d as FacetResponse;
         node.scratch(scratchspace, result);
       }
@@ -86,6 +78,19 @@ export default Vue.extend({
       if (this.open) {
         this.getFacets();
       }
+    },
+  },
+  computed: {
+    payload(): any {
+      return {
+        params: {
+          'debug': false,
+          'q': `${this.queryField}:"${this.queryValue}"`,
+          'facet': 'on',
+          'rows': 0,
+          'facet.field': this.field,
+          },
+      };
     },
   },
   watch: {

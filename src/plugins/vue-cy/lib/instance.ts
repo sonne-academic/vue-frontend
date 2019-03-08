@@ -6,7 +6,7 @@ import CyController from '../controller';
 export class Instance {
   private pinstance: Promise<cytoscape.Core>;
   private cy?: cytoscape.Core;
-  private ctrl?: CyController;
+  private ctrl!: CyController;
   constructor() {
     this.pinstance = new Promise((resolve, reject) => {
       Promise.all([

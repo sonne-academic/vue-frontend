@@ -48,8 +48,7 @@ export default Vue.extend({
 
     submitSearch(query: string) {
       if (this.$cy.controller) {
-        const id = this.$cy.controller.addSearch(query, this.collection);
-        this.$emit('setactive', {component: 'search-results', id});
+        this.$cy.controller.addSearch(query, this.collection);
       }
       this.query = '';
       this.count = 0;

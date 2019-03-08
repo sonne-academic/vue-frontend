@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1> <img src="/author.svg"/> {{author}} </h1>
+    <h1> <img src="/author.svg"/> {{value}} </h1>
     Publications: {{docCount}}
     <span>
       <details @toggle="clog($event.target.open)"> 
@@ -14,10 +14,10 @@
       </details>
       <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
         :field="facet"
-        queryField="author"
+        :queryField="name"
         :collection="collection" 
         :friendlyName="friendlyNames[index]"
-        :queryValue="author"
+        :queryValue="value"
       />
 
     </span>    
@@ -55,7 +55,8 @@ export default Vue.extend({
       'publications in years',
       'associated keywords',
     ],
-    author: '',
+    name: 'author',
+    value: '',
     result: new Array<AuthorIndex>(),
     facetResponse: {} as FacetResponse,
     docCount: 0,
@@ -71,20 +72,15 @@ export default Vue.extend({
       console.log(d);
     },
     async authorIndexGroup() {
-      if (null === this.author) {
-        return;
-      }
       const scratchspace = '_author_index';
 
       let result;
-      if (this.$cy.controller) {
-        result = this.$cy.controller.getScratchValue(this.nodeid, scratchspace);
-      }
+      result = this.$cy.controller.scratch.get(this.nodeid, scratchspace);
       if (!result) {
         console.debug('no data in scratch');
-        const author = this.author;
+        const author = this.value;
         const idx = 'idx';
-        const q = `"author:"${this.author}""`;
+        const q = `"author:"${this.value}""`;
         const search = `search(${this.collection}, q=${q}, fl="author, id", sort="id desc", qt=/export)`;
         const select = `select(${search}, indexOf(author, "${author}") as ${idx})`;
         const sort = `sort(${select}, by="${idx} asc")`;
@@ -94,7 +90,7 @@ export default Vue.extend({
         console.log(data);
         result = data['result-set'].docs.slice(0, -1);
         if (this.$cy.controller) {
-          this.$cy.controller.setScratchValue(this.nodeid, scratchspace, result);
+          this.$cy.controller.scratch.set(this.nodeid, scratchspace, result);
         }
       }
       this.result = result;
@@ -103,21 +99,10 @@ export default Vue.extend({
       this.$store.dispatch('log', `[AuthorDetails] ${msg}`);
     },
     update() {
-      this.$cy.instance.then((cy) => {
-        const node = cy.$id(this.nodeid);
-        if (0 === node.length) {
-          throw new Error(`[ERR] no node with ID ${this.nodeid}`);
-        }
-        return [node.data('name'), node.data('collection')];
-      })
-      .then(([author, collection]) => {
-        this.author = author;
-        this.collection = collection;
-        return Promise.all([
-          this.authorIndexGroup(),
-          ]);
-      })
-      .catch((reason: any) => this.log(reason));
+      const node = this.$cy.controller.getNodeById(this.nodeid);
+      this.value = node.data('name');
+      this.collection = node.data('collection');
+      this.authorIndexGroup();
     },
   },
   watch: {

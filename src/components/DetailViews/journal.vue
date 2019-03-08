@@ -42,15 +42,9 @@ export default Vue.extend({
       this.$store.dispatch('log', `[${name}-details] ${msg}`);
     },
     update() {
-      this.$cy.instance.then((cy) => {
-        const node = cy.$id(this.nodeid);
-        if (0 === node.length) {
-          throw new Error(`[ERR] no node with ID ${this.nodeid}`);
-        }
-        this.value = node.data('name');
-        this.collection = node.data('collection');
-      });
-
+      const node = this.$cy.controller.getNodeById(this.nodeid);
+      this.value = node.data('name');
+      this.collection = node.data('collection');
     },
   },
   watch: {

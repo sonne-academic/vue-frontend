@@ -10,13 +10,31 @@ export default Vue.extend({
     nodeMenu: {destroy: () => {return; }},
     coreMenu: {destroy: () => {return; }},
   }),
+  methods: {
+    maybeEmit(ev: cytoscape.EventObject) {
+      const c = ev.cy.$('node:selected');
+      if (0 === c.length) {
+        // nothing selected
+        this.$emit('setactive', {component: '', id: ''});
+      }
+      if (1 === c.length) {
+        const component = c.data('component');
+        const id = c.data('id');
+        this.$emit('setactive', {component, id});
+      }
+      if (1 < c.length) {
+        // this is where we decide on what to do with multiple nodes
+        this.$emit('setactive', {component: '', id: ''});
+      }
+    },
+  },
   mounted() {
     const r = this.$refs;
     this.$cy.instance.then((cy) => {
       cy.mount(r.cy as Element);
       this.nodeMenu = cy.cxtmenu({
         selector: 'node',
-        openMenuEvents: 'cxttapstart taphold boxend',
+        openMenuEvents: 'cxttapstart taphold',
         commands: [
           {
             content: 'remove',
@@ -43,70 +61,14 @@ export default Vue.extend({
           },
         ],
       });
-      this.coreMenu = cy.cxtmenu({
-        selector: 'core',
-        openMenuEvents: 'cxttapstart taphold',
-        commands: [
-          {
-            content: 'search',
-            select: (e) => {
-              this.$emit('newsearch'); },
-          },
-
-          {
-            content: 'facet-search',
-            select(ele) {
-              console.log( ele );
-            },
-            enabled: false,
-          },
-
-          {
-            content: 'auto-complete',
-            select(ele) {
-              console.log( ele );
-            },
-          },
-        ],
-      });
-      for (const [eventType, callback] of Object.entries(this.$listeners)) {
-       cy.on(eventType, (event) => (callback as cytoscape.EventHandler)(event));
-      }
-      cy.on('select', (ev) => {
-        // select fires multiple times when box-selecting.
-        // const t: cytoscape.CollectionReturnValue = ev.target;
-        const t = ev.cy.$('node:selected');
-        console.log('Cy: select triggered');
-        if (1 === t.length) {
-          const component = t.data('component');
-          this.$emit('setactive', {component, id: t.data('id')});
-          console.log(`single element selected ${t.data('component')}`);
-        }
-        if (1 < t.length) {
-          this.$emit('setactive', {component: '', id: ''});
-        }
-      });
-      cy.on('unselect', (ev) => {
-        const t = ev.cy.$('node:selected');
-        if (1 === t.length) {
-          this.$emit('setactive', {component: t.data('component'), id: t.data('id')});
-          console.log(`single element selected ${t.data('component')}`);
-        }
-        if (0 === t.length) {
-          this.$emit('setactive', {component: '', id: ''});
-        }
-      });
-      cy.on('data', (ev) => {
-        console.error('DATA CHANGED!');
-        console.error(ev);
-      });
+      cy.on('select', (ev) => {this.maybeEmit(ev); });
+      cy.on('unselect', (ev) => {this.maybeEmit(ev); });
     });
   },
   beforeDestroy() {
     this.$cy.instance.then((cy) => {
       cy.off('select');
       cy.off('unselect');
-      cy.off('data');
       cy.unmount();
       this.nodeMenu.destroy();
       this.coreMenu.destroy();

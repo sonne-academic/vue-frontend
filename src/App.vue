@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <cy id="cy" @setactive="setActive"/>
-    <search-box id="search" @setactive="setActive"/>
+    <search-box id="search"/>
     <component id="active" :nodeid="activeId" :is="activeComponent"/>
     <component id="passive" :nodeid="passiveId" :is="passiveComponent"/>
     <global-log id="log"/>

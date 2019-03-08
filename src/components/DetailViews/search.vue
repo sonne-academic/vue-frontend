@@ -114,19 +114,10 @@ export default Vue.extend({
       this.getPageData(this.activePage);
     },
     update() {
-      this.$cy.instance.then((cy) => {
-        const node = cy.$id(this.nodeid);
-        if (0 === node.length) {
-          throw new Error(`[ERR] no node with ID ${this.nodeid}`);
-        }
-        return [node.data('collection'), node.data('query')];
-      })
-      .then(([coll, query]) => {
-        this.query = query;
-        this.collection = coll;
-        this.submitSearch();
-      })
-      .catch((reason: any) => this.log(reason));
+      const node = this.$cy.controller.getNodeById(this.nodeid);
+      this.collection = node.data('collection');
+      this.query = node.data('query');
+      this.submitSearch();
     },
   },
   computed: {
