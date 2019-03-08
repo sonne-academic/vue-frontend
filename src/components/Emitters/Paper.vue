@@ -5,13 +5,13 @@
 <script lang="ts">
 import Vue from 'vue';
 export default Vue.extend({
-  name: 'SimpleEmitter',
+  name: 'PaperEmitter',
   props: {
     name: {
       type: String,
       required: true,
     },
-    field: {
+    id: {
       type: String,
       required: true,
     },
@@ -23,7 +23,8 @@ export default Vue.extend({
   methods: {
     emit() {
       if (this.$cy.controller) {
-        this.$cy.controller.emitFromActive(this.collection, this.field, this.name);
+        this.$cy.controller.emitPaper(
+          this.collection, this.id, this.name);
       }
     },
   },

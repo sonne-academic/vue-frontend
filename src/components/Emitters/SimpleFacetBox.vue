@@ -64,6 +64,9 @@ export default Vue.extend({
     async getFacets() {
       const scratchspace = `_facets_${this.field}`;
       const node = this.$cy.controller.activeNodes;
+      if (node.length !== 1) {
+        throw new Error('[SimpleFacetBox] cannot emit on multiple nodes');
+      }
       let result = node.scratch(scratchspace);
       if (!result) {
         const d: any = await this.$solr.select({collection: this.collection, payload: this.payload});

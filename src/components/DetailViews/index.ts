@@ -8,5 +8,6 @@ const detailComponents = {
   JournalDetails,
   VenueDetails,
   SearchDetails,
+  PaperDetails,
 };
 export {detailComponents};
