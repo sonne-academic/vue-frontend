@@ -48,7 +48,13 @@ export default Vue.extend({
   },
   data: () => ({
     facets: ['author', 'journal', 'venue', 'year', 'keywords'],
-    friendlyNames: ['co-authors', 'published in journals', 'published on venues', 'publications in years', 'associated keywords'],
+    friendlyNames: [
+      'co-authors',
+      'published in journals',
+      'published on venues',
+      'publications in years',
+      'associated keywords',
+    ],
     author: '',
     result: new Array<AuthorIndex>(),
     facetResponse: {} as FacetResponse,
