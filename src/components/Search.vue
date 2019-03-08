@@ -26,7 +26,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import SearchResult from './SearchResult.vue';
+import {SearchResult} from './Emitters';
 import CollectionSelect from './CollectionSelect.vue';
 
 export default Vue.extend({

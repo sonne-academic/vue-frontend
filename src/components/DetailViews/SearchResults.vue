@@ -22,11 +22,11 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import SearchResult from './SearchResult.vue';
+import {SearchResult} from '../Emitters';
 import CollectionSelect from './CollectionSelect.vue';
 
 export default Vue.extend({
-  name: 'SearchResults',
+  name: 'SearchDetail',
   components: { SearchResult },
   props: {
     nodeid: {
@@ -36,7 +36,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      activesort: 'outCitations_count dec',
+      activesort: 'year desc',
       sortby: ['year desc', 'outCitations_count desc'],
       sortdir: 'desc',
       sortdirs: ['desc', 'asc'],

@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {SimpleEmitter} from './Emitters';
+import SimpleEmitter from './Simple.vue';
 
 export default Vue.extend({
   name: 'SearchResult',
