@@ -1,7 +1,11 @@
 <template>
   <div>
     <h1> <img src="/journal.svg"/> {{value}} </h1>
-    Publications: {{docCount}}
+    <details>
+      <summary>Publications: {{docCount}}</summary>
+      <embedded-search :query="embQuery" :collection="collection" @numfound="docCount = $event"/>
+    </details>
+
     <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
       :field="facet"
       :queryField="name"
@@ -15,9 +19,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import {SimpleFacetBox} from '../Emitters';
+import EmbeddedSearch from './embSearch.vue';
 export default Vue.extend({
   name: 'JournalDetails',
-  components: {SimpleFacetBox},
+  components: {SimpleFacetBox, EmbeddedSearch},
   props: {
     nodeid: {
       required: true,
@@ -31,6 +36,7 @@ export default Vue.extend({
     value: '',
     docCount: 0,
     collection: '',
+    embQuery: '',
   }),
   provide(this: any) {
     return {
@@ -45,6 +51,7 @@ export default Vue.extend({
       const node = this.$cy.controller.getNodeById(this.nodeid);
       this.value = node.data('name');
       this.collection = node.data('collection');
+      this.embQuery = `${this.name}:"${this.value}"`;
     },
   },
   watch: {
@@ -52,7 +59,7 @@ export default Vue.extend({
       this.update();
     },
   },
-  mounted() {
+  created() {
     this.update();
   },
 });

@@ -13,11 +13,11 @@
     </span>
     <details v-if="doc.inCitations"> 
       <summary><strong>cited</strong> by {{doc.inCitations_count}} publications</summary>
-      WIP
+      <embedded-search class="emb" :query="embIn" :collection="collection"/>
     </details>
     <details v-if="doc.outCitations"> 
       <summary><strong>cites</strong> {{doc.outCitations_count}} publications</summary>
-      WIP
+      <embedded-search class="emb" :query="embOut" :collection="collection"/>
     </details>
     <a v-if="doc.doiUrl" :href="doc.doiUrl">DOI: {{doc.doi}}</a>
     <div v-for="url in urls" :key="url.host">
@@ -35,9 +35,10 @@
 import Vue from 'vue';
 import {SimpleEmitter} from '../Emitters';
 import { DocCommon, DocS2 } from '@/plugins/vue-solr/lib/responses/SelectResponse';
+import EmbeddedSearch from './embSearch.vue';
 export default Vue.extend({
   name: 'PaperDetails',
-  components: {SimpleEmitter},
+  components: {SimpleEmitter, EmbeddedSearch},
   props: {
     nodeid: {
       required: true,
@@ -50,6 +51,8 @@ export default Vue.extend({
     collection: '',
     doc: {} as DocCommon,
     paperid: '',
+    embIn: '',
+    embOut: '',
   }),
   provide(this: any) {
     return {
@@ -65,8 +68,11 @@ export default Vue.extend({
       this.title = node.data('name');
       this.collection = node.data('collection');
       this.paperid = node.data('pid');
+      this.embIn = `outCitations:${this.paperid}`;
+      this.embOut = `inCitations:${this.paperid}`;
       const response = await this.$solr.get(this.collection, this.paperid);
       this.doc = response.doc as DocCommon;
+
     },
   },
   watch: {
@@ -89,8 +95,13 @@ export default Vue.extend({
       return urls;
     },
   },
-  mounted() {
+  created() {
     this.update();
   },
 });
 </script>
+<style scoped>
+.emb {
+  margin-left: 2em;
+}
+</style>

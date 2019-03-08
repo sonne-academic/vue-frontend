@@ -1,7 +1,10 @@
 <template>
   <div>
     <h1> <img src="/author.svg"/> {{value}} </h1>
-    Publications: {{docCount}}
+    <details>
+      <summary>Publications: {{docCount}}</summary>
+      <embedded-search :query="embQuery" :collection="collection" @numfound="docCount = $event"/>
+    </details>
     <span>
       <details @toggle="clog($event.target.open)"> 
         <summary>author position in paper</summary>
@@ -36,10 +39,11 @@ interface AuthorIndex {
 import Vue from 'vue';
 import {FacetResponse, FacetFields} from '@/plugins/vue-solr/lib/responses/FacetResponse';
 import {SimpleEmitter, SimpleFacetBox} from '../Emitters';
+import EmbeddedSearch from './embSearch.vue';
 
 export default Vue.extend({
   name: 'AuthorDetails',
-  components: {SimpleEmitter, SimpleFacetBox},
+  components: {SimpleEmitter, SimpleFacetBox, EmbeddedSearch},
   props: {
     nodeid: {
       required: true,
@@ -61,6 +65,7 @@ export default Vue.extend({
     facetResponse: {} as FacetResponse,
     docCount: 0,
     collection: '',
+    embQuery: '',
   }),
   provide(this: any) {
     return {
@@ -85,9 +90,7 @@ export default Vue.extend({
         const select = `select(${search}, indexOf(author, "${author}") as ${idx})`;
         const sort = `sort(${select}, by="${idx} asc")`;
         const rollup = `rollup(${sort}, over="${idx}", count(*))`;
-        // console.log(rollup);
         const data: any = await this.$solr.pass_through_solr.get(`/${this.collection}/stream`, {expr: rollup});
-        console.log(data);
         result = data['result-set'].docs.slice(0, -1);
         if (this.$cy.controller) {
           this.$cy.controller.scratch.set(this.nodeid, scratchspace, result);
@@ -102,6 +105,7 @@ export default Vue.extend({
       const node = this.$cy.controller.getNodeById(this.nodeid);
       this.value = node.data('name');
       this.collection = node.data('collection');
+      this.embQuery = `author:"${this.value}"`;
       this.authorIndexGroup();
     },
   },
@@ -110,7 +114,7 @@ export default Vue.extend({
       this.update();
     },
   },
-  mounted() {
+  created() {
     this.update();
   },
 });

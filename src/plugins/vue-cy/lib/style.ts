@@ -20,9 +20,8 @@ const style: cytoscape.Stylesheet[] = [
   selector: 'edge',
   style: {
     'width': 3,
-    // 'curve-style': 'taxi',
+    'curve-style': 'taxi',
     'line-color': '#eee',
-    'line-opacity': 0.25,
     'target-distance-from-node': 6,
     'target-arrow-color': '#00c',
     'target-arrow-shape': 'triangle',
