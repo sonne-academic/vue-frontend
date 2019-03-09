@@ -1,5 +1,5 @@
 <template>
-  <details @toggle="open = $event.target.open">
+  <details ref='details' @toggle="open = $event.target.open">
     <summary>{{friendlyName}}</summary>
     <table v-if="items.length > 0">
       <tr v-for="data in items" :key="data.name" >
@@ -78,7 +78,7 @@ export default Vue.extend({
         .forEach(([key, arr]) => (this.items = [...gen_pairs(arr)]));
     },
     update() {
-      if (this.open) {
+      if (this.details.open) {
         this.getFacets();
       }
     },
@@ -95,14 +95,18 @@ export default Vue.extend({
           },
       };
     },
+    details(): HTMLDetailsElement {
+      return this.$refs.details as HTMLDetailsElement;
+    },
   },
   watch: {
     open() {this.update(); },
-    queryValue() {this.update(); },
-    queryField() {this.update(); },
-  },
-  mounted() {
-    this.open = false;
+    queryValue() {
+      this.details.open = false;
+    },
+    queryField() {
+      this.details.open = false;
+    },
   },
 });
 </script>
