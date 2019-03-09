@@ -1,12 +1,11 @@
 <template>
   <div>
     <img id="clear" src="/close.svg" @click="clear">
-    <!-- <svg id="save"><use href="/symbols.svg#save"/></svg> -->
-    <img id="save" src="/save.svg" @click="store">
     <textarea rows=10 cols=80 
     id="global-log" 
     readonly 
     title="log" 
+    :class="textclass"
     v-model="logText"></textarea>
   </div>
 </template>
@@ -27,6 +26,12 @@ export default Vue.extend({
     },
   },
   computed: {
+    textclass(): string {
+      if (this.logContent.length > 0) {
+        return '';
+      }
+      return 'empty';
+    },
     logContent(): string[] {
       return this.$store.getters.logContent;
     },
@@ -37,15 +42,6 @@ export default Vue.extend({
 });
 </script>
 <style scoped>
-#save {
-  position: absolute;
-  stroke-width: 1;
-  stroke: gray;
-  right: 2.5em;
-  top: 0.5em;
-  height: 1.5em;
-  width: 1.5em;
-}
 img {
   top: 0.5em;
   height: 1.5em;
@@ -57,5 +53,8 @@ img {
 }
 img:hover {
   opacity: 1;
+}
+.empty {
+  display: none;
 }
 </style>
