@@ -65,11 +65,15 @@ export default class CyController {
   private makeMid() {
     const c = this.activeNodes;
     const compoundId = c.map((node) => node.id()).join(';');
-    const parent = this.cy.add({
-      group: 'nodes',
-      data: new DataNodes.multi('IDUNNOLOL', compoundId),
-      classes: 'mid',
-    });
+    const data = new DataNodes.multi('IDUNNOLOL', compoundId);
+    if (this.cy.$id(data.id).length === 0) {
+      this.cy.add({
+        group: 'nodes',
+        data,
+        classes: 'mid',
+      });
+    }
+    const parent = this.cy.$id(data.id);
     c.forEach((node) => {this.addEdge(node.id(), parent.id()); });
     return parent;
   }
