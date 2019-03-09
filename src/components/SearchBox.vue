@@ -16,6 +16,7 @@
 import Vue from 'vue';
 
 import {CollectionSelect, AutoCompleteItems} from './util';
+import {DataNodes} from '@/plugins/vue-cy/nodes';
 interface HighlitedResult {
   id: string;
   value: string;
@@ -48,7 +49,7 @@ export default Vue.extend({
 
     submitSearch(query: string) {
       if (this.$cy.controller) {
-        this.$cy.controller.addSearch(query, this.collection);
+        this.$cy.controller.addActive(new DataNodes.search(query, this.collection));
       }
       this.query = '';
       this.count = 0;
