@@ -2,6 +2,7 @@ interface ModuleImport {default: any; }
 
 import cfg from './cfg';
 import CyController from '../controller';
+import {DataNodes} from '../nodes';
 
 export class Instance {
   private pinstance: Promise<cytoscape.Core>;
@@ -33,7 +34,7 @@ export class Instance {
             if (split.length === 2) {
               const collection = decodeURI(split[0]);
               const query = decodeURI(split[1]);
-              this.ctrl.addSearch(query, collection);
+              this.ctrl.addActive(new DataNodes.search(query, collection));
             }
           }
         } else {
