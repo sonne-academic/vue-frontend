@@ -35,7 +35,7 @@
 import Vue from 'vue';
 import {SimpleEmitter} from '../Emitters';
 import { DocCommon, DocS2 } from '@/plugins/vue-solr/lib/responses/SelectResponse';
-import EmbeddedSearch from './embSearch.vue';
+import {EmbeddedSearch} from '../Embed';
 export default Vue.extend({
   name: 'PaperDetails',
   components: {SimpleEmitter, EmbeddedSearch},
@@ -54,11 +54,6 @@ export default Vue.extend({
     embIn: '',
     embOut: '',
   }),
-  provide(this: any) {
-    return {
-      getContext: this.getContext,
-    };
-  },
   methods: {
     log(msg: string) {
       this.$store.dispatch('log', `[${name}-details] ${msg}`);

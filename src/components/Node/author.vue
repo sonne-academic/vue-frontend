@@ -39,7 +39,7 @@ interface AuthorIndex {
 import Vue from 'vue';
 import {FacetResponse, FacetFields} from '@/plugins/vue-solr/lib/responses/FacetResponse';
 import {SimpleEmitter, SimpleFacetBox} from '../Emitters';
-import EmbeddedSearch from './embSearch.vue';
+import {EmbeddedSearch} from '../Embed';
 
 export default Vue.extend({
   name: 'AuthorDetails',
@@ -67,11 +67,6 @@ export default Vue.extend({
     collection: '',
     embQuery: '',
   }),
-  provide(this: any) {
-    return {
-      getContext: this.getContext,
-    };
-  },
   methods: {
     clog(d: any) {
       console.log(d);
@@ -105,7 +100,7 @@ export default Vue.extend({
       const node = this.$cy.controller.getNodeById(this.nodeid);
       this.value = node.data('name');
       this.collection = node.data('collection');
-      this.embQuery = `author:"${this.value}"`;
+      this.embQuery = `${this.name}:"${this.value}"`;
       this.authorIndexGroup();
     },
   },

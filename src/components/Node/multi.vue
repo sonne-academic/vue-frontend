@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h1> <img src="/journal.svg"/> {{value}} </h1>
+    <h1> <img src="/lol.svg"/> {{query}} </h1>
     <details>
       <summary>Publications: {{docCount}}</summary>
-      <embedded-search :query="embQuery" :collection="collection" @numfound="docCount = $event"/>
+      <embedded-search :query="query" :collection="collection" @numfound="docCount = $event"/>
     </details>
 
     <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
@@ -19,39 +19,35 @@
 <script lang="ts">
 import Vue from 'vue';
 import {SimpleFacetBox} from '../Emitters';
-import EmbeddedSearch from './embSearch.vue';
+import {EmbeddedSearch} from '../Embed';
 export default Vue.extend({
-  name: 'JournalDetails',
+  name: 'MultiQuery',
   components: {SimpleFacetBox, EmbeddedSearch},
-  props: {
-    nodeid: {
-      required: true,
-      type: String,
-    },
-  },
   data: () => ({
-    facets: ['author', 'venue', 'year', 'keywords'],
-    friendlyNames: ['authors', 'venues', 'years', 'associated keywords'],
-    name: 'journal',
-    value: '',
+    facets: [],
+    friendlyNames: [],
+    query: '',
     docCount: 0,
     collection: '',
-    embQuery: '',
   }),
-  provide(this: any) {
-    return {
-      getContext: this.getContext,
-    };
+  props: {
+    nodeid: {
+      type: String,
+      required: true,
+    },
   },
   methods: {
     log(msg: string) {
       this.$store.dispatch('log', `[${name}-details] ${msg}`);
     },
     update() {
-      const node = this.$cy.controller.getNodeById(this.nodeid);
-      this.value = node.data('name');
-      this.collection = node.data('collection');
-      this.embQuery = `${this.name}:"${this.value}"`;
+      const nodes = this.$cy.controller.activeNodes;
+      this.collection = nodes.data('collection');
+      this.query = nodes.map((node) => {
+        const n = node.data('name');
+        const c = node.data('component');
+        return `${c}:"${n}"`;
+      }).join(' AND ');
     },
   },
   watch: {
