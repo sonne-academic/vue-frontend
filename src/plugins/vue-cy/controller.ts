@@ -1,6 +1,5 @@
-import { NodeData, uuidgen, NodeKind } from './nodes/base';
-import { FacetSearchData } from './nodes/facet';
-import {DataNodes as nodes} from './nodes';
+import { NodeData, uuidgen } from './nodes/base';
+import {DataNodes} from './nodes';
 
 interface LocalStore {version: number; elements: cytoscape.ElementDefinition; }
 
@@ -14,6 +13,18 @@ export default class CyController {
   }
   public get activeNodes(): cytoscape.CollectionReturnValue {
     return this.cy.$('node:selected');
+  }
+
+  private get singleActiveNode(): cytoscape.NodeSingular {
+    const node = this.activeNodes;
+    if (1 < node.length) {
+      return this.makeMid();
+      // throw new Error('cannot act on multiple nodes');
+    }
+    if (0 === node.length) {
+      throw new Error('No node selected');
+    }
+    return node;
   }
   private cy: cytoscape.Core;
   constructor(cy: cytoscape.Core) {
@@ -34,53 +45,37 @@ export default class CyController {
     return node;
   }
 
-  public addSearch(query: string, collection: string) {
-    this.addNodeActive(new nodes.search(query, collection));
-  }
-
   public saveGraph() {
     const data: any = this.cy.json();
     localStorage.setItem('graph', JSON.stringify({version: 1, elements: data.elements}));
   }
 
-  public emitPaper(collection: string, paperid: string, name: string) {
-    const node = this.activeNodes;
-    if (node.length !== 1) {
-      throw new Error('No active node to emit from');
-    }
-    const parent = node.id();
-    const child = this.addNode(new nodes.paper(collection, paperid, name));
-    this.addEdge(parent, child);
+  public addActive(data: NodeData) {
+    this.addNodeActive(data);
     this.layout();
   }
 
-  public emitFromActive(collection: string, field: string, value: string) {
-    const node = this.activeNodes;
-    if (node.length !== 1) {
-      throw new Error('No active node to emit from');
-    }
-    const parent = node.id();
-    this.addFacet(parent, collection, field, value);
-  }
-
-  private addFacet(parent: string, collection: string, field: string, value: string) {
-    const child = this.addNode(this.detailFactory(collection, field, value));
-    this.addEdge(parent, child);
+  public addLinkedToActive(data: NodeData) {
+    const parentNode = this.singleActiveNode;
+    const child = this.addNode(data);
+    this.addEdge(parentNode.id(), child);
     this.layout();
   }
 
+  private makeMid() {
+    const c = this.activeNodes;
+    const compoundId = c.map((node) => node.id()).join(';');
+    const parent = this.cy.add({
+      group: 'nodes',
+      data: new DataNodes.multi('IDUNNOLOL', compoundId),
+      classes: 'mid',
+    });
+    c.forEach((node) => {this.addEdge(node.id(), parent.id()); });
+    return parent;
+  }
   private layout() {
     this.cy.layout({name: 'dagre', rankDir: 'LR', nodeDimensionsIncludeLabels: true}).run();
     this.cy.center(this.activeNodes);
-  }
-
-  private detailFactory(collection: string, field: string, value: string): NodeData {
-    switch (field) {
-      case 'author': return new nodes.author(collection, value);
-      case 'journal': return new nodes.journal(collection, value);
-      case 'venue': return new nodes.venue(collection, value);
-      default: return new FacetSearchData(collection, field, value);
-    }
   }
 
   private addEdge(source: string, target: string) {
