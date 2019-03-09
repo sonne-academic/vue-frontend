@@ -4,6 +4,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import {simpleBuilder} from '@/plugins/vue-cy/nodes';
+import { NodeData, NodeKind } from '@/plugins/vue-cy/nodes/base';
 export default Vue.extend({
   name: 'SimpleEmitter',
   props: {
@@ -22,9 +24,7 @@ export default Vue.extend({
   },
   methods: {
     emit() {
-      if (this.$cy.controller) {
-        this.$cy.controller.emitFromActive(this.collection, this.field, this.name);
-      }
+      this.$cy.controller.addLinkedToActive(simpleBuilder(this.field, this.collection, this.name));
     },
   },
 });

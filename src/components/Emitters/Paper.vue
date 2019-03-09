@@ -4,6 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import {DataNodes} from '@/plugins/vue-cy/nodes';
 export default Vue.extend({
   name: 'PaperEmitter',
   props: {
@@ -23,8 +24,8 @@ export default Vue.extend({
   methods: {
     emit() {
       if (this.$cy.controller) {
-        this.$cy.controller.emitPaper(
-          this.collection, this.id, this.name);
+        const paper = new DataNodes.paper(this.collection, this.id, this.name);
+        this.$cy.controller.addLinkedToActive(paper);
       }
     },
   },
