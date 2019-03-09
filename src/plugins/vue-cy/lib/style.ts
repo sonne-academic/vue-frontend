@@ -9,6 +9,14 @@ const style: cytoscape.Stylesheet[] = [
 },
 ...styles,
 {
+  selector: '.mid',
+  style: {
+    width: 8,
+    height: 8,
+    label: '',
+  },
+},
+{
   selector: 'node:selected',
   style: {
     // 'border-color': '#e00',
