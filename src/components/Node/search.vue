@@ -1,5 +1,6 @@
 <template>
   <div name="search">
+    <h2>{{query}}</h2>
     <span v-if="0 !== pageCount">
       <input id="page-input" min="1" type="number" title="page"
         :max="pageCount"
@@ -12,7 +13,7 @@
       :key="doc.id"
       :collection="collection"
       />
-    <span v-if="searchInProgress.get(activePage)">searching...</span>
+    <spinner v-if="searchInProgress.get(activePage)"/>
     <span v-else-if="docs.length==0"> nothing (0 hits) </span>
 
   </div>
@@ -23,11 +24,11 @@
 import Vue from 'vue';
 
 import {SearchResult} from '../Emitters';
-import CollectionSelect from './CollectionSelect.vue';
+import spinner from '../util/spinner.vue';
 
 export default Vue.extend({
   name: 'SearchDetails',
-  components: { SearchResult },
+  components: { SearchResult, spinner },
   props: {
     nodeid: {
       type: String,
@@ -58,6 +59,7 @@ export default Vue.extend({
     },
     submitSearch() {
       this.pageDocs = new Map();
+      this.searchInProgress = new Map();
       this.currentPage = '1';
       // this.start = 0;
       this.numFound = 0;

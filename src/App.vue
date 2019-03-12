@@ -47,6 +47,7 @@ export default Vue.extend({
 <style>
 body {
   margin: 0;
+  background-color: white;
 }
 h1>img {
   height: 1em;
@@ -80,6 +81,7 @@ h1>img {
   background-color: white;
   overflow: auto;
   z-index: 1;
+  opacity: .95;
 }
 #cy {
   position: fixed;

@@ -3,11 +3,12 @@
     <summary>{{friendlyName}}</summary>
     <table v-if="items.length > 0">
       <tr v-for="data in items" :key="data.name" >
+        <td ><img id="neg" src="/negative.svg" @click="emitFilter(data.name)"/></td>
         <td><simple-emitter :collection="collection" :field="field" :name="data.name"/></td>
         <td class="right">{{data.count}}</td>
       </tr>
     </table>
-    <img v-else class="spinner" src="/spinner.svg"/>
+    <spinner v-else/>
   </details>
 
 </template>
@@ -31,9 +32,11 @@ function* gen_pairs(arr: any[]) {
 import Vue from 'vue';
 import { FacetResponse, FacetFields } from '@/plugins/vue-solr/lib/responses/FacetResponse';
 import SimpleEmitter from './Simple.vue';
+import spinner from '../util/spinner.vue';
+
 export default Vue.extend({
   name: 'SimpleFacetBox',
-  components: {SimpleEmitter},
+  components: {SimpleEmitter, spinner},
   props: {
     field: {
       type: String,
@@ -55,18 +58,22 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    filters: {
+      // type: string[],
+      default: new Array<string>(),
+    },
   },
   data: () => ({
     open: false,
     items: [] as Array<{name: string, count: number}>,
   }),
   methods: {
+    emitFilter(value: string) {
+      this.$emit('filter', `-(${this.field}:"${value}")`);
+    },
     async getFacets() {
-      const scratchspace = `_facets_${this.field}`;
-      const node = this.$cy.controller.activeNodes;
-      if (node.length !== 1) {
-        throw new Error('[SimpleFacetBox] cannot emit on multiple nodes');
-      }
+      const scratchspace = this.scratchspace;
+      const node = this.getNode();
       let result = node.scratch(scratchspace);
       if (!result) {
         const d: any = await this.$solr.select({collection: this.collection, payload: this.payload});
@@ -82,13 +89,29 @@ export default Vue.extend({
         this.getFacets();
       }
     },
+    getNode() {
+      const node = this.$cy.controller.activeNodes;
+      if (node.length !== 1) {
+        throw new Error('[SimpleFacetBox] cannot emit on multiple nodes');
+      }
+      return node;
+    },
+    resetScratch() {
+      const node = this.getNode();
+      node.removeScratch(this.scratchspace);
+    },
   },
   computed: {
+    scratchspace(): string {
+      return `_facets_${this.field}`;
+    },
     payload(): any {
+      let q = `${this.queryField}:"${this.queryValue}"`;
+      q += ' ' + this.filters.join(' ');
       return {
         params: {
           'debug': false,
-          'q': `${this.queryField}:"${this.queryValue}"`,
+          q,
           'facet': 'on',
           'rows': 0,
           'facet.field': this.field,
@@ -101,6 +124,10 @@ export default Vue.extend({
   },
   watch: {
     open() {this.update(); },
+    filters() {
+      this.resetScratch();
+      this.update();
+      },
     queryValue() {
       this.details.open = false;
     },
@@ -137,17 +164,10 @@ table {
   margin-left: 2em;
   max-width: 80%;
 }
-img.spinner {
-  height: 2em;
-  animation: spinner 1s linear infinite;
+#neg {
+  opacity: 0.25;
 }
-@keyframes spinner {
-    0% {
-        transform: rotate(0deg);
-    } 50% {
-        transform: rotate(0deg);
-    } 100% {
-        transform: rotate(180deg);
-    }
+#neg:hover {
+  opacity: 1;
 }
 </style>

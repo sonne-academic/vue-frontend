@@ -2,8 +2,16 @@
   <div>
     <h1> <img src="/author.svg"/> {{value}} </h1>
     <details>
+      <summary>Filters: {{filters.length}}</summary>
+      <div v-for="filter in filters" :key="filter"
+      @click="removeFilter(filter)">
+        {{filter}}
+      </div>
+    </details>
+    
+    <details>
       <summary>Publications: {{docCount}}</summary>
-      <embedded-search :query="embQuery" :collection="collection" @numfound="docCount = $event"/>
+      <embedded-search :filters="filters" :query="embQuery" :collection="collection" @numfound="docCount = $event"/>
     </details>
     <span>
       <details @toggle="clog($event.target.open)"> 
@@ -21,6 +29,8 @@
         :collection="collection" 
         :friendlyName="friendlyNames[index]"
         :queryValue="value"
+        @filter="doFilter"
+        :filters="filters"
       />
 
     </span>    
@@ -66,8 +76,17 @@ export default Vue.extend({
     docCount: 0,
     collection: '',
     embQuery: '',
+    filters: new Array<string>(),
   }),
   methods: {
+    removeFilter(name: string) {
+      this.filters = this.filters.filter((val) => val !== name);
+    },
+    doFilter(filter: string) {
+      this.filters.push(filter);
+      const node = this.$cy.controller.getNodeById(this.nodeid);
+      node.data('filters', this.filters);
+    },
     clog(d: any) {
       console.log(d);
     },
@@ -86,6 +105,8 @@ export default Vue.extend({
         const sort = `sort(${select}, by="${idx} asc")`;
         const rollup = `rollup(${sort}, over="${idx}", count(*))`;
         const data: any = await this.$solr.pass_through_solr.get(`/${this.collection}/stream`, {expr: rollup});
+        console.log(rollup);
+        console.log(data);
         result = data['result-set'].docs.slice(0, -1);
         if (this.$cy.controller) {
           this.$cy.controller.scratch.set(this.nodeid, scratchspace, result);
@@ -100,6 +121,12 @@ export default Vue.extend({
       const node = this.$cy.controller.getNodeById(this.nodeid);
       this.value = node.data('name');
       this.collection = node.data('collection');
+      const filters = node.data('filters');
+      if (filters) {
+        this.filters = filters;
+      } else {
+        this.filters = [];
+      }
       this.embQuery = `${this.name}:"${this.value}"`;
       this.authorIndexGroup();
     },

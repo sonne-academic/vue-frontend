@@ -61,6 +61,16 @@ export default class CyController {
     this.addEdge(parentNode.id(), child);
     this.layout();
   }
+  public layout() {
+    this.cy.layout({
+      name: 'dagre',
+      rankDir: 'LR',
+      nodeDimensionsIncludeLabels: true,
+      animate: 'end',
+      animationDuration: 250,
+    }).run();
+    // this.cy.one('layoutstop', () => (this.cy.center(this.activeNodes)));
+  }
 
   private makeMid() {
     const c = this.activeNodes;
@@ -76,10 +86,6 @@ export default class CyController {
     const parent = this.cy.$id(data.id);
     c.forEach((node) => {this.addEdge(node.id(), parent.id()); });
     return parent;
-  }
-  private layout() {
-    this.cy.layout({name: 'dagre', rankDir: 'LR', nodeDimensionsIncludeLabels: true}).run();
-    this.cy.center(this.activeNodes);
   }
 
   private addEdge(source: string, target: string) {

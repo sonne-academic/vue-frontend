@@ -13,11 +13,11 @@
     </span>
     <details v-if="doc.inCitations"> 
       <summary><strong>cited</strong> by {{doc.inCitations_count}} publications</summary>
-      <embedded-search class="emb" :query="embIn" :collection="collection"/>
+      <embedded-search :filters="filters" class="emb" :query="embIn" :collection="collection"/>
     </details>
     <details v-if="doc.outCitations"> 
       <summary><strong>cites</strong> {{doc.outCitations_count}} publications</summary>
-      <embedded-search class="emb" :query="embOut" :collection="collection"/>
+      <embedded-search :filters="filters" class="emb" :query="embOut" :collection="collection"/>
     </details>
     <a v-if="doc.doiUrl" :href="doc.doiUrl">DOI: {{doc.doi}}</a>
     <div v-for="url in urls" :key="url.host">
@@ -53,6 +53,7 @@ export default Vue.extend({
     paperid: '',
     embIn: '',
     embOut: '',
+    filters: [],
   }),
   methods: {
     log(msg: string) {

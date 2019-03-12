@@ -8,7 +8,7 @@ declare module 'cytoscape' {
   type LayoutExtensions = LayoutOptions|cd.DagreLayoutOptions;
   export interface Core {
     cxtmenu: (args: cm.MenuArgs) => cm.Destructor;
-    compoundDragAndDrop: (options: cdnd.CompoundOptions) => cdnd.CompundObject;
+    compoundDragAndDrop: (options?: cdnd.CompoundOptions) => cdnd.CompundObject;
   }
   // export interface CytoscapeOptions {
   //   layout?: LayoutOptions | cd.DagreLayoutOptions;

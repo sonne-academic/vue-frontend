@@ -1,9 +1,13 @@
 <template>
   <div>
-    <h1> <img src="/lol.svg"/> {{query}} </h1>
+    <h1> <img src="/multi.svg"/> {{query}} </h1>
     <details>
       <summary>Publications: {{docCount}}</summary>
-      <embedded-search :query="query" :collection="collection" @numfound="docCount = $event"/>
+      <embedded-search 
+        :query="query" 
+        :collection="collection" 
+        @numfound="docCount = $event"
+        :filters="filters"/>
     </details>
 
     <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
@@ -11,7 +15,8 @@
       :queryField="name"
       :collection="collection" 
       :friendlyName="friendlyNames[index]"
-      :queryValue="value"
+      :queryValue="query"
+      :filters="filters"
     />
   </div>
 </template>
@@ -29,6 +34,7 @@ export default Vue.extend({
     query: '',
     docCount: 0,
     collection: '',
+    filters: [],
   }),
   props: {
     nodeid: {
@@ -41,13 +47,17 @@ export default Vue.extend({
       this.$store.dispatch('log', `[${name}-details] ${msg}`);
     },
     update() {
+      const allowed = ['venue', 'journal', 'keywords', 'author'];
       const nodes = this.$cy.controller.activeNodes;
       this.collection = nodes.data('collection');
       this.query = nodes.map((node) => {
         const n = node.data('name');
         const c = node.data('component');
-        return `${c}:"${n}"`;
-      }).join(' AND ');
+        if (0 > allowed.indexOf(c)) {
+          return '';
+        }
+        return `+(${c}:"${n}")`;
+      }).join(' ');
     },
   },
   watch: {

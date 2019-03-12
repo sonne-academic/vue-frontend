@@ -12,7 +12,7 @@
       :key="doc.id"
       :collection="collection"
       />
-    <span v-if="searchInProgress.get(activePage)">searching...</span>
+    <spinner v-if="searchInProgress.get(activePage)"/>
     <span v-else-if="docs.length==0"> nothing (0 hits) </span>
 
   </div>
@@ -23,9 +23,10 @@
 import Vue from 'vue';
 
 import {SearchResult} from '../Emitters';
+import spinner from '../util/spinner.vue';
 export default Vue.extend({
   name: 'EmbeddedSearch',
-  components: { SearchResult },
+  components: { SearchResult, spinner },
   props: {
     query: {
       type: String,
@@ -34,6 +35,11 @@ export default Vue.extend({
     collection: {
       type: String,
       required: true,
+    },
+    filters: {
+      // type: String,
+      required: true,
+      default: new Array<string>(),
     },
   },
   data() {
@@ -58,6 +64,7 @@ export default Vue.extend({
     },
     submitSearch() {
       this.pageDocs = new Map();
+      this.searchInProgress = new Map();
       this.currentPage = '1';
       // this.start = 0;
       this.numFound = 0;
@@ -67,10 +74,9 @@ export default Vue.extend({
       const start = (page - 1) * this.rows;
       this.searchInProgress.set(page, true);
       const payload = {params: {
-        q: this.query,
+        q: this.query + ' ' + this.filters.join(' '),
         rows: this.rows,
         start,
-        // 'omitHeader': 'true',
         sort: `year ${this.sortdir}`}};
       this.$solr.select({collection: this.collection, payload})
         .then((d: any) => {
@@ -117,6 +123,9 @@ export default Vue.extend({
     },
   },
   watch: {
+    filters() {
+      this.update();
+    },
     query() {
       this.update();
     },

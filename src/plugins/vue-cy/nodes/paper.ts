@@ -1,4 +1,5 @@
 import {NodeData, NodeKind} from './base';
+
 const kind = NodeKind.PAPER;
 const selector = `node[component="${kind}"]`;
 const style: cytoscape.Stylesheet = {

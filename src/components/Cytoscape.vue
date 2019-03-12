@@ -1,6 +1,7 @@
 <template>
 <div>
-    <img id="save" src="/save.svg" title="save to localStorage" @click="save">
+    <img class="cybtn" id="save" src="/save.svg" title="save to localStorage" @click="save">
+    <img class="cybtn" id="layout" src="/layout.svg" title="do layout" @click="layout">
     <div class="cy" ref="cy"/>
 </div>
 </template>
@@ -17,6 +18,9 @@ export default Vue.extend({
   methods: {
     save() {
       this.$cy.controller.saveGraph();
+    },
+    layout() {
+      this.$cy.controller.layout();
     },
     maybeEmit(ev: cytoscape.EventObject) {
       const c = ev.cy.$('node:selected');
@@ -48,13 +52,12 @@ export default Vue.extend({
       // cy.compoundDragAndDrop();
       cy.mount(r.cy as Element);
       this.nodeMenu = cy.cxtmenu({
-        selector: 'node',
+        selector: 'node, edge',
         openMenuEvents: 'cxttapstart taphold',
         commands: [
           {
             content: 'remove',
             select(ele) {
-              console.log( ele.id() );
               ele.unselect();
               ele.remove();
             },
@@ -98,19 +101,22 @@ export default Vue.extend({
   width: 100%;
   height: 100%;
 }
-#save {
+.cybtn {
   position: absolute;
-  stroke-width: 1;
-  stroke: gray;
   right: 0.5em;
-  top: 0.5em;
   height: 1.5em;
   width: 1.5em;
   opacity: 0.25;
-  background-color: white;
   z-index: 1;
 }
-#save:hover {
+.cybtn:hover {
   opacity: 1;
+  border: solid 1px red;
+}
+#save {
+  top: 0.5em;
+}
+#layout {
+  top: 2.5em;
 }
 </style>
