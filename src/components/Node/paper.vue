@@ -13,11 +13,11 @@
     </span>
     <details v-if="doc.cited_by"> 
       <summary><strong>cited by</strong> {{doc.cited_by_count}} publications</summary>
-      <embedded-search :filters="filters" class="emb" :query="q_cited_by" :collection="collection"/>
+      <embedded-search :filters="filters" class="emb" :query="q_references" :collection="collection"/>
     </details>
     <details v-if="doc.references"> 
       <summary><strong>cites</strong> {{doc.references_count}} publications</summary>
-      <embedded-search :filters="filters" class="emb" :query="q_references" :collection="collection"/>
+      <embedded-search :filters="filters" class="emb" :query="q_cited_by" :collection="collection"/>
     </details>
     <a v-if="doc.doiUrl" :href="doc.doiUrl">DOI: {{doc.doi}}</a>
     <div v-for="url in urls" :key="url.host">
