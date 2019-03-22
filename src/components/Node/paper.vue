@@ -12,12 +12,12 @@
       <span v-if="index+1 < doc.author.length">, </span>
     </span>
     <details v-if="doc.cited_by"> 
-      <summary><strong>cited</strong> by {{doc.cited_by_count}} publications</summary>
-      <embedded-search :filters="filters" class="emb" :query="embIn" :collection="collection"/>
+      <summary><strong>cited by</strong> {{doc.cited_by_count}} publications</summary>
+      <embedded-search :filters="filters" class="emb" :query="q_cited_by" :collection="collection"/>
     </details>
     <details v-if="doc.references"> 
       <summary><strong>cites</strong> {{doc.references_count}} publications</summary>
-      <embedded-search :filters="filters" class="emb" :query="embOut" :collection="collection"/>
+      <embedded-search :filters="filters" class="emb" :query="q_references" :collection="collection"/>
     </details>
     <a v-if="doc.doiUrl" :href="doc.doiUrl">DOI: {{doc.doi}}</a>
     <div v-for="url in urls" :key="url.host">
@@ -51,8 +51,8 @@ export default Vue.extend({
     collection: '',
     doc: {} as DocCommon,
     paperid: '',
-    embIn: '',
-    embOut: '',
+    q_cited_by: '',
+    q_references: '',
     filters: [],
   }),
   methods: {
@@ -64,8 +64,8 @@ export default Vue.extend({
       this.title = node.data('name');
       this.collection = node.data('collection');
       this.paperid = node.data('pid');
-      this.embIn = `cited_by:${this.paperid}`;
-      this.embOut = `references:${this.paperid}`;
+      this.q_cited_by = `cited_by:${this.paperid}`;
+      this.q_references = `references:${this.paperid}`;
       const response = await this.$solr.get(this.collection, this.paperid);
       this.doc = response.doc as DocCommon;
 
