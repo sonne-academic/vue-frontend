@@ -10,8 +10,8 @@
       <simple-emitter :collection="collection" field="author" :name="author"/>
       <span v-if="index+1 < doc.author.length">, </span>
     </span>
-    <div v-if="doc.inCitations"> 
-      <strong>cited: </strong>{{doc.inCitations_count}}
+    <div v-if="doc.cited_by"> 
+      <strong>cited: </strong>{{doc.cited_by_count}}
     </div>
   </div>
 </template>

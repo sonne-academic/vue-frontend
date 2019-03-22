@@ -9,11 +9,13 @@
 <script lang="ts">
 import Vue from 'vue';
 const activeComponents = ['search-results'];
+type evl = (ev: KeyboardEvent) => void;
 export default Vue.extend({
   data: () => ({
     nodeMenu: {destroy: () => {return; }},
     coreMenu: {destroy: () => {return; }},
     cdnd: {enable: () => {return; }, disable: () => {return; }, destroy: () => {return; }},
+    listener: null as evl|null,
   }),
   methods: {
     save() {
@@ -45,6 +47,25 @@ export default Vue.extend({
         this.$emit('setactive', {component: 'multi', id: q});
       }
     },
+    keypress(ev: KeyboardEvent) {
+      if ('Escape' === ev.key) {
+        this.$cy.instance.then((cy) => {
+          cy.$(':selected').unselect();
+        });
+      } else if ('Delete' === ev.key) {
+        this.$cy.instance.then((cy) => {
+          cy.$(':selected').remove();
+        });
+      } else {
+        // console.log(ev);
+      }
+    },
+  },
+  created() {
+    if (!this.listener) {
+      this.listener = (ev) => this.keypress(ev);
+    }
+    window.addEventListener('keyup', this.listener);
   },
   mounted() {
     const r = this.$refs;
@@ -62,19 +83,10 @@ export default Vue.extend({
               ele.remove();
             },
           },
-
           {
-            content: 'size',
+            content: 'log\ndata in\nconsole',
             select(ele) {
-              console.log( ele );
-            },
-            enabled: true,
-          },
-
-          {
-            content: 'Text',
-            select(ele) {
-              console.log( ele.position() );
+              console.log( ele.data() );
             },
           },
         ],
@@ -85,6 +97,9 @@ export default Vue.extend({
     });
   },
   beforeDestroy() {
+    if (this.listener) {
+      window.removeEventListener('keyup', this.listener);
+    }
     this.$cy.instance.then((cy) => {
       cy.off('select');
       cy.off('unselect');

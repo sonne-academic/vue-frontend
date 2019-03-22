@@ -48,6 +48,7 @@ export default Vue.extend({
   },
   data: () => ({
     active: true,
+    response: {} as any,
   }),
   methods: {
     log(content: any) {
@@ -83,11 +84,12 @@ export default Vue.extend({
       };
       const d: any = await this.$solr.pass_through_solr.get(this.endpoint, payload);
       const response = d as COMP.CompletionResponse<COMP.Title>;
+      this.response = response;
       const endsWithNgram = ([k, v]: [string, any]) => k.endsWith('ngram');
       const thing: HighlitedResult[] = Object
         .entries(response.highlighting)
         .flatMap(([id, entry]) => Object.entries(entry)
-          .filter(endsWithNgram).map(([k, value]) => ({id, value})));
+          .filter(endsWithNgram).map(([k, value]) => ({id, value: value[0]})));
       this.autocomplete(response.response.numFound, thing);
     },
     db: debounce(function(this: any, e: string) {

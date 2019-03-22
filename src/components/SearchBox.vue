@@ -7,7 +7,7 @@
       @enter="submitSearch"/>
       <collection-select id="select" @change="collection = $event"/>
       <span id="count" v-if="count">hits: {{count}}</span>
-      <auto-complete-items class="auto-items" :results="highlights"/>
+      <auto-complete-items @clicked="submitPaper" class="auto-items" :results="highlights"/>
   </div>
 
 </template>
@@ -48,9 +48,12 @@ export default Vue.extend({
     },
 
     submitSearch(query: string) {
-      if (this.$cy.controller) {
-        this.$cy.controller.addActive(new DataNodes.search(query, this.collection));
-      }
+      this.$cy.controller.addActive(new DataNodes.search(query, this.collection));
+      this.query = '';
+      this.count = 0;
+    },
+    submitPaper(id: string) {
+      this.$cy.controller.addActive(new DataNodes.paper(this.collection, id, 'wat'));
       this.query = '';
       this.count = 0;
     },

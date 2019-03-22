@@ -23,7 +23,7 @@ export default Vue.extend({
   },
   methods: {
     clicked(key: string) {
-      console.log(key);
+      this.$emit('clicked', key);
     },
   },
 });

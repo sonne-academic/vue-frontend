@@ -38,7 +38,7 @@ export default Vue.extend({
   data() {
     return {
       activesort: 'year desc',
-      sortby: ['year desc', 'outCitations_count desc'],
+      sortby: ['year desc', 'cited_by_count desc'],
       sortdir: 'desc',
       sortdirs: ['desc', 'asc'],
       collection: '',

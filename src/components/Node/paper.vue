@@ -11,12 +11,12 @@
       <simple-emitter :collection="collection" field="author" :name="author"/>
       <span v-if="index+1 < doc.author.length">, </span>
     </span>
-    <details v-if="doc.inCitations"> 
-      <summary><strong>cited</strong> by {{doc.inCitations_count}} publications</summary>
+    <details v-if="doc.cited_by"> 
+      <summary><strong>cited</strong> by {{doc.cited_by_count}} publications</summary>
       <embedded-search :filters="filters" class="emb" :query="embIn" :collection="collection"/>
     </details>
-    <details v-if="doc.outCitations"> 
-      <summary><strong>cites</strong> {{doc.outCitations_count}} publications</summary>
+    <details v-if="doc.references"> 
+      <summary><strong>cites</strong> {{doc.references_count}} publications</summary>
       <embedded-search :filters="filters" class="emb" :query="embOut" :collection="collection"/>
     </details>
     <a v-if="doc.doiUrl" :href="doc.doiUrl">DOI: {{doc.doi}}</a>
@@ -64,8 +64,8 @@ export default Vue.extend({
       this.title = node.data('name');
       this.collection = node.data('collection');
       this.paperid = node.data('pid');
-      this.embIn = `outCitations:${this.paperid}`;
-      this.embOut = `inCitations:${this.paperid}`;
+      this.embIn = `cited_by:${this.paperid}`;
+      this.embOut = `references:${this.paperid}`;
       const response = await this.$solr.get(this.collection, this.paperid);
       this.doc = response.doc as DocCommon;
 
