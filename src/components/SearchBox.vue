@@ -8,6 +8,7 @@
       <collection-select id="select" @change="collection = $event"/>
       <span id="count" v-if="count">hits: {{count}}</span>
       <auto-complete-items @clicked="submitPaper" class="auto-items" :results="highlights"/>
+      <img v-if="highlights.length" @click="clear" id="close" src="/close.svg"/>
   </div>
 
 </template>
@@ -42,6 +43,9 @@ export default Vue.extend({
     log(content: any) {
       this.$store.dispatch('log', content);
     },
+    clear() {
+      this.highlights = new Array<HighlitedResult>();
+    },
     completion(cmp: {count: number, result: HighlitedResult[]}) {
       this.highlights = cmp.result;
       this.count = cmp.count;
@@ -52,8 +56,9 @@ export default Vue.extend({
       this.query = '';
       this.count = 0;
     },
-    submitPaper(id: string) {
-      this.$cy.controller.addActive(new DataNodes.paper(this.collection, id, 'wat'));
+    async submitPaper(id: string) {
+      const paper = await this.$solr.get(this.collection, id);
+      this.$cy.controller.addActive(new DataNodes.paper(this.collection, id, paper.doc.title || 'wat'));
       this.query = '';
       this.count = 0;
     },
@@ -85,5 +90,11 @@ export default Vue.extend({
   position: absolute;
   border-color: #ccc;
   border-width: 1px;
+}
+#close {
+  top: 2em;
+  height: 2em;
+  width: 2em;
+  position: absolute;
 }
 </style>
