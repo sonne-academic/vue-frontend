@@ -88,8 +88,7 @@ export interface DocDBLP extends DocCommon {
   // informal encyclopedia disambiguation "informal withdrawn" habil withdrawn data software group edited noshow
   publtype?: string;
   // enum article inproceedings proceedings book incollection phdthesis mastersthesis www person data
-  pub_type?: string;
-  pub_type_str?: string;
+  doc_type: string;
   id_ancestor?: string;
   id_descendent?: string;
   booktitle_lower?: string[];
