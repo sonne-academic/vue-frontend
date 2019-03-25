@@ -73,6 +73,9 @@ export default class CyController {
     this.cy.zoomingEnabled(true);
     // this.cy.one('layoutstop', () => (this.cy.center(this.activeNodes)));
   }
+  public fit() {
+    this.cy.fit();
+  }
 
   private makeMid() {
     const c = this.activeNodes;

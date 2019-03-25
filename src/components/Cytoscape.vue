@@ -2,6 +2,7 @@
 <div>
     <img class="cybtn" id="save" src="/save.svg" title="save to localStorage" @click="save">
     <img class="cybtn" id="layout" src="/layout.svg" title="do layout" @click="layout">
+    <img class="cybtn" id="fit" src="/fit.svg" title="do layout" @click="fit">
     <div class="cy" ref="cy"/>
 </div>
 </template>
@@ -23,6 +24,9 @@ export default Vue.extend({
     },
     layout() {
       this.$cy.controller.layout();
+    },
+    fit() {
+      this.$cy.controller.fit();
     },
     maybeEmit(ev: cytoscape.EventObject) {
       const c = ev.cy.$('node:selected');
@@ -133,5 +137,8 @@ export default Vue.extend({
 }
 #layout {
   top: 2.5em;
+}
+#fit {
+  top: 4.5em;
 }
 </style>
