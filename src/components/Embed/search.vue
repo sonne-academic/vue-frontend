@@ -85,7 +85,7 @@ export default Vue.extend({
           .split(' ').filter((s) => s.length >= 2)
           .map((s) => `+(suggest_ngram:${s} | (suggest_lower:${s})^10.0)`);
         payload.params.q += ' ' + flt.join(' ');
-        console.log(payload.params.q);
+        // console.log(payload.params.q);
       }
       this.$solr.select({collection: this.collection, payload})
         .then((d: any) => {
