@@ -1,3 +1,3 @@
 import EmbeddedSearch from './search.vue';
-
-export {EmbeddedSearch};
+import LaTeXFormatter from './biblatex.vue';
+export {EmbeddedSearch, LaTeXFormatter};

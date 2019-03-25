@@ -5,6 +5,7 @@
       <i v-if="doc.journal"><simple-emitter :collection="collection" field="journal" :name="doc.journal"/></i>
       <i v-else-if="doc.venue"><simple-emitter :collection="collection" field="venue" :name="doc.venue"/></i>
       <i v-else-if="doc.booktitle"><simple-emitter :collection="collection" field="booktitle" :name="doc.booktitle"/></i>
+      <i v-if="doc.doc_type">({{doc.doc_type}})</i>
     </div>
     <strong>{{doc.year}}</strong> - 
     <span v-for="(author, index) in doc.author" :key="author">
@@ -27,18 +28,21 @@
       <strong>Abstract: </strong>
       <i>{{doc.paperAbstract}}</i>
     </div>
-    
+    <details open>
+      <summary> biblatex </summary>
+      <la-te-x-formatter :doc="doc" :collection="collection"/>
+    </details>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import {SimpleEmitter} from '../Emitters';
-import { DocCommon, DocS2 } from '@/plugins/vue-solr/lib/responses/SelectResponse';
-import {EmbeddedSearch} from '../Embed';
+import { DocCommon, DocS2, DocDBLP } from '@/plugins/vue-solr/lib/responses/SelectResponse';
+import {EmbeddedSearch, LaTeXFormatter} from '../Embed';
 export default Vue.extend({
   name: 'PaperDetails',
-  components: {SimpleEmitter, EmbeddedSearch},
+  components: {SimpleEmitter, EmbeddedSearch, LaTeXFormatter},
   props: {
     nodeid: {
       required: true,
@@ -64,11 +68,11 @@ export default Vue.extend({
       this.title = node.data('name');
       this.collection = node.data('collection');
       this.paperid = node.data('pid');
-      this.q_cited_by = `+(cited_by:${this.paperid})`;
-      this.q_references = `+(references:${this.paperid})`;
       const response = await this.$solr.get(this.collection, this.paperid);
       this.doc = response.doc as DocCommon;
-
+      this.q_cited_by = `+(cited_by:${this.paperid})`;
+      this.q_references = `+(references:${this.paperid})`;
+      this.$cy.controller.scratch.set(node.id(), '_paper_data', response.doc);
     },
   },
   watch: {
@@ -83,6 +87,21 @@ export default Vue.extend({
         const d = this.doc as DocS2;
         if (d.pdfUrls) {
           urls.push(...d.pdfUrls.map((inp: string) => new URL(inp)));
+        }
+      }
+      if ('dblp' === this.collection) {
+        const d = this.doc as DocDBLP;
+        if (d.ee) {
+          urls.push(...d.ee.map((inp) => new URL(inp)));
+        }
+        if (d.url) {
+          urls.push(...d.url.map((inp) => {
+            if (inp.startsWith('http')) {
+              return new URL(inp);
+            } else {
+              return new URL('https://dblp.org/' + inp);
+            }
+          }));
         }
       }
       for (const url of urls) {
