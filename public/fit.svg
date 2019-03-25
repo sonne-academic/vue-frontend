@@ -2,4 +2,10 @@
  <path d="m0 9v3h3z"/>
  <path d="m11 0h3v3z"/>
  <path d="m1 8 3 3h9v-7l-3-3h-9z" fill="none" stroke="#000" stroke-linejoin="round"/>
+ <g>
+  <circle cx="4" cy="4" r="1"/>
+  <circle cx="6" cy="8" r="1"/>
+  <circle cx="9" cy="5" r="1"/>
+ </g>
+ <path d="m4 4 2 4 3-3" fill="none" stroke="#000"/>
 </svg>

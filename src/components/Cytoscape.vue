@@ -2,7 +2,8 @@
 <div>
     <img class="cybtn" id="save" src="/save.svg" title="save to localStorage" @click="save">
     <img class="cybtn" id="layout" src="/layout.svg" title="do layout" @click="layout">
-    <img class="cybtn" id="fit" src="/fit.svg" title="do layout" @click="fit">
+    <img class="cybtn" id="fit" src="/fit.svg" title="fit graph to window" @click="fit">
+    <img class="cybtn" id="rstzoom" src="/reset_zoom.svg" title="reset zoom" @click="reset_zoom">
     <div class="cy" ref="cy"/>
 </div>
 </template>
@@ -27,6 +28,9 @@ export default Vue.extend({
     },
     fit() {
       this.$cy.controller.fit();
+    },
+    reset_zoom() {
+      this.$cy.controller.reset_zoom();
     },
     maybeEmit(ev: cytoscape.EventObject) {
       const c = ev.cy.$('node:selected');
@@ -140,5 +144,8 @@ export default Vue.extend({
 }
 #fit {
   top: 4.5em;
+}
+#rstzoom {
+  top: 6.5em;
 }
 </style>

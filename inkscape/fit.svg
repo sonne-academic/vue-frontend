@@ -75,4 +75,27 @@
      id="path4761"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="ccccccc" />
+  <circle
+     style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00157475;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path4820"
+     cx="4"
+     cy="4"
+     r="1" />
+  <circle
+     style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00157475;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path4822"
+     cx="6"
+     cy="8"
+     r="1" />
+  <circle
+     style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00157475;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path4824"
+     cx="9"
+     cy="5"
+     r="1" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="M 4,4 6,8 9,5"
+     id="path4830"
+     inkscape:connector-curvature="0" />
 </svg>

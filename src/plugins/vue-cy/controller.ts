@@ -76,6 +76,9 @@ export default class CyController {
   public fit() {
     this.cy.fit();
   }
+  public reset_zoom() {
+    this.cy.zoom(1);
+  }
 
   private makeMid() {
     const c = this.activeNodes;
