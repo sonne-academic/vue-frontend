@@ -97,6 +97,12 @@ export default Vue.extend({
               console.log( ele.data() );
             },
           },
+          {
+            content: 'log\nscratch in\nconsole',
+            select(ele) {
+              console.log( ele.scratch() );
+            },
+          },
         ],
       });
       cy.on('select', (ev) => {this.maybeEmit(ev); });
