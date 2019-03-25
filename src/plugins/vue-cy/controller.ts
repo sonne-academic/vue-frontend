@@ -62,6 +62,7 @@ export default class CyController {
     this.layout();
   }
   public layout() {
+    this.cy.zoomingEnabled(false);
     this.cy.layout({
       name: 'dagre',
       rankDir: 'LR',
@@ -69,6 +70,7 @@ export default class CyController {
       animate: 'end',
       animationDuration: 250,
     }).run();
+    this.cy.zoomingEnabled(true);
     // this.cy.one('layoutstop', () => (this.cy.center(this.activeNodes)));
   }
 
