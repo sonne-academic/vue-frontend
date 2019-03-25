@@ -1,5 +1,6 @@
 <template>
   <div>
+    <input id="filter-input" type="text" v-model="q_filter" placeholder="filter harder"/>
     <span v-if="0 !== pageCount">
       <input id="page-input" min="1" type="number" title="page"
         :max="pageCount"
@@ -56,6 +57,7 @@ export default Vue.extend({
       currentPage: '1',
       numFound: 0,
       rows: 10,
+      q_filter: '',
     };
   },
   methods: {
@@ -78,6 +80,13 @@ export default Vue.extend({
         rows: this.rows,
         start,
         sort: `year ${this.sortdir}`}};
+      if (this.q_filter) {
+        const flt = this.q_filter
+          .split(' ').filter((s) => s !== '')
+          .map((s) => `+(suggest_ngram:${s} | (suggest_lower:${s})^10.0)`);
+        payload.params.q += ' ' + flt.join(' ');
+        console.log(payload.params.q);
+      }
       this.$solr.select({collection: this.collection, payload})
         .then((d: any) => {
           this.result = d;
@@ -127,6 +136,9 @@ export default Vue.extend({
       this.update();
     },
     query() {
+      this.update();
+    },
+    q_filter() {
       this.update();
     },
     currentPage() {

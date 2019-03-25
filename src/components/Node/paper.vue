@@ -64,8 +64,8 @@ export default Vue.extend({
       this.title = node.data('name');
       this.collection = node.data('collection');
       this.paperid = node.data('pid');
-      this.q_cited_by = `cited_by:${this.paperid}`;
-      this.q_references = `references:${this.paperid}`;
+      this.q_cited_by = `+(cited_by:${this.paperid})`;
+      this.q_references = `+(references:${this.paperid})`;
       const response = await this.$solr.get(this.collection, this.paperid);
       this.doc = response.doc as DocCommon;
 

@@ -127,7 +127,7 @@ export default Vue.extend({
       } else {
         this.filters = [];
       }
-      this.embQuery = `${this.name}:"${this.value}"`;
+      this.embQuery = `+(${this.name}:"${this.value}")`;
       this.authorIndexGroup();
     },
   },

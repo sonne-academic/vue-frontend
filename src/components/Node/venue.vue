@@ -45,7 +45,7 @@ export default Vue.extend({
       const node = this.$cy.controller.getNodeById(this.nodeid);
       this.value = node.data('name');
       this.collection = node.data('collection');
-      this.embQuery = `${this.name}:"${this.value}"`;
+      this.embQuery = `+(${this.name}:"${this.value}")`;
     },
   },
   watch: {
