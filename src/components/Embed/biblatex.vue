@@ -5,9 +5,10 @@
     <div>author=<span>{</span>{{author}}<span>}</span>,</div>
     <div v-if="journaltitle">journaltitle={{journaltitle}},</div>
     <div>year={{year}},</div>
-    <div>pages={{pages}},</div>
+    <div v-if="pages">pages={{pages}},</div>
     <div v-if="doi">doi={{doi}},</div>
     <div v-if="booktitle">booktitle={{booktitle}},</div>
+    <div v-if="volume">volume={{volume}},</div>
     <div>}</div>
   </div>
 </template>
@@ -46,13 +47,27 @@ export default Vue.extend({
         }
         return 'UNKNOWN';
       }
+      if (MAG === this.collection) {
+        switch (this.doc.doc_type) {
+          case 'Journal': return 'article';
+          case 'Patent': return 'patent';
+          case 'Conference': return 'inproceedings';
+          case 'BookChapter': return 'inbook';
+          case 'Book': return 'book';
+          case 'Dataset': return 'online';
+          default: return 'NOMATCH:MAG';
+        }
+      }
       return `no rule for ${this.collection}`;
     },
     id(): string {
       return `${this.collection}:${this.doc.id}`;
     },
     author(): string {
-      return this.doc.author.join(' and ');
+      if (this.doc.author) {
+        return this.doc.author.join(' and ');
+      }
+      return '';
     },
     journaltitle(): string {
       if (this.kind !== 'article') {
@@ -61,7 +76,7 @@ export default Vue.extend({
       if (DBLP === this.collection) {
         return quoted(this.doc.journal);
       }
-      if (S2 === this.collection) {
+      if (S2 === this.collection || MAG === this.collection) {
         if (this.doc.journal) {
           return quoted(this.doc.journal);
         }
@@ -77,7 +92,21 @@ export default Vue.extend({
         return quoted(this.doc.pages[0]);
       }
       if (S2 === this.collection) {
-        return quoted(this.doc.pages);
+        if (this.doc.pages) {
+          return quoted(this.doc.pages);
+        }
+        return '';
+      }
+      if (MAG === this.collection) {
+        let page = '';
+        if (this.doc.firstpage) {
+          page += this.doc.firstpage;
+          if (this.doc.lastpage) {
+            page += '-' + this.doc.lastpage;
+          }
+          return quoted(page);
+        }
+        return '';
       }
       return `no rule for ${this.collection}`;
     },
@@ -112,7 +141,7 @@ export default Vue.extend({
           return '';
         }
       }
-      if (S2 === this.collection) {
+      if (S2 === this.collection || MAG === this.collection) {
         if (this.doc.doi) {
           return quoted(this.doc.doi);
         }
@@ -121,8 +150,11 @@ export default Vue.extend({
       return `no rule for ${this.collection}`;
     },
     volume(): string {
-      if (S2 === this.collection) {
-        return this.doc.volume;
+      if (S2 === this.collection || MAG === this.collection) {
+        if (this.doc.volume) {
+          return quoted(this.doc.volume);
+        }
+        return '';
       }
       return `no rule for ${this.collection}`;
     },
