@@ -5,7 +5,7 @@ import solr from './plugins/vue-solr/plugin';
 import cy from './plugins/vue-cy/plugin';
 
 Vue.use(solr, {
-  collections: ['s2', 'dblp'],
+  collections: ['s2', 'dblp', 'mag'],
 });
 Vue.use(cy);
 

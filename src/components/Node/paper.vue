@@ -12,13 +12,17 @@
       <simple-emitter :collection="collection" field="author" :name="author"/>
       <span v-if="index+1 < doc.author.length">, </span>
     </span>
-    <details v-if="doc.cited_by"> 
+    <details v-if="doc.cited_by_count"> 
       <summary><strong>cited by</strong> {{doc.cited_by_count}} publications</summary>
       <embedded-search :filters="filters" class="emb" :query="q_references" :collection="collection"/>
     </details>
-    <details v-if="doc.references"> 
+    <details v-if="doc.references_count && collection === 's2'"> 
       <summary><strong>cites</strong> {{doc.references_count}} publications</summary>
       <embedded-search :filters="filters" class="emb" :query="q_cited_by" :collection="collection"/>
+    </details>
+    <details v-if="doc.references_count && collection === 'mag'"> 
+      <summary><strong>cites</strong> {{doc.references_count}} publications</summary>
+      <sub-query-search :filters="filters" class="emb" :query="q_subq" subquery="{!terms f=id v=$row.references}" :collection="collection"/>
     </details>
     <a v-if="doc.doiUrl" :href="doc.doiUrl">DOI: {{doc.doi}}</a>
     <div v-for="url in urls" :key="url.host">
@@ -39,10 +43,10 @@
 import Vue from 'vue';
 import {SimpleEmitter} from '../Emitters';
 import { DocCommon, DocS2, DocDBLP } from '@/plugins/vue-solr/lib/responses/SelectResponse';
-import {EmbeddedSearch, LaTeXFormatter} from '../Embed';
+import {EmbeddedSearch, LaTeXFormatter, SubQuerySearch} from '../Embed';
 export default Vue.extend({
   name: 'PaperDetails',
-  components: {SimpleEmitter, EmbeddedSearch, LaTeXFormatter},
+  components: {SimpleEmitter, EmbeddedSearch, LaTeXFormatter, SubQuerySearch},
   props: {
     nodeid: {
       required: true,
@@ -57,6 +61,7 @@ export default Vue.extend({
     paperid: '',
     q_cited_by: '',
     q_references: '',
+    q_subq: '',
     filters: [],
   }),
   methods: {
@@ -72,6 +77,7 @@ export default Vue.extend({
       this.doc = response.doc as DocCommon;
       this.q_cited_by = `+(cited_by:${this.paperid})`;
       this.q_references = `+(references:${this.paperid})`;
+      this.q_subq = `id:${this.paperid}`;
       this.$cy.controller.scratch.set(node.id(), '_paper_data', response.doc);
     },
   },
