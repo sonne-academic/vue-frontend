@@ -110,6 +110,12 @@ export default Vue.extend({
           }));
         }
       }
+      if ('mag' === this.collection) {
+        const d: any = this.doc;
+        if (d.urls) {
+          urls.push(...d.urls.map((s: string) => new URL(s)));
+        }
+      }
       for (const url of urls) {
         console.log(url.host);
       }
