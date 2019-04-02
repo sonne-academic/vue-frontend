@@ -14,15 +14,9 @@
       <embedded-search :filters="filters" :query="embQuery" :collection="collection" @numfound="docCount = $event"/>
     </details>
     <span>
-      <details @toggle="clog($event.target.open)"> 
-        <summary>author position in paper</summary>
-        <table>
-          <tr v-for="index in result" :key="index.idx">
-            <td class="right">{{index.idx+1}}</td>
-            <td class="right">{{index['count(*)']}}</td>
-          </tr>
-        </table>
-      </details>
+      <span v-if="docCount > 0">
+        <author-position :collection="collection" :author="value" :docCount="docCount"/>
+      </span>
       <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
         :field="facet"
         :queryField="name"
@@ -49,11 +43,11 @@ interface AuthorIndex {
 import Vue from 'vue';
 import {FacetResponse, FacetFields} from '@/plugins/vue-solr/lib/responses/FacetResponse';
 import {SimpleEmitter, SimpleFacetBox} from '../Emitters';
-import {EmbeddedSearch} from '../Embed';
+import {EmbeddedSearch, AuthorPosition} from '../Embed';
 
 export default Vue.extend({
   name: 'AuthorDetails',
-  components: {SimpleEmitter, SimpleFacetBox, EmbeddedSearch},
+  components: {SimpleEmitter, SimpleFacetBox, EmbeddedSearch, AuthorPosition},
   props: {
     nodeid: {
       required: true,
@@ -90,30 +84,6 @@ export default Vue.extend({
     clog(d: any) {
       console.log(d);
     },
-    async authorIndexGroup() {
-      const scratchspace = '_author_index';
-
-      let result;
-      result = this.$cy.controller.scratch.get(this.nodeid, scratchspace);
-      if (!result) {
-        console.debug('no data in scratch');
-        const author = this.value;
-        const idx = 'idx';
-        const q = `"author:"${this.value}""`;
-        const search = `search(${this.collection}, q=${q}, fl="author, id", sort="id desc", qt=/export)`;
-        const select = `select(${search}, indexOf(author, "${author}") as ${idx})`;
-        const sort = `sort(${select}, by="${idx} asc")`;
-        const rollup = `rollup(${sort}, over="${idx}", count(*))`;
-        const data: any = await this.$solr.pass_through_solr.get(`/${this.collection}/stream`, {expr: rollup});
-        console.log(rollup);
-        console.log(data);
-        result = data['result-set'].docs.slice(0, -1);
-        if (this.$cy.controller) {
-          this.$cy.controller.scratch.set(this.nodeid, scratchspace, result);
-        }
-      }
-      this.result = result;
-    },
     log(msg: string) {
       this.$store.dispatch('log', `[AuthorDetails] ${msg}`);
     },
@@ -128,7 +98,6 @@ export default Vue.extend({
         this.filters = [];
       }
       this.embQuery = `+(${this.name}:"${this.value}")`;
-      this.authorIndexGroup();
     },
   },
   watch: {
