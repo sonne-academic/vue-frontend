@@ -66,6 +66,7 @@ export default Vue.extend({
     },
     submitSearch() {
       this.pageDocs = new Map();
+      this.docs = new Array<any>();
       this.searchInProgress = new Map();
       this.currentPage = '1';
       // this.start = 0;
