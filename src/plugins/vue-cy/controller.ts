@@ -53,6 +53,7 @@ export default class CyController {
   public addActive(data: NodeData) {
     this.addNodeActive(data);
     this.layout();
+    this.cy.center(this.activeNodes);
   }
 
   public addLinkedToActive(data: NodeData) {
@@ -71,7 +72,6 @@ export default class CyController {
       animationDuration: 250,
     }).run();
     this.cy.zoomingEnabled(true);
-    this.cy.center(this.activeNodes);
     // this.cy.one('layoutstop', () => (this.cy.center(this.activeNodes)));
   }
   public fit() {
