@@ -1,10 +1,12 @@
 <template>
 <div>
+  <div id="controls">
     <img class="cybtn" id="save" src="/save.svg" title="save to localStorage" @click="save">
     <img class="cybtn" id="layout" src="/layout.svg" title="do layout" @click="layout">
     <img class="cybtn" id="fit" src="/fit.svg" title="fit graph to window" @click="fit">
     <img class="cybtn" id="rstzoom" src="/reset_zoom.svg" title="reset zoom" @click="reset_zoom">
-    <div class="cy" ref="cy"/>
+  </div>
+  <div class="cy" ref="cy"/>
 </div>
 </template>
 
@@ -125,33 +127,26 @@ export default Vue.extend({
 });
 </script>
 <style>
+#controls {
+  position: fixed;
+  width: 1.5em;
+  right: 0.5em;
+  top: 0.5em;
+  z-index: 1;
+}
 .cy {
   position: fixed;
   width: 100%;
   height: 100%;
 }
 .cybtn {
-  position: absolute;
-  right: 0.5em;
   height: 1.5em;
   width: 1.5em;
   opacity: 0.25;
-  z-index: 1;
+  border: solid 1px white;
 }
 .cybtn:hover {
   opacity: 1;
   border: solid 1px red;
-}
-#save {
-  top: 0.5em;
-}
-#layout {
-  top: 2.5em;
-}
-#fit {
-  top: 4.5em;
-}
-#rstzoom {
-  top: 6.5em;
 }
 </style>
