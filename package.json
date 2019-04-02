@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --no-unsafe-inline",
     "lint": "vue-cli-service lint",
-    "postinstall_skip": "scripts/patch_cy.sh"
+    "postinstall": "scripts/patch_cy.sh"
   },
   "dependencies": {
     "cytoscape": "^3.5.0",
