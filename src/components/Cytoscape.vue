@@ -1,6 +1,7 @@
 <template>
 <div>
   <div id="controls">
+    <a href="https://blog.0ds.de/sonne/"><img class="cybtn" src="/about.svg" title="about"></a>
     <img class="cybtn" id="save" src="/save.svg" title="save to localStorage" @click="save">
     <img class="cybtn" id="layout" src="/layout.svg" title="do layout" @click="layout">
     <img class="cybtn" id="fit" src="/fit.svg" title="fit graph to window" @click="fit">
