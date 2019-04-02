@@ -32,11 +32,11 @@ function* gen_pairs(arr: any[]) {
 import Vue from 'vue';
 import { FacetResponse, FacetFields } from '@/plugins/vue-solr/lib/responses/FacetResponse';
 import SimpleEmitter from './Simple.vue';
-import spinner from '../util/spinner.vue';
+import {Spinner} from '../util/';
 
 export default Vue.extend({
   name: 'SimpleFacetBox',
-  components: {SimpleEmitter, spinner},
+  components: {SimpleEmitter, Spinner},
   props: {
     field: {
       type: String,
