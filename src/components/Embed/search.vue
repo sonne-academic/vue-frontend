@@ -78,15 +78,25 @@ export default Vue.extend({
       const start = (page - 1) * this.rows;
       this.searchInProgress.set(page, true);
       const payload = {params: {
-        q: this.query + ' ' + this.filters.join(' '),
-        rows: this.rows,
+        'q': this.query,
+        'rows': this.rows,
         start,
-        sort: `year ${this.sortdir}`}};
+        'sort': `year ${this.sortdir}`,
+        'defType': 'edismax',
+        'qf': 'suggest_lower^10 suggest_ngram',
+        'q.op': 'AND',
+        'debug': 'query',
+        'fq': '',
+      }};
+      if (this.filters) {
+        payload.params.q += ' ' + this.filters.join(' ');
+      }
       if (this.q_filter) {
-        const flt = this.q_filter
-          .split(' ').filter((s) => s.length >= 2)
-          .map((s) => `+(suggest_ngram:${s} | (suggest_lower:${s})^10.0)`);
-        payload.params.q += ' ' + flt.join(' ');
+        // const flt = this.q_filter
+        //   .split(' ').filter((s) => s.length >= 2)
+        //   .map((s) => `+(suggest_ngram:${s} | (suggest_lower:${s})^10.0)`);
+        // payload.params.q += ' ' + flt.join(' ');
+        payload.params.q += ' ' + this.q_filter;
         // console.log(payload.params.q);
       }
       this.$solr.select({collection: this.collection, payload})
