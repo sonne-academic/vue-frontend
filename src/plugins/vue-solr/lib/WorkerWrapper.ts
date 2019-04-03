@@ -30,9 +30,11 @@ export default class WorkerWrapper {
   private callbacks: Map<number, RpcCallback> = new Map();
   private counter: number = 1;
   private collects: string[];
-  constructor(collections: string[]) {
+  private readonly coll: Map<string, string[]>;
+  constructor(collections: Map<string, string[]>) {
     this.worker = new Worker();
-    this.collects = collections;
+    this.collects = [...collections.keys()];
+    this.coll = collections;
     this.worker.onerror = (event) => {
       this.log(`ERR: ${event.message}`);
     };
@@ -49,6 +51,14 @@ export default class WorkerWrapper {
 
   public get(collection: string, id: string): Promise<GetResponse> {
     return this.send('get', {collection, id}) as any;
+  }
+
+  public facets(collection: string) {
+    const facets = this.coll.get(collection);
+    if (!facets) {
+      throw new Error(`invalid collection name, allowed values: ${this.collections.join(', ')}`);
+    }
+    return facets;
   }
 
   private log(message: string) {

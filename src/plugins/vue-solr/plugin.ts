@@ -2,7 +2,7 @@ import {PluginFunction, PluginObject} from 'vue';
 import WorkerWrapper from './lib/WorkerWrapper';
 import SolrAutoCompleteInput from './components/SolrAutoCompleteInput.vue';
 export interface SolrPluginOptions {
-  collections: string[];
+  collections: Map<string, string[]>;
 }
 const plugObject: PluginObject<SolrPluginOptions> = {
   install(Vue, options) {

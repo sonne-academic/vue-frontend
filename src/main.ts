@@ -3,9 +3,12 @@ import App from './App.vue';
 import store from './store';
 import solr from './plugins/vue-solr/plugin';
 import cy from './plugins/vue-cy/plugin';
-
+const collections = new Map<string, string[]>();
+collections.set('s2', ['author', 'year', 'keywords', 'journal', 'venue']);
+collections.set('mag', ['author', 'year', 'journal', 'venue']);
+collections.set('dblp', ['author', 'year', 'journal', 'booktitle']);
 Vue.use(solr, {
-  collections: ['s2', 'dblp', 'mag'],
+  collections,
 });
 Vue.use(cy);
 
