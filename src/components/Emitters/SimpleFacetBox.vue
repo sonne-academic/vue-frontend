@@ -1,6 +1,11 @@
 <template>
-  <details ref='details' @toggle="open = $event.target.open">
-    <summary>{{friendlyName}}</summary>
+  <sidebar-detail ref="details"
+    @opened="open=true"
+    @closed="open=false">
+    <template #summary>
+      {{friendlyName}}
+    </template>
+    <template #detail>
     <spinner v-if="loading"/>
     <span v-else-if="error"> error :( </span>
     <table v-else-if="items.length > 0">
@@ -11,8 +16,8 @@
       </tr>
     </table>
     <span v-else> nothing found </span>
-  </details>
-
+    </template>
+  </sidebar-detail>
 </template>
 
 <script lang="ts">
@@ -35,10 +40,11 @@ import Vue from 'vue';
 import { FacetResponse, FacetFields } from '@/plugins/vue-solr/lib/responses/FacetResponse';
 import SimpleEmitter from './Simple.vue';
 import {Spinner} from '../util/';
+import {SidebarDetail} from '@/components/sidebar';
 
 export default Vue.extend({
   name: 'SimpleFacetBox',
-  components: {SimpleEmitter, Spinner},
+  components: {SimpleEmitter, Spinner, SidebarDetail},
   props: {
     field: {
       type: String,
@@ -68,25 +74,31 @@ export default Vue.extend({
   data: () => ({
     open: false,
     items: [] as Array<{name: string, count: number}>,
-    loading: true,
+    loading: false,
     error: false,
   }),
   methods: {
     emitFilter(value: string) {
       this.$emit('filter', `-(${this.field}:"${value}")`);
     },
-    async getFacets() {
-      this.loading = true;
-      this.error = false;
+    async getFacets(): Promise<FacetResponse> {
       const scratchspace = this.scratchspace;
       const node = this.getNode();
       let result = node.scratch(scratchspace);
-      if (!result) {
-        console.log('awaiting');
+      if (result) {
+        return result;
+      }
+      const d: any = await this.$solr.select({collection: this.collection, payload: this.payload});
+      result = d as FacetResponse;
+      node.scratch(scratchspace, result);
+      return result;
+    },
+    async update() {
+      if (this.open) {
+        this.loading = true;
+        this.error = false;
         try {
-          const d: any = await this.$solr.select({collection: this.collection, payload: this.payload});
-          result = d as FacetResponse;
-          node.scratch(scratchspace, result);
+          const result = await this.getFacets();
           const flds: FacetFields = result.facet_counts.facet_fields;
           Object.entries(flds)
             .forEach(([key, arr]) => (this.items = [...gen_pairs(arr)]));
@@ -95,11 +107,6 @@ export default Vue.extend({
         } finally {
           this.loading = false;
         }
-      }
-    },
-    update() {
-      if (this.details.open) {
-        this.getFacets();
       }
     },
     getNode() {
@@ -116,7 +123,7 @@ export default Vue.extend({
   },
   computed: {
     scratchspace(): string {
-      return `_facets_${this.field}`;
+      return `_facets_${this.collection}_${this.field}`;
     },
     payload(): any {
       let q = `${this.queryField}:"${this.queryValue}"`;
@@ -131,8 +138,8 @@ export default Vue.extend({
           },
       };
     },
-    details(): HTMLDetailsElement {
-      return this.$refs.details as HTMLDetailsElement;
+    details(): any {
+      return this.$refs.details as any;
     },
   },
   watch: {
@@ -142,10 +149,13 @@ export default Vue.extend({
       this.update();
       },
     queryValue() {
-      this.details.open = false;
+      this.details.close();
     },
     queryField() {
-      this.details.open = false;
+      this.details.close();
+    },
+    collection() {
+      this.update();
     },
   },
 });
