@@ -17,6 +17,8 @@ interface HighlitedResult {
   id: string;
   value: string;
 }
+const debounceDef = () => process.env.VUE_APP_DEBOUNCE;
+
 export default Vue.extend({
   name: 'SolrAutoCompleteInput',
   components: {  },

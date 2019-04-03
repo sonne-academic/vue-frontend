@@ -3,6 +3,7 @@
       <solr-autocomplete-input id="input"
       :endpoint="endpoint"
       :collection="collection"
+      :debounce="debounce"
       @autocomplete="completion"
       @enter="submitSearch"/>
       <collection-select id="select" @change="collection = $event"/>
@@ -38,6 +39,9 @@ export default Vue.extend({
   computed: {
     endpoint(): string {
       return `/${this.collection}/suggest`;
+    },
+    debounce() {
+      return process.env.VUE_APP_DEBOUNCE;
     },
   },
   methods: {
