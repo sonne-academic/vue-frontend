@@ -1,14 +1,16 @@
 <template>
   <details ref='details' @toggle="open = $event.target.open">
     <summary>{{friendlyName}}</summary>
-    <table v-if="items.length > 0">
+    <spinner v-if="loading"/>
+    <span v-else-if="error"> error :( </span>
+    <table v-else-if="items.length > 0">
       <tr v-for="data in items" :key="data.name" >
         <td ><img id="neg" src="/negative.svg" @click="emitFilter(data.name)"/></td>
         <td><simple-emitter :collection="collection" :field="field" :name="data.name"/></td>
         <td class="right">{{data.count}}</td>
       </tr>
     </table>
-    <spinner v-else/>
+    <span v-else> nothing found </span>
   </details>
 
 </template>
@@ -66,23 +68,34 @@ export default Vue.extend({
   data: () => ({
     open: false,
     items: [] as Array<{name: string, count: number}>,
+    loading: true,
+    error: false,
   }),
   methods: {
     emitFilter(value: string) {
       this.$emit('filter', `-(${this.field}:"${value}")`);
     },
     async getFacets() {
+      this.loading = true;
+      this.error = false;
       const scratchspace = this.scratchspace;
       const node = this.getNode();
       let result = node.scratch(scratchspace);
       if (!result) {
-        const d: any = await this.$solr.select({collection: this.collection, payload: this.payload});
-        result = d as FacetResponse;
-        node.scratch(scratchspace, result);
+        console.log('awaiting');
+        try {
+          const d: any = await this.$solr.select({collection: this.collection, payload: this.payload});
+          result = d as FacetResponse;
+          node.scratch(scratchspace, result);
+          const flds: FacetFields = result.facet_counts.facet_fields;
+          Object.entries(flds)
+            .forEach(([key, arr]) => (this.items = [...gen_pairs(arr)]));
+        } catch {
+          this.error = true;
+        } finally {
+          this.loading = false;
+        }
       }
-      const flds: FacetFields = result.facet_counts.facet_fields;
-      Object.entries(flds)
-        .forEach(([key, arr]) => (this.items = [...gen_pairs(arr)]));
     },
     update() {
       if (this.details.open) {
