@@ -5,10 +5,11 @@
       <sidebar-detail>
         <template #summary>Publications: {{docCount}}</template>
         <template #detail> 
-          <embedded-search :query="embQuery" :collection="collection" @numfound="docCount = $event"/>
+          <embedded-search :query="embQuery" :filters="filters" :collection="collection" @numfound="docCount = $event"/>
         </template>
       </sidebar-detail>
       <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
+        :filters="filters"
         :field="facet"
         :collection="collection" 
         :friendlyName="friendlyNames[index]"
@@ -38,6 +39,7 @@ export default Vue.extend({
     docCount: 0,
     collection: '',
     embQuery: '',
+    filters: [],
   }),
   methods: {
     log(msg: string) {
