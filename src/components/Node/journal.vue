@@ -11,10 +11,9 @@
 
       <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
         :field="facet"
-        :queryField="name"
         :collection="collection" 
         :friendlyName="friendlyNames[index]"
-        :queryValue="journalName"
+        :parentQuery="embQuery"
         :filters="filters"
       />
     </template>

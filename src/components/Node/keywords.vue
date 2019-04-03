@@ -1,28 +1,32 @@
 <template>
-  <div>
-    <h1> <img src="/keywords.svg"/> {{value}} </h1>
-    <details>
-      <summary>Publications: {{docCount}}</summary>
-      <embedded-search :query="embQuery" :collection="collection" @numfound="docCount = $event"/>
-    </details>
+  <sidebar iconName="keywords">
+    <template #heading> {{value}} </template>
+    <template #main>
+      <sidebar-detail>
+        <template #summary> Publications: {{docCount}} </template>
+        <template #detail> <embedded-search :filters="filters" :query="embQuery" :collection="collection" @numfound="docCount = $event"/> </template>
+      </sidebar-detail>
 
-    <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
-      :field="facet"
-      :queryField="name"
-      :collection="collection" 
-      :friendlyName="friendlyNames[index]"
-      :queryValue="value"
-    />
-  </div>
+      <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
+        :field="facet"
+        :collection="collection" 
+        :friendlyName="friendlyNames[index]"
+        :filters="filters"
+        :parentQuery="embQuery"
+      />
+
+    </template>
+  </sidebar>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import {SimpleFacetBox} from '../Emitters';
 import {EmbeddedSearch} from '../Embed';
+import {Sidebar, SidebarDetail} from '../sidebar';
 export default Vue.extend({
   name: 'JournalDetails',
-  components: {SimpleFacetBox, EmbeddedSearch},
+  components: {SimpleFacetBox, EmbeddedSearch, Sidebar, SidebarDetail},
   props: {
     nodeid: {
       required: true,
@@ -30,13 +34,11 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    facets: ['author', 'venue', 'journal', 'year'],
-    friendlyNames: ['authors', 'venues', 'journals', 'years'],
     name: 'keywords',
     value: '',
     docCount: 0,
     collection: '',
-    embQuery: '',
+    filters: [],
   }),
   methods: {
     log(msg: string) {
@@ -46,7 +48,17 @@ export default Vue.extend({
       const node = this.$cy.controller.getNodeById(this.nodeid);
       this.value = node.data('name');
       this.collection = node.data('collection');
-      this.embQuery = `+(${this.name}:"${this.value}")`;
+    },
+  },
+  computed: {
+    embQuery(): string {
+      return `${this.name}:"${this.value}"`;
+    },
+    facets(): string[] {
+      return this.$solr.facets(this.collection);
+    },
+    friendlyNames(): string[] {
+      return this.$solr.facets(this.collection);
     },
   },
   watch: {

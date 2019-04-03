@@ -46,6 +46,10 @@ export default Vue.extend({
   name: 'SimpleFacetBox',
   components: {SimpleEmitter, Spinner, SidebarDetail},
   props: {
+    parentQuery: {
+      type: String,
+      required: true,
+    },
     field: {
       type: String,
       required: true,
@@ -55,14 +59,6 @@ export default Vue.extend({
       required: true,
     },
     collection: {
-      type: String,
-      required: true,
-    },
-    queryValue: {
-      type: String,
-      required: true,
-    },
-    queryField: {
       type: String,
       required: true,
     },
@@ -126,7 +122,7 @@ export default Vue.extend({
       return `_facets_${this.collection}_${this.field}`;
     },
     payload(): any {
-      let q = `${this.queryField}:"${this.queryValue}"`;
+      let q = this.parentQuery;
       q += ' ' + this.filters.join(' ');
       return {
         params: {

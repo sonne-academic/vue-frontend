@@ -26,12 +26,11 @@
         </span>
         <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
           :field="facet"
-          :queryField="fieldname"
           :collection="collection" 
           :friendlyName="friendlyNames[index]"
-          :queryValue="author"
           @filter="doFilter"
           :filters="filters"
+          :parentQuery="embQuery"
         />
       </span>    
     </template>
