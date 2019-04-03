@@ -24,10 +24,11 @@
 import Vue from 'vue';
 
 import {SearchResult} from '../Emitters';
-import spinner from '../util/spinner.vue';
+import {Spinner} from '../util';
+import debounce from 'lodash/debounce';
 export default Vue.extend({
   name: 'EmbeddedSearch',
-  components: { SearchResult, spinner },
+  components: { SearchResult, Spinner },
   props: {
     query: {
       type: String,
@@ -111,11 +112,22 @@ export default Vue.extend({
       this.pageDocs.set(page, []);
       this.getPageData(this.activePage);
     },
-    update() {
+    db: debounce(function(this: any) {
       this.submitSearch();
+    }, 500),
+    update() {
+      if (this.debounce) {
+        this.db();
+      } else {
+        this.submitSearch();
+      }
+
     },
   },
   computed: {
+    debounce() {
+      return !!process.env.VUE_APP_DEBOUNCE;
+    },
     pageCount(): number {
       if ( this.numFound === 0) {
         return 0;
