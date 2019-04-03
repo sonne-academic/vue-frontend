@@ -51,6 +51,7 @@ export default class RpcHandler implements WebSocketHandler {
   public onmessage(event: MessageEvent) {
     const message: RpcResponse = JSON.parse(event.data);
     if (message.error) {
+      this.error(`error for id: ${message.id}`);
       if (message.id) {
         this.results.delete(message.id);
       }
