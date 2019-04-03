@@ -41,7 +41,7 @@ export default Vue.extend({
       return `/${this.collection}/suggest`;
     },
     debounce() {
-      return process.env.VUE_APP_DEBOUNCE;
+      return !!process.env.VUE_APP_DEBOUNCE;
     },
   },
   methods: {
