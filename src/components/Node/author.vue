@@ -1,34 +1,41 @@
 <template>
-  <div>
-    <h1> <img src="/author.svg"/> {{value}} </h1>
-    <details>
-      <summary>Filters: {{filters.length}}</summary>
-      <div v-for="filter in filters" :key="filter"
-      @click="removeFilter(filter)">
-        {{filter}}
-      </div>
-    </details>
-    
-    <details>
-      <summary>Publications: {{docCount}}</summary>
-      <embedded-search :filters="filters" :query="embQuery" :collection="collection" @numfound="docCount = $event"/>
-    </details>
-    <span>
-      <span v-if="docCount > 0">
-        <author-position :collection="collection" :author="value" :docCount="docCount"/>
-      </span>
-      <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
-        :field="facet"
-        :queryField="name"
-        :collection="collection" 
-        :friendlyName="friendlyNames[index]"
-        :queryValue="value"
-        @filter="doFilter"
-        :filters="filters"
-      />
-
-    </span>    
-  </div>
+  <sidebar iconName="author">
+    <template #heading>
+       {{author}} 
+    </template>
+    <template #main>
+      <div>Source: <collection-select @change="collection = $event" :initCollection="collection"/></div>
+      <sidebar-detail>
+        <template #summary> Filters: {{filters.length}} </template>
+        <template #detail> 
+          <div v-for="filter in filters" :key="filter"
+            @click="removeFilter(filter)">
+            {{filter}}
+          </div>
+        </template>
+      </sidebar-detail>      
+      <sidebar-detail>
+        <template #summary>Publications: {{docCount}}</template>
+        <template #detail>
+          <embedded-search :filters="filters" :query="embQuery" :collection="collection" @numfound="docCount = $event"/>
+        </template>
+      </sidebar-detail>
+      <span>
+        <span v-if="docCount > 0">
+          <author-position :collection="collection" :author="author" :docCount="docCount"/>
+        </span>
+        <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
+          :field="facet"
+          :queryField="fieldname"
+          :collection="collection" 
+          :friendlyName="friendlyNames[index]"
+          :queryValue="author"
+          @filter="doFilter"
+          :filters="filters"
+        />
+      </span>    
+    </template>
+  </sidebar>
 </template>
 
 <script lang="ts">
@@ -44,10 +51,19 @@ import Vue from 'vue';
 import {FacetResponse, FacetFields} from '@/plugins/vue-solr/lib/responses/FacetResponse';
 import {SimpleEmitter, SimpleFacetBox} from '../Emitters';
 import {EmbeddedSearch, AuthorPosition} from '../Embed';
+import {Sidebar, SidebarDetail} from '@/components/sidebar';
+import {CollectionSelect} from '@/plugins/vue-solr/components';
 
+const friendlyMap = new Map<string, string>([
+  ['author', 'co-authors'],
+  ['journal', 'published in journals'],
+  ['venue', 'published in venues'],
+  ['year', 'publications in years'],
+  ['keywords', 'associated keywords'],
+]);
 export default Vue.extend({
   name: 'AuthorDetails',
-  components: {SimpleEmitter, SimpleFacetBox, EmbeddedSearch, AuthorPosition},
+  components: {SimpleEmitter, SimpleFacetBox, EmbeddedSearch, AuthorPosition, Sidebar, CollectionSelect, SidebarDetail},
   props: {
     nodeid: {
       required: true,
@@ -55,16 +71,8 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    facets: ['author', 'journal', 'venue', 'year', 'keywords'],
-    friendlyNames: [
-      'co-authors',
-      'published in journals',
-      'published on venues',
-      'publications in years',
-      'associated keywords',
-    ],
-    name: 'author',
-    value: '',
+    fieldname: 'author',
+    author: '',
     result: new Array<AuthorIndex>(),
     facetResponse: {} as FacetResponse,
     docCount: 0,
@@ -72,14 +80,24 @@ export default Vue.extend({
     embQuery: '',
     filters: new Array<string>(),
   }),
+  computed: {
+    facets(): string[] {
+      return this.$solr.facets(this.collection);
+    },
+    friendlyNames(): string[] {
+      return this.facets.map((k) => friendlyMap.get(k) || k);
+    },
+  },
   methods: {
+    getNode() {
+      return this.$cy.controller.getNodeById(this.nodeid);
+    },
     removeFilter(name: string) {
       this.filters = this.filters.filter((val) => val !== name);
     },
     doFilter(filter: string) {
       this.filters.push(filter);
-      const node = this.$cy.controller.getNodeById(this.nodeid);
-      node.data('filters', this.filters);
+      this.getNode().data('filters', this.filters);
     },
     clog(d: any) {
       console.log(d);
@@ -88,8 +106,8 @@ export default Vue.extend({
       this.$store.dispatch('log', `[AuthorDetails] ${msg}`);
     },
     update() {
-      const node = this.$cy.controller.getNodeById(this.nodeid);
-      this.value = node.data('name');
+      const node = this.getNode();
+      this.author = node.data('name');
       this.collection = node.data('collection');
       const filters = node.data('filters');
       if (filters) {
@@ -97,7 +115,7 @@ export default Vue.extend({
       } else {
         this.filters = [];
       }
-      this.embQuery = `+(${this.name}:"${this.value}")`;
+      this.embQuery = `${this.fieldname}:"${this.author}"`;
     },
   },
   watch: {
