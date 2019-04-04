@@ -4,9 +4,10 @@
         type="search"
         :placeholder="placeholder"
         :aria-label="placeholder"
-        @input="complete($event.target.value)"
+
         @keyup.enter="enter($event.target.value)"
       />
+      <!-- @input="complete($event.target.value)" -->
 </template>
 
 <script lang="ts">
