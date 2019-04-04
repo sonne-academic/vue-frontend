@@ -130,24 +130,10 @@ export default Vue.extend({
       return `no rule for ${this.collection}`;
     },
     doi(): string {
-      if (DBLP === this.collection) {
-        if (this.doc.ee) {
-          const ee: string[] = this.doc.ee;
-          const dois = ee.map((s) => new URL(s))
-            .filter((u) => u.host.endsWith('doi.org'));
-          if (1 <= dois.length) {
-            return quoted(dois[0].pathname.slice(1));
-          }
-          return '';
-        }
+      if (this.doc.doi) {
+        return this.doc.doi;
       }
-      if (S2 === this.collection || MAG === this.collection) {
-        if (this.doc.doi) {
-          return quoted(this.doc.doi);
-        }
-        return '';
-      }
-      return `no rule for ${this.collection}`;
+      return '';
     },
     volume(): string {
       if (S2 === this.collection || MAG === this.collection) {
