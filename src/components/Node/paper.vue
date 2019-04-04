@@ -1,68 +1,88 @@
 <template>
-  <sidebar iconName="paper"> 
-    <template #heading>
-       {{title}}
-    </template>
+  <sidebar iconName="paper">
+    <template #heading>{{title}}</template>
     <template #main>
       <div>
-        <i v-if="doc.journal"><simple-emitter :collection="collection" field="journal" :name="doc.journal"/></i>
-        <i v-else-if="doc.venue"><simple-emitter :collection="collection" field="venue" :name="doc.venue"/></i>
-        <i v-else-if="doc.booktitle"><simple-emitter :collection="collection" field="booktitle" :name="doc.booktitle"/></i>
+        <i v-if="doc.journal">
+          <simple-emitter :collection="collection" field="journal" :name="doc.journal"/>
+        </i>
+        <i v-else-if="doc.venue">
+          <simple-emitter :collection="collection" field="venue" :name="doc.venue"/>
+        </i>
+        <i v-else-if="doc.booktitle">
+          <simple-emitter :collection="collection" field="booktitle" :name="doc.booktitle"/>
+        </i>
         <i v-if="doc.doc_type">({{doc.doc_type}})</i>
       </div>
       <!-- year and authors -->
-      <strong>{{doc.year}}</strong> - 
+      <strong>{{doc.year}}</strong> -
       <span v-for="(author, index) in doc.author" :key="author">
         <simple-emitter :collection="collection" field="author" :name="author"/>
-        <span v-if="index+1 < doc.author.length">, </span>
+        <span v-if="index+1 < doc.author.length">,</span>
       </span>
       <!-- doi and urls -->
       <div v-if="doc.doi">
-        <strong>DOI</strong>: <a :href="'https://doi.org/'+doc.doi">{{doc.doi}}</a>
+        <strong>DOI</strong>:
+        <a :href="'https://doi.org/'+doc.doi">{{doc.doi}}</a>
       </div>
       <div v-for="url in urls" :key="url.host">
-        <a :href="url"> {{url.host}} </a>
+        <a :href="url">{{url.host}}</a>
       </div>
 
       <sidebar-detail v-if="doc.cited_by_count">
-        <template #summary><strong>cited by</strong> {{doc.cited_by_count}} publications</template>
-        <template #detail><embedded-search :filters="filters" class="emb" :query="q_references" :collection="collection"/></template>
+        <template #summary>
+          <strong>cited by</strong>
+          {{doc.cited_by_count}} publications
+        </template>
+        <template #detail>
+          <embedded-search :filters="filters" :query="q_references" :collection="collection"/>
+        </template>
       </sidebar-detail>
       <sidebar-detail v-if="doc.references_count && collection === 's2'">
-        <template #summary><strong>cites</strong> {{doc.references_count}} publications</template>
-        <template #detail><embedded-search :filters="filters" class="emb" :query="q_cited_by" :collection="collection"/></template>
-      </sidebar-detail>
-      <sidebar-detail v-if="doc.references_count && collection === 'mag'"> 
-        <template #summary><strong>cites</strong> {{doc.references_count}} publications</template>
+        <template #summary>
+          <strong>cites</strong>
+          {{doc.references_count}} publications
+        </template>
         <template #detail>
-          <sub-query-search class="emb"
-            :filters="filters" 
-            :query="q_subq" 
+          <embedded-search :filters="filters" :query="q_cited_by" :collection="collection"/>
+        </template>
+      </sidebar-detail>
+      <sidebar-detail v-if="doc.references_count && collection === 'mag'">
+        <template #summary>
+          <strong>cites</strong>
+          {{doc.references_count}} publications
+        </template>
+        <template #detail>
+          <sub-query-search
+            class="emb"
+            :filters="filters"
+            :query="q_subq"
             :collection="collection"
-            subquery="{!terms f=id v=$row.references}" 
+            subquery="{!terms f=id v=$row.references}"
           />
         </template>
       </sidebar-detail>
       <sidebar-detail>
-        <template #summary> biblatex </template>
-        <template #detail> <la-te-x-formatter :doc="doc" :collection="collection"/> </template>
+        <template #summary>biblatex</template>
+        <template #detail>
+          <la-te-x-formatter :doc="doc" :collection="collection"/>
+        </template>
       </sidebar-detail>
-
     </template>
-    <template #footer> source: {{collection}} </template>
+    <template #footer>source: {{collection}}</template>
   </sidebar>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {SimpleEmitter} from '../Emitters';
+import { SimpleEmitter } from '../Emitters';
 import { DocCommon, DocS2, DocDBLP } from '@/plugins/vue-solr/lib/responses/SelectResponse';
-import {EmbeddedSearch, LaTeXFormatter, SubQuerySearch} from '../Embed';
-import {SidebarDetail, Sidebar} from '../sidebar';
+import { EmbeddedSearch, LaTeXFormatter, SubQuerySearch } from '../Embed';
+import { SidebarDetail, Sidebar } from '../sidebar';
 
 export default Vue.extend({
   name: 'PaperDetails',
-  components: {SimpleEmitter, EmbeddedSearch, LaTeXFormatter, SubQuerySearch, SidebarDetail, Sidebar},
+  components: { SimpleEmitter, EmbeddedSearch, LaTeXFormatter, SubQuerySearch, SidebarDetail, Sidebar },
   props: {
     nodeid: {
       required: true,
@@ -143,8 +163,3 @@ export default Vue.extend({
   },
 });
 </script>
-<style scoped>
-.emb {
-  margin-left: 2em;
-}
-</style>

@@ -1,30 +1,22 @@
 <template>
   <div>
-    <input id="filter-input" type="text" v-model="q_filter" placeholder="filter harder"/>
+    <input type="text" v-model="q_filter" placeholder="filter harder">
     <span v-if="0 !== pageCount">
-      <input id="page-input" min="1" type="number" title="page"
-        :max="pageCount"
-        v-model="currentPage"
-      /> / {{ pageCount }} ({{numFound}} hits)
+      <input min="1" type="number" title="page" :max="pageCount" v-model="currentPage">
+      / {{ pageCount }} ({{numFound}} hits)
     </span>
-    <search-result 
-      v-for="doc in docs" 
-      :doc="doc" 
-      :key="doc.id"
-      :collection="collection"
-      />
+    <search-result v-for="doc in docs" :doc="doc" :key="doc.id" :collection="collection"/>
     <spinner v-if="searchInProgress.get(activePage)"/>
-    <span v-else-if="docs.length==0"> nothing (0 hits) </span>
-
+    <span v-else-if="docs.length==0">nothing (0 hits)</span>
   </div>
-
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import debounce from 'lodash/debounce';
-import {SearchResult} from '../Emitters';
+import { SearchResult } from '../Emitters';
 import spinner from '../util/spinner.vue';
+
 export default Vue.extend({
   name: 'SubQuerySearch',
   components: { SearchResult, spinner },
@@ -74,14 +66,17 @@ export default Vue.extend({
     getPageData(page: number) {
       const start = (page - 1) * this.rows;
       this.searchInProgress.set(page, true);
-      const payload = {params: {
-        'q': this.query,
-        'fl': '*,sq:[subquery]',
-        'sq.q': this.subquery,
-        'sq.rows': this.rows,
-        'sq.start': this.start,
-        'sq.fq': '',
-        'sort': `year ${this.sortdir}`}};
+      const payload = {
+        params: {
+          'q': this.query,
+          'fl': '*,sq:[subquery]',
+          'sq.q': this.subquery,
+          'sq.rows': this.rows,
+          'sq.start': this.start,
+          'sq.fq': '',
+          'sort': `year ${this.sortdir}`,
+        },
+      };
       if (this.q_filter) {
         const flt = this.q_filter
           .split(' ').filter((s) => s.length >= 2)
@@ -89,12 +84,13 @@ export default Vue.extend({
         payload.params['sq.fq'] = flt.join(' ');
       }
       console.log(payload);
-      this.$solr.select({collection: this.collection, payload})
+      this.$solr.select({ collection: this.collection, payload })
         .then((d: any) => {
           this.result = d;
           if (!d.response.docs[0]) {
             return;
           }
+
           const sq: any = d.response.docs[0].sq;
           this.pageDocs.set(page, sq.docs);
           this.numFound = sq.numFound;
@@ -132,7 +128,7 @@ export default Vue.extend({
       return !!process.env.VUE_APP_DEBOUNCE;
     },
     pageCount(): number {
-      if ( this.numFound === 0) {
+      if (0 === this.numFound) {
         return 0;
       }
       const quotient = Math.floor(this.numFound / this.rows);
@@ -181,3 +177,8 @@ export default Vue.extend({
 
 });
 </script>
+<style scoped>
+div {
+  margin-left: 2em;
+}
+</style>
