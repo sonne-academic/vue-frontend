@@ -1,19 +1,19 @@
 <template>
   <sidebar iconName="author">
     <template #heading>
-       {{author}} 
+       {{author}}
     </template>
     <template #main>
-      <div>Source: <collection-select @change="collection = $event" :initCollection="collection"/></div>
+      <div>Source: <collection-select @change="changeCollection" :initCollection="collection"/></div>
       <sidebar-detail>
         <template #summary> Filters: {{filters.length}} </template>
-        <template #detail> 
+        <template #detail>
           <div v-for="filter in filters" :key="filter"
             @click="removeFilter(filter)">
             {{filter}}
           </div>
         </template>
-      </sidebar-detail>      
+      </sidebar-detail>
       <sidebar-detail>
         <template #summary>Publications: {{docCount}}</template>
         <template #detail>
@@ -24,15 +24,15 @@
         <span v-if="docCount > 0">
           <author-position :collection="collection" :author="author" :docCount="docCount"/>
         </span>
-        <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
+        <simple-facet-box v-for="(facet, index) in facets" :key="facet"
           :field="facet"
-          :collection="collection" 
+          :collection="collection"
           :friendlyName="friendlyNames[index]"
           @filter="doFilter"
           :filters="filters"
           :parentQuery="embQuery"
         />
-      </span>    
+      </span>
     </template>
   </sidebar>
 </template>
@@ -41,10 +41,6 @@
 interface FacetDetail {
   name: string;
   count: number;
-}
-interface AuthorIndex {
-  idx: number;
-  'count(*)': number;
 }
 import Vue from 'vue';
 import {FacetResponse, FacetFields} from '@/plugins/vue-solr/lib/responses/FacetResponse';
@@ -72,7 +68,6 @@ export default Vue.extend({
   data: () => ({
     fieldname: 'author',
     author: '',
-    result: new Array<AuthorIndex>(),
     facetResponse: {} as FacetResponse,
     docCount: 0,
     collection: '',
@@ -116,9 +111,16 @@ export default Vue.extend({
       }
       this.embQuery = `${this.fieldname}:"${this.author}"`;
     },
+    changeCollection(ev: string) {
+      this.getNode().data('collection', ev);
+      this.collection = ev;
+    },
   },
   watch: {
     nodeid() {
+      this.update();
+    },
+    collection() {
       this.update();
     },
   },
