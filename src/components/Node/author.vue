@@ -1,30 +1,35 @@
 <template>
   <sidebar iconName="author">
-    <template #heading>
-       {{author}}
-    </template>
+    <template #heading>{{author}}</template>
     <template #main>
-      <div>Source: <collection-select @change="changeCollection" :initCollection="collection"/></div>
+      <div>
+        Source:
+        <collection-select @change="changeCollection" :initCollection="collection"/>
+      </div>
       <sidebar-detail>
-        <template #summary> Filters: {{filters.length}} </template>
+        <template #summary>Filters: {{filters.length}}</template>
         <template #detail>
-          <div v-for="filter in filters" :key="filter"
-            @click="removeFilter(filter)">
-            {{filter}}
-          </div>
+          <div v-for="filter in filters" :key="filter" @click="removeFilter(filter)">{{filter}}</div>
         </template>
       </sidebar-detail>
       <sidebar-detail>
         <template #summary>Publications: {{docCount}}</template>
         <template #detail>
-          <embedded-search :filters="filters" :query="embQuery" :collection="collection" @numfound="docCount = $event"/>
+          <embedded-search
+            :filters="filters"
+            :query="embQuery"
+            :collection="collection"
+            @numfound="docCount = $event"
+          />
         </template>
       </sidebar-detail>
       <span>
         <span v-if="docCount > 0">
           <author-position :collection="collection" :author="author" :docCount="docCount"/>
         </span>
-        <simple-facet-box v-for="(facet, index) in facets" :key="facet"
+        <simple-facet-box
+          v-for="(facet, index) in facets"
+          :key="facet"
           :field="facet"
           :collection="collection"
           :friendlyName="friendlyNames[index]"
@@ -43,11 +48,11 @@ interface FacetDetail {
   count: number;
 }
 import Vue from 'vue';
-import {FacetResponse, FacetFields} from '@/plugins/vue-solr/lib/responses/FacetResponse';
-import {SimpleEmitter, SimpleFacetBox} from '../Emitters';
-import {EmbeddedSearch, AuthorPosition} from '../Embed';
-import {Sidebar, SidebarDetail} from '@/components/sidebar';
-import {CollectionSelect} from '@/plugins/vue-solr/components';
+import { FacetResponse, FacetFields } from '@/plugins/vue-solr/lib/responses/FacetResponse';
+import { SimpleEmitter, SimpleFacetBox } from '../Emitters';
+import { EmbeddedSearch, AuthorPosition } from '../Embed';
+import { Sidebar, SidebarDetail } from '@/components/sidebar';
+import { CollectionSelect } from '@/plugins/vue-solr/components';
 
 const friendlyMap = new Map<string, string>([
   ['author', 'co-authors'],
@@ -58,7 +63,15 @@ const friendlyMap = new Map<string, string>([
 ]);
 export default Vue.extend({
   name: 'AuthorDetails',
-  components: {SimpleEmitter, SimpleFacetBox, EmbeddedSearch, AuthorPosition, Sidebar, CollectionSelect, SidebarDetail},
+  components: {
+    SimpleEmitter,
+    SimpleFacetBox,
+    EmbeddedSearch,
+    AuthorPosition,
+    Sidebar,
+    CollectionSelect,
+    SidebarDetail,
+  },
   props: {
     nodeid: {
       required: true,
