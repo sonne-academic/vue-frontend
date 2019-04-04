@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-
+import debounce from 'lodash/debounce';
 import {SearchResult} from '../Emitters';
 import spinner from '../util/spinner.vue';
 export default Vue.extend({
@@ -74,11 +74,6 @@ export default Vue.extend({
     getPageData(page: number) {
       const start = (page - 1) * this.rows;
       this.searchInProgress.set(page, true);
-      // refs.q={!terms f=id v=$row.references}
-      // refs.rows=10
-      // refs.start=10
-      // refs.fq=+(suggest_ngram:plas)
-
       const payload = {params: {
         'q': this.query,
         'fl': '*,sq:[subquery]',
@@ -121,11 +116,21 @@ export default Vue.extend({
       this.pageDocs.set(page, []);
       this.getPageData(this.activePage);
     },
-    update() {
+    db: debounce(function(this: any) {
       this.submitSearch();
+    }, 500),
+    update() {
+      if (this.debounce) {
+        this.db();
+      } else {
+        this.submitSearch();
+      }
     },
   },
   computed: {
+    debounce() {
+      return !!process.env.VUE_APP_DEBOUNCE;
+    },
     pageCount(): number {
       if ( this.numFound === 0) {
         return 0;
