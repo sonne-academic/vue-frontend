@@ -52,7 +52,9 @@ export default class WorkerWrapper {
   public get(collection: string, id: string): Promise<GetResponse> {
     return this.send('get', {collection, id}) as any;
   }
-
+  public author_position(collection: string, author: string, rows: number) {
+    return this.send('author_position', {collection, author, rows});
+  }
   public facets(collection: string) {
     const facets = this.coll.get(collection);
     if (!facets) {

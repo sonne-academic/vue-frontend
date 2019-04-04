@@ -3,10 +3,11 @@
     <summary>author position in paper</summary>
     <spinner v-if="loading"/>
     <table v-else>
-      <th>position</th> <th>count</th>
+      <th>position</th> <th>count</th><th> senior</th>
       <tr v-for="index in result" :key="index.idx">
-        <td class="right">{{index.idx+1}}</td>
-        <td class="right">{{index['count(*)']}}</td>
+        <td class="right">{{index.position}}</td>
+        <td class="right">{{index.count}}</td>
+        <td class="right">{{index.senior_count}}</td>
       </tr>
     </table>
   </details>
@@ -57,16 +58,8 @@ export default Vue.extend({
       let result;
       if (!result) {
         console.debug('no data in scratch');
-        const author = this.author;
-        const idx = 'idx';
-        const q = `"author:"${author}""`;
-        const search = `search(${this.collection},
-          q=${q},
-          fl="author, id", sort="id desc", qt=/select, rows=${this.docCount})`;
-        const select = `select(${search}, indexOf(author, "${author}") as ${idx})`;
-        const sort = `sort(${select}, by="${idx} asc")`;
-        const rollup = `rollup(${sort}, over="${idx}", count(*))`;
-        const data: any = await this.$solr.pass_through_solr.get(`/${this.collection}/stream`, {expr: rollup});
+        const data: any = await this.$solr.author_position(this.collection, this.author, this.docCount);
+        // drop eof (last in list)
         result = data['result-set'].docs.slice(0, -1);
       }
       this.result = result;
