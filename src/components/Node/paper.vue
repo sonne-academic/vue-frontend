@@ -17,12 +17,13 @@
         <span v-if="index+1 < doc.author.length">, </span>
       </span>
       <!-- doi and urls -->
-      <div v-if="doc.doiUrl">
-        <strong>DOI</strong>: <a :href="doc.doiUrl">{{doc.doi}}</a>
-        <div v-for="url in urls" :key="url.host">
-          <a :href="url"> {{url.host}} </a>
-        </div>
+      <div v-if="doc.doi">
+        <strong>DOI</strong>: <a :href="'https://doi.org/'+doc.doi">{{doc.doi}}</a>
       </div>
+      <div v-for="url in urls" :key="url.host">
+        <a :href="url"> {{url.host}} </a>
+      </div>
+
       <sidebar-detail v-if="doc.cited_by_count">
         <template #summary><strong>cited by</strong> {{doc.cited_by_count}} publications</template>
         <template #detail><embedded-search :filters="filters" class="emb" :query="q_references" :collection="collection"/></template>
@@ -48,6 +49,7 @@
       </sidebar-detail>
 
     </template>
+    <template #footer> source: {{collection}} </template>
   </sidebar>
 </template>
 
