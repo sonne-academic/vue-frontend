@@ -142,30 +142,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style scoped>
-.right {
-  text-align: right;
-  min-width: 2em;
-}
-
-td {
-  padding: 0;
-  background-color: inherit;
-}
-tr:nth-of-type(2n) {
-  background-color: beige;
-}
-table {
-  margin-left: 2em;
-  max-width: 80%;
-}
-summary {
-  background-color: black;
-  color: white;
-  padding: 0.5em;
-  position: sticky;
-  top: 0;
-  margin: 1em 0;
-}
-</style>
