@@ -1,17 +1,24 @@
 <template>
   <sidebar iconName="journal">
-    <template #heading> {{journalName}} </template>
-    <template #main>          
+    <template #heading>{{journalName}}</template>
+    <template #main>
       <sidebar-detail>
         <template #summary>Publications: {{docCount}}</template>
-        <template #detail> 
-          <embedded-search :query="embQuery" :collection="collection" :filters="filters" @numfound="docCount = $event"/>
+        <template #detail>
+          <embedded-search
+            :query="embQuery"
+            :collection="collection"
+            :filters="filters"
+            @numfound="docCount = $event"
+          />
         </template>
       </sidebar-detail>
 
-      <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
+      <simple-facet-box
+        v-for="(facet, index) in facets"
+        :key="facet"
         :field="facet"
-        :collection="collection" 
+        :collection="collection"
         :friendlyName="friendlyNames[index]"
         :parentQuery="embQuery"
         :filters="filters"
@@ -22,12 +29,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {SimpleFacetBox} from '../Emitters';
-import {EmbeddedSearch} from '../Embed';
-import {Sidebar, SidebarDetail} from '../sidebar';
+import { SimpleFacetBox } from '../Emitters';
+import { EmbeddedSearch } from '../Embed';
+import { Sidebar, SidebarDetail } from '../sidebar';
 export default Vue.extend({
   name: 'JournalDetails',
-  components: {SimpleFacetBox, EmbeddedSearch, Sidebar, SidebarDetail},
+  components: { SimpleFacetBox, EmbeddedSearch, Sidebar, SidebarDetail },
   props: {
     nodeid: {
       required: true,
@@ -35,8 +42,6 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    facets: ['author', 'venue', 'year', 'keywords'],
-    friendlyNames: ['authors', 'venues', 'years', 'associated keywords'],
     name: 'journal',
     journalName: '',
     docCount: 0,
@@ -60,9 +65,16 @@ export default Vue.extend({
       this.update();
     },
   },
+  computed: {
+    facets(): string[] {
+      return this.$solr.facets(this.collection);
+    },
+    friendlyNames(): string[] {
+      return this.$solr.facets(this.collection);
+    },
+  },
   created() {
     this.update();
   },
 });
 </script>
-
