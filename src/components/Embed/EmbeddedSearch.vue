@@ -1,34 +1,27 @@
 <template>
-  <div>
-    <input id="filter-input" type="text" v-model="q_filter" placeholder="filter harder"/>
+  <div class="outer">
+    <input type="text" v-model="q_filter" placeholder="filter harder">
+    <select-sort :collection="collection" @facetchanged="sortby = $event" @orderchanged="sortdir = $event"/>
     <span v-if="0 !== pageCount">
-      <input id="page-input" min="1" type="number" title="page"
-        :max="pageCount"
-        v-model="currentPage"
-      /> / {{ pageCount }} ({{numFound}} hits)
+      <input min="1" type="number" title="page" :max="pageCount" v-model="currentPage">
+      / {{ pageCount }} ({{numFound}} hits)
     </span>
-    <search-result 
-      v-for="doc in docs" 
-      :doc="doc" 
-      :key="doc.id"
-      :collection="collection"
-      />
+    <search-result v-for="doc in docs" :doc="doc" :key="doc.id" :collection="collection"/>
     <spinner v-if="searchInProgress.get(activePage)"/>
-    <span v-else-if="docs.length==0"> nothing (0 hits) </span>
-
+    <span v-else-if="docs.length==0">nothing (0 hits)</span>
   </div>
-
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import {SearchResult} from '../Emitters';
-import {Spinner} from '../util';
+import { SearchResult } from '../Emitters';
+import { Spinner } from '../util';
 import debounce from 'lodash/debounce';
+import SelectSort from './SelectSort.vue';
 export default Vue.extend({
   name: 'EmbeddedSearch',
-  components: { SearchResult, Spinner },
+  components: { SearchResult, Spinner, SelectSort },
   props: {
     query: {
       type: String,
@@ -46,10 +39,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      activesort: 'year desc',
-      sortby: ['year desc', 'cited_by_count desc'],
+      sortby: 'year',
       sortdir: 'desc',
-      sortdirs: ['desc', 'asc'],
       result: {},
       start: 0,
       docs: new Array<any>(),
@@ -77,17 +68,17 @@ export default Vue.extend({
     getPageData(page: number) {
       const start = (page - 1) * this.rows;
       this.searchInProgress.set(page, true);
-      const payload = {params: {
-        'q': this.query,
-        'rows': this.rows,
-        start,
-        'sort': `year ${this.sortdir}`,
-        'defType': 'edismax',
-        'qf': 'suggest_lower^10 suggest_ngram',
-        'q.op': 'AND',
-        'debug': 'query',
-        'fq': '',
-      }};
+      const payload = {        params: {
+          'q': this.query,
+          'rows': this.rows,
+          start,
+          'sort': this.activeSort,
+          'defType': 'edismax',
+          'qf': 'suggest_lower^10 suggest_ngram',
+          'q.op': 'AND',
+          'debug': 'query',
+          'fq': '',
+        }      };
       if (this.filters) {
         payload.params.q += ' ' + this.filters.join(' ');
       }
@@ -99,7 +90,7 @@ export default Vue.extend({
         payload.params.q += ' ' + this.q_filter;
         // console.log(payload.params.q);
       }
-      this.$solr.select({collection: this.collection, payload})
+      this.$solr.select({ collection: this.collection, payload })
         .then((d: any) => {
           this.result = d;
           this.pageDocs.set(page, d.response.docs);
@@ -139,7 +130,7 @@ export default Vue.extend({
       return !!process.env.VUE_APP_DEBOUNCE;
     },
     pageCount(): number {
-      if ( this.numFound === 0) {
+      if (this.numFound === 0) {
         return 0;
       }
       const quotient = Math.floor(this.numFound / this.rows);
@@ -152,6 +143,9 @@ export default Vue.extend({
     },
     activePage(): number {
       return Number.parseInt(this.currentPage, 10);
+    },
+    activeSort(): string {
+      return [this.sortby, this.sortdir].join(' ');
     },
   },
   watch: {
@@ -181,6 +175,9 @@ export default Vue.extend({
     numFound() {
       this.$emit('numfound', this.numFound);
     },
+    activeSort() {
+      this.update();
+    },
   },
   mounted() {
     this.update();
@@ -188,3 +185,8 @@ export default Vue.extend({
 
 });
 </script>
+<style scoped>
+.outer {
+  margin-left: 2em;
+}
+</style>

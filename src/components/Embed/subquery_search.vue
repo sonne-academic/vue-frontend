@@ -1,6 +1,7 @@
 <template>
-  <div>
+  <div class="outer">
     <input type="text" v-model="q_filter" placeholder="filter harder">
+    <select-sort :collection="collection" @facetchanged="sortby = $event" @orderchanged="sortdir = $event"/>
     <span v-if="0 !== pageCount">
       <input min="1" type="number" title="page" :max="pageCount" v-model="currentPage">
       / {{ pageCount }} ({{numFound}} hits)
@@ -15,11 +16,12 @@
 import Vue from 'vue';
 import debounce from 'lodash/debounce';
 import { SearchResult } from '../Emitters';
-import spinner from '../util/spinner.vue';
+import { Spinner } from '../util';
+import SelectSort from './SelectSort.vue';
 
 export default Vue.extend({
   name: 'SubQuerySearch',
-  components: { SearchResult, spinner },
+  components: { SearchResult, Spinner, SelectSort },
   props: {
     query: {
       type: String,
@@ -36,10 +38,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      activesort: 'year desc',
-      sortby: ['year desc', 'cited_by_count desc'],
+      sortby: 'year',
       sortdir: 'desc',
-      sortdirs: ['desc', 'asc'],
       result: {},
       start: 0,
       docs: new Array<any>(),
@@ -74,7 +74,7 @@ export default Vue.extend({
           'sq.rows': this.rows,
           'sq.start': this.start,
           'sq.fq': '',
-          'sort': `year ${this.sortdir}`,
+          'sort': this.activeSort,
         },
       };
       if (this.q_filter) {
@@ -142,8 +142,14 @@ export default Vue.extend({
     activePage(): number {
       return Number.parseInt(this.currentPage, 10);
     },
+    activeSort(): string {
+      return [this.sortby, this.sortdir].join(' ');
+    },
   },
   watch: {
+    activeSort() {
+      this.update();
+    },
     filters() {
       this.update();
     },
@@ -178,7 +184,7 @@ export default Vue.extend({
 });
 </script>
 <style scoped>
-div {
+.outer {
   margin-left: 2em;
 }
 </style>
