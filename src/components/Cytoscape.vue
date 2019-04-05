@@ -1,14 +1,16 @@
 <template>
-<div>
-  <div id="controls">
-    <a href="https://blog.0ds.de/sonne/"><img class="cybtn" src="/about.svg" title="about"></a>
-    <img class="cybtn" id="save" src="/save.svg" title="save to localStorage" @click="save">
-    <img class="cybtn" id="layout" src="/layout.svg" title="do layout" @click="layout">
-    <img class="cybtn" id="fit" src="/fit.svg" title="fit graph to window" @click="fit">
-    <img class="cybtn" id="rstzoom" src="/reset_zoom.svg" title="reset zoom" @click="reset_zoom">
+  <div>
+    <div id="controls">
+      <a href="https://blog.0ds.de/sonne/">
+        <img class="cybtn" src="/about.svg" title="about">
+      </a>
+      <img class="cybtn" id="save" src="/save.svg" title="save to localStorage" @click="save">
+      <img class="cybtn" id="layout" src="/layout.svg" title="do layout" @click="layout">
+      <img class="cybtn" id="fit" src="/fit.svg" title="fit graph to window" @click="fit">
+      <img class="cybtn" id="rstzoom" src="/reset_zoom.svg" title="reset zoom" @click="reset_zoom">
+    </div>
+    <div class="cy" ref="cy"/>
   </div>
-  <div class="cy" ref="cy"/>
-</div>
 </template>
 
 <script lang="ts">
@@ -17,10 +19,10 @@ const activeComponents = ['search-results'];
 type evl = (ev: KeyboardEvent) => void;
 export default Vue.extend({
   data: () => ({
-    nodeMenu: {destroy: () => {return; }},
-    coreMenu: {destroy: () => {return; }},
-    cdnd: {enable: () => {return; }, disable: () => {return; }, destroy: () => {return; }},
-    listener: null as evl|null,
+    nodeMenu: { destroy: () => { return; } },
+    coreMenu: { destroy: () => { return; } },
+    cdnd: { enable: () => { return; }, disable: () => { return; }, destroy: () => { return; } },
+    listener: null as evl | null,
   }),
   methods: {
     save() {
@@ -39,12 +41,12 @@ export default Vue.extend({
       const c = ev.cy.$('node:selected');
       if (0 === c.length) {
         // nothing selected
-        this.$emit('setactive', {component: '', id: ''});
+        this.$emit('setactive', { component: '', id: '' });
       }
       if (1 === c.length) {
         const component = c.data('component');
         const id = c.data('id');
-        this.$emit('setactive', {component, id});
+        this.$emit('setactive', { component, id });
       }
       if (1 < c.length) {
         const components: string[] = c.map((node) => {
@@ -53,9 +55,8 @@ export default Vue.extend({
           return `${f}:"${n}"`;
         });
         const q = components.join(' AND ');
-        console.log(q);
         // this is where we decide on what to do with multiple nodes
-        this.$emit('setactive', {component: 'multi', id: q});
+        this.$emit('setactive', { component: 'multi', id: q });
       }
     },
     keypress(ev: KeyboardEvent) {
@@ -97,20 +98,19 @@ export default Vue.extend({
           {
             content: 'log\ndata in\nconsole',
             select(ele) {
-              console.log( ele.data() );
+              console.log(ele.data());
             },
           },
           {
             content: 'log\nscratch in\nconsole',
             select(ele) {
-              console.log( ele.scratch() );
+              console.log(ele.scratch());
             },
           },
         ],
       });
-      cy.on('select', (ev) => {this.maybeEmit(ev); });
-      cy.on('unselect', (ev) => {this.maybeEmit(ev); });
-      this.maybeEmit({cy} as cytoscape.EventObject);
+      cy.on('select unselect', 'node', (ev) => { this.maybeEmit(ev); });
+      this.maybeEmit({ cy } as cytoscape.EventObject);
     });
   },
   beforeDestroy() {
