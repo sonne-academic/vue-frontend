@@ -5,7 +5,7 @@ import * as cdnd from 'cytoscape-compound-drag-and-drop'
 
 
 declare module 'cytoscape' {
-  type LayoutExtensions = LayoutOptions|cd.DagreLayoutOptions;
+  type LayoutExtensions = LayoutOptions | cd.DagreLayoutOptions;
   export interface Core {
     cxtmenu: (args: cm.MenuArgs) => cm.Destructor;
     compoundDragAndDrop: (options?: cdnd.CompoundOptions) => cdnd.CompundObject;
@@ -22,7 +22,10 @@ declare module 'cytoscape' {
     layout(options: LayoutExtensions): Layouts;
     makeLayout(options: LayoutExtensions): Layouts;
     createLayout(options: LayoutExtensions): Layouts;
-}
+  }
+  namespace Css {
+    export interface Node extends Partial<Visibility>{}
+  }
 
 
 }
