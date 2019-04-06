@@ -50,10 +50,10 @@ export default class WorkerWrapper {
   }
 
   public get(collection: string, id: string): Promise<GetResponse> {
-    return this.send('get', {collection, id}) as any;
+    return this.send('get', { collection, id }) as any;
   }
   public author_position(collection: string, author: string, rows: number) {
-    return this.send('author_position', {collection, author, rows});
+    return this.send('author_position', { collection, author, rows });
   }
   public facets(collection: string) {
     const facets = this.coll.get(collection);
@@ -61,6 +61,18 @@ export default class WorkerWrapper {
       throw new Error(`invalid collection name, allowed values: ${this.collections.join(', ')}`);
     }
     return facets;
+  }
+
+  public upload_graph(data: string) {
+    return this.send('store_new_graph', { graph: data });
+  }
+
+  public download_graph(uuid: string) {
+    return this.send('get_graph', { graph_id: uuid });
+  }
+
+  public upload_update(data: string, uuid: string) {
+    return this.send('update_graph', { graph_id: uuid, data });
   }
 
   private log(message: string) {
