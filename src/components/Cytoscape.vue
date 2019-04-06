@@ -42,13 +42,24 @@ export default Vue.extend({
       if (0 === c.length) {
         // nothing selected
         this.$emit('setactive', { component: '', id: '' });
-      }
-      if (1 === c.length) {
+      } else if (1 === c.length) {
         const component = c.data('component');
+        if ('multi' === component) {
+          c.unselect();
+          c.incomers('node').select();
+          return;
+        }
         const id = c.data('id');
         this.$emit('setactive', { component, id });
-      }
-      if (1 < c.length) {
+      } else if (1 < c.length) {
+        const multi = c.filter('node[component="multi"]');
+        if (0 < multi.length) {
+          multi.forEach((m) => {
+            m.unselect();
+            m.incomers('node').select();
+          });
+          return;
+        }
         const components: string[] = c.map((node) => {
           const f = node.data('component');
           const n = node.data('name');
@@ -66,7 +77,9 @@ export default Vue.extend({
         });
       } else if ('Delete' === ev.key) {
         this.$cy.instance.then((cy) => {
-          cy.$(':selected').remove();
+          const nodes = cy.$(':selected');
+          nodes.unselect();
+          nodes.remove();
         });
       } else {
         // console.log(ev);
