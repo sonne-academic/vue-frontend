@@ -37,6 +37,39 @@ export default Vue.extend({
     reset_zoom() {
       this.$cy.controller.reset_zoom();
     },
+    current_graph_id(): string|null {
+      const deeplink = window.location.search;
+      if (deeplink) {
+        const split = deeplink.replace('?', '').split('=');
+        if (split.length === 1) {
+          const uuid = decodeURI(split[0]);
+          return uuid;
+        }
+      }
+      return null;
+    },
+    async upload() {
+      const cy = await this.$cy.instance;
+      const data: any = cy.json();
+      const uuid = this.current_graph_id();
+      const dataStr = JSON.stringify({version: 1, elements: data.elements});
+      if (!uuid) {
+        const response = await this.$solr.upload_graph(dataStr);
+        window.location.search = `${response.id}`;
+      } else {
+        const response = await this.$solr.upload_update(dataStr, uuid);
+        console.log('sent update0');
+      }
+    },
+    async download() {
+      const uuid = this.current_graph_id();
+      if (!uuid) {
+        return;
+      }
+      const response: any = await this.$solr.download_graph(uuid);
+      const cy = await this.$cy.instance;
+      cy.add(response.graph.elements);
+    },
     maybeEmit(ev: cytoscape.EventObject) {
       const c = ev.cy.$('node:selected');
       if (0 === c.length) {
@@ -123,8 +156,12 @@ export default Vue.extend({
         ],
       });
       cy.on('select unselect', 'node', (ev) => { this.maybeEmit(ev); });
+      return this.download();
+    }).then(() => {
+      return this.$cy.instance;
+    }).then((cy)=> {
       this.maybeEmit({ cy } as cytoscape.EventObject);
-    });
+    }).catch(console.error);
   },
   beforeDestroy() {
     if (this.listener) {

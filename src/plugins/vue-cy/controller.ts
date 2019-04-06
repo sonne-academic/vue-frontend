@@ -30,10 +30,13 @@ export default class CyController {
   constructor(cy: cytoscape.Core) {
     Object.assign(window, {cy});
     this.cy = cy;
+  }
+
+  public restoreFromLocalStorage() {
     const graphstr = localStorage.getItem('graph');
     if (graphstr) {
       const {version, elements}: LocalStore = JSON.parse(graphstr);
-      cy.add(elements);
+      this.cy.add(elements);
     }
   }
 

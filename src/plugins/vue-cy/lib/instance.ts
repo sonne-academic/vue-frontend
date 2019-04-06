@@ -1,8 +1,8 @@
-interface ModuleImport {default: any; }
+interface ModuleImport { default: any; }
 
 import cfg from './cfg';
 import CyController from '../controller';
-import {DataNodes} from '../nodes';
+import { DataNodes } from '../nodes';
 
 export class Instance {
   private pinstance: Promise<cytoscape.Core>;
@@ -18,13 +18,8 @@ export class Instance {
         // import('cytoscape-cola'),
         // import('cytoscape-cose-bilkent'),
       ]).then(([mod, ...exts]) => {
-        exts.forEach((ext: ModuleImport) => {mod.use(ext.default); });
+        exts.forEach((ext: ModuleImport) => { mod.use(ext.default); });
         this.cy = mod.default(cfg);
-        const datas = localStorage.getItem('graph');
-        if (datas) {
-          const data = JSON.parse(datas);
-
-        }
         if (this.cy) {
 
           resolve(this.cy);
@@ -37,6 +32,8 @@ export class Instance {
               const query = decodeURI(split[1]);
               this.ctrl.addActive(new DataNodes.search(query, collection));
             }
+          } else {
+            this.ctrl.restoreFromLocalStorage();
           }
         } else {
           reject('could not load cytoscape');
