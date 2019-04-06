@@ -2,6 +2,6 @@
  <g fill="none" stroke="#000" stroke-width="1px">
   <path d="m1 7v2h8v-2"/>
   <path d="m5 2v6"/>
-  <path d="m3 6 2 2 2-2"/>
+  <path d="m3 4 2-2 2 2"/>
  </g>
 </svg>
