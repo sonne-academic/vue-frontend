@@ -1,5 +1,5 @@
 import { HandleableWebSocket, WebSocketHandler } from './HandleableWebSocket';
-import { RpcResponse } from './RpcInterface';
+import { RpcResponse, RpcResult } from './RpcInterface';
 
 export default class RpcHandler implements WebSocketHandler {
   private sock: HandleableWebSocket;
@@ -28,7 +28,7 @@ export default class RpcHandler implements WebSocketHandler {
     this.queue.push(payload);
 
     if (this.sock.isClosing) {
-      // TODO: schedule reconnect
+      // TODO: schedule reconnect?
       return;
     }
     if (this.sock.isClosed) {
@@ -49,53 +49,9 @@ export default class RpcHandler implements WebSocketHandler {
   }
 
   public onmessage(event: MessageEvent) {
-    const message: RpcResponse = JSON.parse(event.data);
-    if (message.error) {
-      this.error(`error for id: ${message.id}`);
-      if (message.id) {
-        this.results.delete(message.id);
-      }
-      this.postToHandler(message);
-      return;
-    }
-    const data = message.result;
-    if (data) {
-      if (data.responseHeader && data.responseHeader.status === 'accept') {
-        this.debug('confirm with id: ' + message.id);
-        this.results.set(message.id, []);
-        return;
-      }
-      if (data.responseHeader && data.responseHeader.status === 'finished') {
-        this.debug('finished with id: ' + message.id);
-        const finished = this.results.get(message.id);
-        this.results.delete(message.id);
-        if (!finished) {
-          return console.log('did not receive any data');
-        }
-        const msg: RpcResponse = {
-          id: message.id,
-          jsonrpc: '2.0',
-        };
-        if (finished.length === 1) {
-          msg.result = finished[0];
-        } else {
-          msg.result = finished;
-        }
-        this.postToHandler(msg);
-
-        return;
-      }
-      const res = this.results.get(message.id);
-      if ( !res ) {
-        this.error('did not receive [accept] message, but got message');
-        this.error(JSON.stringify(message));
-        return;
-      }
-      res.push(message.result);
-      // console.log(JSON.stringify(message, null, 2));
-    } else {
-      throw new Error('[SolrCmdSock] unexpected message:\n' + JSON.stringify(message, null, 2));
-    }
+    const message = this.getResult(event.data);
+    this.debug(`received result for id: ${message.id}`);
+    this.postToHandler(message);
   }
 
   public onclose(event: CloseEvent) {
@@ -110,6 +66,21 @@ export default class RpcHandler implements WebSocketHandler {
   public onerror(event: Event) {
     event.preventDefault();
     throw new Error(`Error in Websocket ${JSON.stringify(event)}`);
+  }
+
+  private getResult<T>(data: any): RpcResult<T> {
+    const message: RpcResponse<T> = JSON.parse(data);
+    if (message.error) {
+      this.error(`error for id: ${message.id}`);
+      if (message.id) {
+        this.results.delete(message.id);
+      }
+      this.postToHandler(message);
+      throw new Error(message.error.message);
+    } else if (message.result) {
+      return message as RpcResult<T>;
+    }
+    throw new Error('[SolrCmdSock] unexpected message:\n' + JSON.stringify(message, null, 2));
   }
 
   private log(message: string) {
@@ -127,7 +98,7 @@ export default class RpcHandler implements WebSocketHandler {
     this.log(`[ERR] ${message}`);
   }
 
-  private postToHandler(message: RpcResponse) {
+  private postToHandler<T>(message: RpcResponse<T>) {
     this.context.postMessage(message);
   }
 }

@@ -85,13 +85,13 @@ export default Vue.extend({
       }
       console.log(payload);
       this.$solr.select({ collection: this.collection, payload })
-        .then((d: any) => {
-          this.result = d;
-          if (!d.response.docs[0]) {
+        .then((d) => {
+          this.result = d.result;
+          if (!d.result.response.docs[0]) {
             return;
           }
 
-          const sq: any = d.response.docs[0].sq;
+          const sq: any = d.result.response.docs[0].sq;
           this.pageDocs.set(page, sq.docs);
           this.numFound = sq.numFound;
           if (this.activePage === page) {

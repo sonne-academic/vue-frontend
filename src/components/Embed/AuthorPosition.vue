@@ -1,9 +1,11 @@
 <template>
-  <details ref='details' @toggle="open = $event.target.open">
+  <details ref="details" @toggle="open = $event.target.open">
     <summary>author position in paper</summary>
     <spinner v-if="loading"/>
     <table v-else>
-      <th>position</th> <th>count</th><th> senior</th>
+      <th>position</th>
+      <th>count</th>
+      <th>senior</th>
       <tr v-for="index in result" :key="index.idx">
         <td class="right">{{index.position}}</td>
         <td class="right">{{index.count}}</td>
@@ -11,16 +13,15 @@
       </tr>
     </table>
   </details>
-
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {Spinner} from '../util';
+import { Spinner } from '../util';
 
 export default Vue.extend({
   name: 'AuthorPosition',
-  components: {Spinner},
+  components: { Spinner },
   props: {
     author: {
       type: String,
@@ -36,13 +37,13 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    result: {},
+    result: new Array<any>(),
     loading: true,
     open: false,
   }),
   methods: {
     reset() {
-      this.result = {};
+      this.result = [];
       this.loading = true;
     },
     update() {
@@ -58,9 +59,9 @@ export default Vue.extend({
       let result;
       if (!result) {
         console.debug('no data in scratch');
-        const data: any = await this.$solr.author_position(this.collection, this.author, this.docCount);
+        const data = await this.$solr.author_position(this.collection, this.author, this.docCount);
         // drop eof (last in list)
-        result = data['result-set'].docs.slice(0, -1);
+        result = data.result;
       }
       this.result = result;
       this.loading = false;
@@ -101,5 +102,4 @@ table {
 .right {
   text-align: right;
 }
-
 </style>

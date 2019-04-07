@@ -63,7 +63,7 @@ export default Vue.extend({
     },
     async submitPaper(id: string) {
       const paper = await this.$solr.get(this.collection, id);
-      this.$cy.controller.addActive(new DataNodes.paper(this.collection, id, paper.doc.title || 'wat'));
+      this.$cy.controller.addActive(new DataNodes.paper(this.collection, id, paper.result.doc.title || 'wat'));
       this.query = '';
       this.count = 0;
     },
@@ -82,7 +82,7 @@ export default Vue.extend({
   position: absolute;
   /* transform: translateX(-100%); */
   /* top: 25%; */
-  
+
 }
 .auto-items {
   position: absolute;

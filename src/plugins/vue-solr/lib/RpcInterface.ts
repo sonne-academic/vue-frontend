@@ -1,3 +1,7 @@
+interface RpcBase {
+  id: number;
+  jsonrpc: string;
+}
 
 interface RpcRequestParams {
   method: string;
@@ -10,10 +14,8 @@ export interface SelectRequestParams {
   payload: any;
 }
 
-export interface RpcRequest {
-  jsonrpc: string;
+export interface RpcRequest extends RpcBase {
   method: string;
-  id: number;
   params: RpcRequestParams | SelectRequestParams;
 }
 
@@ -23,9 +25,15 @@ interface Error {
   data: any;
 }
 
-export interface RpcResponse {
-  jsonrpc: string;
-  id: number;
-  result?: any;
+export interface RpcResponse<T> extends RpcBase {
+  result?: T;
   error?: Error;
+}
+
+export interface RpcResult<T> extends RpcBase {
+  result: T;
+}
+
+export interface RpcError extends RpcBase {
+  error: Error;
 }

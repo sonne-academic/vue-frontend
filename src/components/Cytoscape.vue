@@ -5,7 +5,7 @@
         <img class="cybtn" src="/about.svg" title="about">
       </a>
       <img class="cybtn" id="save" src="/save.svg" title="save to localStorage" @click="save">
-      <img class="cybtn" id="save" src="/upload.svg" title="save to localStorage" @click="upload">
+      <img class="cybtn" id="save" src="/upload.svg" title="upload to sonne" @click="upload">
       <img class="cybtn" id="layout" src="/layout.svg" title="do layout" @click="layout">
       <img class="cybtn" id="fit" src="/fit.svg" title="fit graph to window" @click="fit">
       <img class="cybtn" id="rstzoom" src="/reset_zoom.svg" title="reset zoom" @click="reset_zoom">
@@ -38,7 +38,7 @@ export default Vue.extend({
     reset_zoom() {
       this.$cy.controller.reset_zoom();
     },
-    current_graph_id(): string|null {
+    current_graph_id(): string | null {
       const deeplink = window.location.search;
       if (deeplink) {
         const split = deeplink.replace('?', '').split('=');
@@ -53,13 +53,13 @@ export default Vue.extend({
       const cy = await this.$cy.instance;
       const data: any = cy.json();
       const uuid = this.current_graph_id();
-      const dataStr = JSON.stringify({version: 1, elements: data.elements});
+      const dataStr = JSON.stringify({ version: 1, elements: data.elements });
       if (!uuid) {
         const response = await this.$solr.upload_graph(dataStr);
-        window.location.search = `${response.id}`;
+        window.location.search = `${response.result.uuid}`;
       } else {
         const response = await this.$solr.upload_update(dataStr, uuid);
-        console.log('sent update0');
+        console.log('sent update');
       }
     },
     async download() {
@@ -67,9 +67,9 @@ export default Vue.extend({
       if (!uuid) {
         return;
       }
-      const response: any = await this.$solr.download_graph(uuid);
+      const response = await this.$solr.download_graph(uuid);
       const cy = await this.$cy.instance;
-      cy.add(response.graph.elements);
+      cy.add(response.result.graph.elements);
     },
     maybeEmit(ev: cytoscape.EventObject) {
       const c = ev.cy.$('node:selected');
@@ -154,13 +154,19 @@ export default Vue.extend({
               console.log(ele.scratch());
             },
           },
+          {
+            content: 'ENHANCE',
+            select: (ele) => {
+              this.$cy.controller.enhance(ele);
+            },
+          },
         ],
       });
       cy.on('select unselect', 'node', (ev) => { this.maybeEmit(ev); });
       return this.download();
     }).then(() => {
       return this.$cy.instance;
-    }).then((cy)=> {
+    }).then((cy) => {
       this.maybeEmit({ cy } as cytoscape.EventObject);
     }).catch(console.error);
   },

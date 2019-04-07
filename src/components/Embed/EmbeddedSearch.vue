@@ -91,12 +91,12 @@ export default Vue.extend({
         // console.log(payload.params.q);
       }
       this.$solr.select({ collection: this.collection, payload })
-        .then((d: any) => {
+        .then((d) => {
           this.result = d;
-          this.pageDocs.set(page, d.response.docs);
-          this.numFound = d.response.numFound;
+          this.pageDocs.set(page, d.result.response.docs);
+          this.numFound = d.result.response.numFound;
           if (this.activePage === page) {
-            this.docs = d.response.docs;
+            this.docs = d.result.response.docs;
           }
           this.searchInProgress.set(page, false);
         }).catch(console.error);

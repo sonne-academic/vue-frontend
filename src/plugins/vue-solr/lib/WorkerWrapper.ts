@@ -1,12 +1,13 @@
 import Worker from 'worker-loader!./solr.worker';
-import { RpcRequest, RpcResponse, SelectRequestParams } from './RpcInterface';
+import { RpcRequest, RpcResponse, SelectRequestParams, RpcResult, RpcError } from './RpcInterface';
 import store from '@/store';
 import { GetResponse } from './responses/GetResponse';
 import { Searcher } from './Searcher';
+import { AuthorPositionResponse } from './responses/AuthorPositionResponse';
 
-interface RpcCallback {
-  onmessage: (d: RpcResponse) => void;
-  onerror: (d: RpcResponse) => void;
+interface RpcCallback<T> {
+  onmessage: (d: RpcResult<T>) => void;
+  onerror: (d: RpcError) => void;
 }
 
 /**
@@ -27,7 +28,7 @@ export default class WorkerWrapper {
   }
 
   private worker: Worker;
-  private callbacks: Map<number, RpcCallback> = new Map();
+  private callbacks: Map<number, RpcCallback<any>> = new Map();
   private counter: number = 1;
   private collects: string[];
   private readonly coll: Map<string, string[]>;
@@ -42,18 +43,19 @@ export default class WorkerWrapper {
   }
 
   public select(payload: SelectRequestParams) {
-    return this.send('select', payload);
+    // TODO remove any
+    return this.send<{response: { numFound: number, docs: any[], start: number }}>('solr_select', payload);
   }
 
   public search(collection: string, query: string) {
     return new Searcher(this, query, collection);
   }
 
-  public get(collection: string, id: string): Promise<GetResponse> {
-    return this.send('get', { collection, id }) as any;
+  public get(collection: string, id: string) {
+    return this.send<GetResponse>('solr_get', { collection, id });
   }
   public author_position(collection: string, author: string, rows: number) {
-    return this.send('author_position', { collection, author, rows });
+    return this.send<AuthorPositionResponse>('solr_author_position', { collection, author, rows });
   }
   public facets(collection: string) {
     const facets = this.coll.get(collection);
@@ -64,39 +66,37 @@ export default class WorkerWrapper {
   }
 
   public upload_graph(data: string) {
-    return this.send('store_new_graph', { graph: data });
+    return this.send<{uuid: string}>('store_new_graph', { graph: data });
   }
 
   public download_graph(uuid: string) {
-    return this.send('get_graph', { graph_id: uuid });
+    return this.send<{graph: {version: number, elements: any}}>('get_graph', { graph_id: uuid });
   }
 
   public upload_update(data: string, uuid: string) {
-    return this.send('update_graph', { graph_id: uuid, data });
+    return this.send<{uuid: string}>('update_graph', { graph_id: uuid, data });
   }
 
   private log(message: string) {
     store.dispatch('log', `[WorkerWrapper] ${message}`);
   }
 
-  private send_command(command: string, method: string, endpoint: string, payload: any): Promise<RpcResponse> {
-    return this.send(command, { method, endpoint, payload });
+  private send_command<T>(command: string, method: string, endpoint: string, payload: any) {
+    return this.send<T>(command, { method, endpoint, payload });
   }
 
-  private send(command: string, params: any) {
+  private send<T>(command: string, params: any): Promise<RpcResult<T>> {
     const id = this.counter++;
-    const promise = new Promise<RpcResponse>((resolve, reject) => {
+    const promise = new Promise<RpcResult<T>>((resolve, reject) => {
       this.callbacks.set(id, {
-        onmessage: (d: RpcResponse) => {
+        onmessage: (d: RpcResult<T>) => {
           resolve(d);
           this.callbacks.delete(id);
         },
-        onerror: (d: RpcResponse) => {
+        onerror: (d: RpcError) => {
           reject(d);
-          if (d.error) {
-            const e = d.error;
-            this.log(`ERR: ${e.message}: \n ${JSON.stringify(d.error, undefined, 2)}`);
-          }
+          const e = d.error;
+          this.log(`ERR: ${e.message}: \n ${JSON.stringify(d.error, undefined, 2)}`);
           this.callbacks.delete(id);
         },
       });
@@ -125,17 +125,17 @@ export default class WorkerWrapper {
     this.worker.postMessage(request);
   }
 
-  private receiveFromWorker(event: MessageEvent) {
-    const data: RpcResponse = event.data;
+  private receiveFromWorker<T>(event: MessageEvent) {
+    const data: RpcResponse<T> = event.data;
     const cb = this.callbacks.get(data.id);
     if (!cb) {
       console.error(`had no callback for id: ${data.id}`);
       return;
     }
     if (data.error) {
-      cb.onerror(data);
+      cb.onerror(data as RpcError);
     } else {
-      cb.onmessage(data.result);
+      cb.onmessage(data as RpcResult<T>);
     }
   }
 }

@@ -84,8 +84,8 @@ export default Vue.extend({
       if (result) {
         return result;
       }
-      const d: any = await this.$solr.select({collection: this.collection, payload: this.payload});
-      result = d as FacetResponse;
+      const d = await this.$solr.select({collection: this.collection, payload: this.payload});
+      result = d.result as FacetResponse;
       node.scratch(scratchspace, result);
       return result;
     },

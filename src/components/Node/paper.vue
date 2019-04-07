@@ -110,11 +110,11 @@ export default Vue.extend({
       this.collection = node.data('collection');
       this.paperid = node.data('pid');
       const response = await this.$solr.get(this.collection, this.paperid);
-      this.doc = response.doc as DocCommon;
+      this.doc = response.result.doc as DocCommon;
       this.q_cited_by = `cited_by:${this.paperid}`;
       this.q_references = `references:${this.paperid}`;
       this.q_subq = `id:${this.paperid}`;
-      this.$cy.controller.scratch.set(node.id(), '_paper_data', response.doc);
+      this.$cy.controller.scratch.set(node.id(), '_paper_data', response.result.doc);
     },
   },
   watch: {
