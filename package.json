@@ -26,7 +26,7 @@
     "@vue/cli-plugin-typescript": "^3.5.3",
     "@vue/cli-service": "^3.5.3",
     "k6": "0.0.0",
-    "typescript": "^3.4.1",
+    "typescript": "^3.4.2",
     "vue-template-compiler": "^2.6.10"
   }
 }
