@@ -65,6 +65,10 @@ export default class CyController {
     this.addEdge(parentNode.id(), child);
     this.layout();
   }
+  public enhance(ele: cytoscape.NodeSingular) {
+    this.cy.fit(ele);
+    // TODO
+  }
   public layout() {
     this.cy.zoomingEnabled(false);
     this.cy.layout({
