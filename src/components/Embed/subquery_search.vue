@@ -90,7 +90,6 @@ export default Vue.extend({
           if (!d.result.response.docs[0]) {
             return;
           }
-
           const sq: any = d.result.response.docs[0].sq;
           this.pageDocs.set(page, sq.docs);
           this.numFound = sq.numFound;

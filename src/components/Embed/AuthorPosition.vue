@@ -60,7 +60,6 @@ export default Vue.extend({
       if (!result) {
         console.debug('no data in scratch');
         const data = await this.$solr.author_position(this.collection, this.author, this.docCount);
-        // drop eof (last in list)
         result = data.result;
       }
       this.result = result;

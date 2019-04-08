@@ -1,7 +1,11 @@
 <template>
   <div class="outer">
     <input type="text" v-model="q_filter" placeholder="filter harder">
-    <select-sort :collection="collection" @facetchanged="sortby = $event" @orderchanged="sortdir = $event"/>
+    <select-sort
+      :collection="collection"
+      @facetchanged="sortby = $event"
+      @orderchanged="sortdir = $event"
+    />
     <span v-if="0 !== pageCount">
       <input min="1" type="number" title="page" :max="pageCount" v-model="currentPage">
       / {{ pageCount }} ({{numFound}} hits)
@@ -68,7 +72,8 @@ export default Vue.extend({
     getPageData(page: number) {
       const start = (page - 1) * this.rows;
       this.searchInProgress.set(page, true);
-      const payload = {        params: {
+      const payload = {
+        params: {
           'q': this.query,
           'rows': this.rows,
           start,
@@ -78,7 +83,8 @@ export default Vue.extend({
           'q.op': 'AND',
           'debug': 'query',
           'fq': '',
-        }      };
+        },
+      };
       if (this.filters) {
         payload.params.q += ' ' + this.filters.join(' ');
       }

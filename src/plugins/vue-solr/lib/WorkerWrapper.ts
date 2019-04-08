@@ -24,17 +24,15 @@ export default class WorkerWrapper {
   }
 
   public get collections() {
-    return this.collects;
+    return [...this.coll.keys()];
   }
 
   private worker: Worker;
   private callbacks: Map<number, RpcCallback<any>> = new Map();
   private counter: number = 1;
-  private collects: string[];
   private readonly coll: Map<string, string[]>;
   constructor(collections: Map<string, string[]>) {
     this.worker = new Worker();
-    this.collects = [...collections.keys()];
     this.coll = collections;
     this.worker.onerror = (event) => {
       this.log(`ERR: ${event.message}`);
