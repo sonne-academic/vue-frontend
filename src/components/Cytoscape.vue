@@ -231,7 +231,7 @@ export default Vue.extend({
                         animate: 'end',
                         animationDuration: 250,
                         nodeDimensionsIncludeLabels: true,
-                        concentric: (cn: cytoscape.NodeSingular) => (cn.data('size')),
+                        concentric: (cn: cytoscape.NodeSingular) => (cn.data('level')),
                         levelWidth: () => 1,
                       }).run();
                     });
