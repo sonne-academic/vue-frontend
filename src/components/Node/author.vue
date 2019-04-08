@@ -12,7 +12,7 @@
           <div v-for="filter in filters" :key="filter" @click="removeFilter(filter)">{{filter}}</div>
         </template>
       </sidebar-detail>
-      <sidebar-detail>
+      <sidebar-detail :alwaysLoad=true>
         <template #summary>Publications: {{docCount}}</template>
         <template #detail>
           <embedded-search

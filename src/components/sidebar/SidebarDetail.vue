@@ -3,20 +3,31 @@
     <summary>
       <slot name="summary"></slot>
     </summary>
-    <slot name="detail"></slot>
-  </details>  
+    <slot v-if="open || alwaysLoad" name="detail"></slot>
+  </details>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 export default Vue.extend({
   name: 'SidebarDetail',
+  props: {
+    alwaysLoad: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data: () => ({
+    open: false,
+  }),
   methods: {
     toggled(ev: any) {
       if (this.details.open) {
         this.$emit('opened');
+        this.open = true;
       } else {
         this.$emit('closed');
+        this.open = false;
       }
     },
     close() {
@@ -27,6 +38,9 @@ export default Vue.extend({
     details(): HTMLDetailsElement {
       return this.$refs.details as HTMLDetailsElement;
     },
+  },
+  mounted() {
+    this.open = false;
   },
 });
 </script>

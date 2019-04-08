@@ -1,21 +1,37 @@
 <template>
-  <sidebar-detail ref="details"
-    @opened="open=true"
-    @closed="open=false">
-    <template #summary>
-      {{friendlyName}}
-    </template>
+  <sidebar-detail ref="details" @opened="open=true" @closed="open=false">
+    <template #summary>{{friendlyName}}</template>
     <template #detail>
-    <spinner v-if="loading"/>
-    <span v-else-if="error"> error :( </span>
-    <table v-else-if="items.length > 0">
-      <tr v-for="data in items" :key="data.name" >
-        <td ><img id="neg" src="/negative.svg" @click="emitFilter(data.name)"/></td>
-        <td><simple-emitter :collection="collection" :field="field" :name="data.name"/></td>
-        <td class="right">{{data.count}}</td>
-      </tr>
-    </table>
-    <span v-else> nothing found </span>
+      <spinner v-if="loading"/>
+      <span v-else-if="error">error :(</span>
+      <span v-else-if="items.length === 0">nothing found</span>
+      <!-- year -->
+      <table class="chart" v-else-if="field === 'year'">
+        <th>year</th>
+        <tr class="alternate"  v-for="data in sorted" :key="data.name">
+          <td>{{data.name}}</td>
+          <td :style="{width: '80%'}">
+            <div
+              class="bar"
+              :title="data.count"
+              :style="{width: 100*(data.count/maxCount)+'%'}"
+            ></div>
+
+          </td>
+        </tr>
+      </table>
+      <!-- rest -->
+      <table v-else>
+        <tr class="alternate" v-for="data in items" :key="data.name">
+          <td>
+            <img id="neg" src="/negative.svg" @click="emitFilter(data.name)">
+          </td>
+          <td>
+            <simple-emitter :collection="collection" :field="field" :name="data.name"/>
+          </td>
+          <td class="right">{{data.count}}</td>
+        </tr>
+      </table>
     </template>
   </sidebar-detail>
 </template>
@@ -39,12 +55,12 @@ function* gen_pairs(arr: any[]) {
 import Vue from 'vue';
 import { FacetResponse, FacetFields } from '@/plugins/vue-solr/lib/responses/FacetResponse';
 import SimpleEmitter from './Simple.vue';
-import {Spinner} from '../util/';
-import {SidebarDetail} from '@/components/sidebar';
+import { Spinner } from '../util/';
+import { SidebarDetail } from '@/components/sidebar';
 
 export default Vue.extend({
   name: 'SimpleFacetBox',
-  components: {SimpleEmitter, Spinner, SidebarDetail},
+  components: { SimpleEmitter, Spinner, SidebarDetail },
   props: {
     parentQuery: {
       type: String,
@@ -69,7 +85,7 @@ export default Vue.extend({
   },
   data: () => ({
     open: false,
-    items: [] as Array<{name: string, count: number}>,
+    items: [] as Array<{ name: string, count: number }>,
     loading: false,
     error: false,
   }),
@@ -84,7 +100,7 @@ export default Vue.extend({
       if (result) {
         return result;
       }
-      const d = await this.$solr.select({collection: this.collection, payload: this.payload});
+      const d = await this.$solr.select({ collection: this.collection, payload: this.payload });
       result = d.result as FacetResponse;
       node.scratch(scratchspace, result);
       return result;
@@ -118,8 +134,14 @@ export default Vue.extend({
     },
   },
   computed: {
+    maxCount(): number {
+      return Math.max(...this.items.map(({ count }) => count));
+    },
     scratchspace(): string {
       return `_facets_${this.collection}_${this.field}`;
+    },
+    sorted(): any[] {
+      return this.items.slice().sort((a, b) => a.name < b.name ? 1 : -1);
     },
     payload(): any {
       let q = this.parentQuery;
@@ -131,7 +153,7 @@ export default Vue.extend({
           'facet': 'on',
           'rows': 0,
           'facet.field': this.field,
-          },
+        },
       };
     },
     details(): any {
@@ -139,11 +161,11 @@ export default Vue.extend({
     },
   },
   watch: {
-    open() {this.update(); },
+    open() { this.update(); },
     filters() {
       this.resetScratch();
       this.update();
-      },
+    },
     queryValue() {
       this.details.close();
     },
@@ -176,7 +198,7 @@ td {
   padding: 0;
   background-color: inherit;
 }
-tr:nth-of-type(2n-1) {
+tr.alternate:nth-of-type(2n-1) {
   background-color: beige;
 }
 table {
@@ -188,5 +210,15 @@ table {
 }
 #neg:hover {
   opacity: 1;
+}
+.bar {
+  background-color: lightgray;
+  height: 1.2em;
+}
+.bar:hover {
+  background-color: gray;
+}
+.value {
+  text-align: right;
 }
 </style>

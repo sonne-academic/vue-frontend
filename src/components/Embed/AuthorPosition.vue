@@ -6,10 +6,23 @@
       <th>position</th>
       <th>count</th>
       <th>senior</th>
-      <tr v-for="index in result" :key="index.idx">
-        <td class="right">{{index.position}}</td>
-        <td class="right">{{index.count}}</td>
-        <td class="right">{{index.senior_count}}</td>
+      <tr class="alternate" v-for="data in result" :key="data.position">
+        <td class="right">{{data.position}}</td>
+        <td class="right">{{data.count}}</td>
+        <td class="right">{{data.senior_count}}</td>
+        <td :style="{width: 50+'%', 'background-color': 'white'}">
+          <div class="outerbar"
+            :title="data.count"
+            :style="{width: 100*(data.count/maxCount)+'%'}"
+          >
+            <div class="innerbar"
+              :title="data.senior_count"
+              :style="{width: 100*(data.senior_count/data.count)+'%'}"
+            ></div>
+          </div>
+
+          <!-- <div class="bart">{{data.count}}</div> -->
+        </td>
       </tr>
     </table>
   </details>
@@ -37,7 +50,7 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    result: new Array<any>(),
+    result: new Array<{ position: number, count: number, senior_count: number }>(),
     loading: true,
     open: false,
   }),
@@ -53,7 +66,6 @@ export default Vue.extend({
       }
     },
     async authorIndexGroup() {
-      console.log(this.details);
       const scratchspace = '_author_index';
 
       let result;
@@ -69,6 +81,9 @@ export default Vue.extend({
   computed: {
     details(): HTMLDetailsElement {
       return this.$refs.details as HTMLDetailsElement;
+    },
+    maxCount(): number {
+      return Math.max(...this.result.map(({ count }) => count));
     },
   },
   watch: {
@@ -91,7 +106,7 @@ td {
   padding: 0;
   background-color: inherit;
 }
-tr:nth-of-type(2n) {
+tr.alternate:nth-of-type(2n) {
   background-color: beige;
 }
 table {
@@ -100,5 +115,25 @@ table {
 }
 .right {
   text-align: right;
+}
+.outerbar {
+  background-color: lightgray;
+}
+.innerbar {
+  background-color: gray;
+  /* height: .5em; */
+  height: 1.2em;
+}
+.outerbar > .innerbar:hover {
+  background-color: black;
+}
+.outerbar:hover > .innerbar:hover {
+  background-color: black;
+}
+.outerbar:hover > .innerbar {
+  background-color: lightgray;
+}
+.outerbar:hover {
+  background-color: gray;
 }
 </style>

@@ -4,7 +4,6 @@ import {DataNodes} from './nodes';
 interface LocalStore {version: number; elements: cytoscape.ElementDefinition; }
 
 export default class CyController {
-
   public get scratch() {
     return {
       get: (id: string , ns: string) => this.cy.$id(id).scratch(ns),
@@ -26,6 +25,8 @@ export default class CyController {
     }
     return node;
   }
+
+  // constructor and fields
   private cy: cytoscape.Core;
   constructor(cy: cytoscape.Core) {
     Object.assign(window, {cy});

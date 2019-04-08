@@ -25,8 +25,8 @@
         <strong>DOI</strong>:
         <a :href="'https://doi.org/'+doc.doi">{{doc.doi}}</a>
       </div>
-      <div v-for="url in urls" :key="url.host">
-        <a :href="url">{{url.host}}</a>
+      <div v-for="url in urls" :key="url.href">
+        <a :href="url.href">{{url.host}}</a>
       </div>
 
       <sidebar-detail v-if="doc.cited_by_count">

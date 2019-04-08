@@ -1,21 +1,21 @@
 <template>
   <sidebar iconName="multi">
     <template #heading> {{query}} </template>
-    <template #main> 
-      <sidebar-detail>
+    <template #main>
+      <sidebar-detail :alwaysLoad=true>
         <template #summary>Publications: {{docCount}}</template>
-        <template #detail>       
-          <embedded-search 
-            :query="query" 
-            :collection="collection" 
+        <template #detail>
+          <embedded-search
+            :query="query"
+            :collection="collection"
             @numfound="docCount = $event"
             :filters="filters"/>
         </template>
       </sidebar-detail>
 
-      <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
+      <simple-facet-box v-for="(facet, index) in facets" :key="facet"
         :field="facet"
-        :collection="collection" 
+        :collection="collection"
         :friendlyName="friendlyNames[index]"
         :filters="filters"
         :parentQuery="query"
@@ -80,4 +80,3 @@ export default Vue.extend({
   },
 });
 </script>
-
