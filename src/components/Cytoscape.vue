@@ -16,6 +16,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { FacetResponse } from '../plugins/vue-solr/lib/responses/FacetResponse';
+import { RpcResponse, RpcResult } from '../plugins/vue-solr/lib/RpcInterface';
 const activeComponents = ['search-results'];
 type evl = (ev: KeyboardEvent) => void;
 export default Vue.extend({
@@ -157,7 +159,86 @@ export default Vue.extend({
           {
             content: 'ENHANCE',
             select: (ele) => {
-              this.$cy.controller.enhance(ele);
+              cy.batch(() => {
+                ele.data('level', 10);
+                cy.zoomingEnabled(false);
+                cy.elements().not(ele).addClass('faded');
+                const facets = this.$solr.facets(ele.data('collection'));
+                for (const facet of facets) {
+                  cy.add({ group: 'nodes', data: { size: 30, name: facet, id: facet, level: 9 }, classes: 'tmp' });
+                  cy.add({ group: 'edges', data: { source: ele.id(), target: facet }, classes: 'tmp' });
+                }
+                const coll = cy.$('.tmp').union(ele);
+                coll.layout({
+                  name: 'concentric',
+                  animate: 'end',
+                  animationDuration: 250,
+                  nodeDimensionsIncludeLabels: true,
+                }).run();
+                coll.nodes('.tmp').forEach((node) => {
+                  console.log(`${node.data('name')}:${ele.data('name')}`);
+                  const params = {
+                    'q': `${ele.data('component')}:"${ele.data('name')}"`,
+                    'facet': 'on',
+                    'rows': 0,
+                    'facet.field': node.data('name'),
+                  };
+                  node.scratch('_enhance', () => {
+                    return this.$solr.select({
+                      collection: ele.data('collection'),
+                      payload: { params },
+                    });
+                  });
+                  node.on('select', () => {
+                    const fun = node.scratch('_enhance');
+                    if (!fun) {
+                      return;
+                    }
+                    fun().then((d: RpcResult<FacetResponse>) => {
+                      console.log(d.result.facet_counts.facet_fields);
+                      for (const [k, v] of Object.entries(d.result.facet_counts.facet_fields)) {
+                        let x: any[] = v;
+                        const maxSize: number = x[1];
+                        console.log(maxSize);
+                        let nm;
+                        let cn;
+                        while (x.length) {
+                          [nm, cn, ...x] = x;
+                          const data = {
+                            size: 30 + 60 * (cn / maxSize),
+                            facet: k,
+                            level: 8,
+                            id: `tmp:${nm}`,
+                            name: nm,
+                          };
+                          cy.add({
+                            group: 'nodes',
+                            data,
+                            classes: 'tmp',
+                          });
+                          cy.add({
+                            group: 'edges',
+                            data: { source: node.id(), target: `tmp:${nm}` },
+                            classes: 'tmp',
+                          });
+                        }
+                        node.on('unselect', () => {
+                          cy.$(`node[facet="${k}"]`).remove();
+                        });
+                      }
+                      cy.elements('.tmp').union(ele).layout({
+                        name: 'concentric',
+                        animate: 'end',
+                        animationDuration: 250,
+                        nodeDimensionsIncludeLabels: true,
+                        concentric: (cn: cytoscape.NodeSingular) => (cn.data('size')),
+                        levelWidth: () => 1,
+                      }).run();
+                    });
+                  });
+                });
+                cy.zoomingEnabled(true);
+              });
             },
           },
         ],
