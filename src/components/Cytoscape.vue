@@ -160,13 +160,13 @@ export default Vue.extend({
             content: 'ENHANCE',
             select: (ele) => {
               cy.batch(() => {
-                ele.data('level', 10);
+                ele.data('level', 10000);
                 cy.zoomingEnabled(false);
                 cy.elements().not(ele).addClass('faded');
                 const facets = this.$solr.facets(ele.data('collection'));
                 for (const facet of facets) {
-                  cy.add({ group: 'nodes', data: { size: 30, name: facet, id: facet, level: 9 }, classes: 'tmp' });
-                  cy.add({ group: 'edges', data: { source: ele.id(), target: facet }, classes: 'tmp' });
+                  cy.add({ group: 'nodes', data: { size: 30, name: facet, id: facet, level: 9999 }, classes: 'tmp' });
+                  cy.add({ group: 'edges', data: { target: ele.id(), source: facet }, classes: 'tmp' });
                 }
                 const coll = cy.$('.tmp').union(ele);
                 coll.layout({
@@ -195,21 +195,26 @@ export default Vue.extend({
                       return;
                     }
                     fun().then((d: RpcResult<FacetResponse>) => {
-                      console.log(d.result.facet_counts.facet_fields);
+                      cy.startBatch();
                       for (const [k, v] of Object.entries(d.result.facet_counts.facet_fields)) {
                         let x: any[] = v;
                         const maxSize: number = x[1];
                         console.log(maxSize);
                         let nm;
                         let cn;
+                        const arr = new Array<{ name: string, count: number }>();
                         while (x.length) {
                           [nm, cn, ...x] = x;
+                          arr.push({ name: nm, count: cn });
+                        }
+                        arr.sort((a, b) => a.name < b.name ? 1 : -1);
+                        arr.forEach(({name, count}) => {
                           const data = {
-                            size: 30 + 60 * (cn / maxSize),
+                            size: 30 + 60 * (count / maxSize),
                             facet: k,
-                            level: 8,
-                            id: `tmp:${nm}`,
-                            name: nm,
+                            level: count,
+                            id: `tmp:${k}:${name}`,
+                            name,
                           };
                           cy.add({
                             group: 'nodes',
@@ -218,21 +223,25 @@ export default Vue.extend({
                           });
                           cy.add({
                             group: 'edges',
-                            data: { source: node.id(), target: `tmp:${nm}` },
+                            data: { source: node.id(), target: `tmp:${k}:${name}` },
                             classes: 'tmp',
                           });
-                        }
+                        });
+
                         node.on('unselect', () => {
-                          cy.$(`node[facet="${k}"]`).remove();
+                          // cy.$(`node[facet="${k}"]`).remove();
                         });
                       }
+
+                      cy.endBatch();
                       cy.elements('.tmp').union(ele).layout({
                         name: 'concentric',
                         animate: 'end',
                         animationDuration: 250,
                         nodeDimensionsIncludeLabels: true,
-                        concentric: (cn: cytoscape.NodeSingular) => (cn.data('level')),
-                        levelWidth: () => 1,
+                        directed: true,
+                        concentric: (cn: cytoscape.NodeSingular) => (cn.indegree(false)),
+                        levelWidth: (nodes: cytoscape.NodeCollection) => nodes.maxIndegree(false) / 4,
                       }).run();
                     });
                   });
