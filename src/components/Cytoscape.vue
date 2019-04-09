@@ -4,11 +4,11 @@
       <a href="https://blog.0ds.de/sonne/">
         <img class="cybtn" src="/about.svg" title="about">
       </a>
-      <img class="cybtn" id="save" src="/save.svg" title="save to localStorage" @click="save">
-      <img class="cybtn" id="save" src="/upload.svg" title="upload to sonne" @click="upload">
-      <img class="cybtn" id="layout" src="/layout.svg" title="do layout" @click="layout">
-      <img class="cybtn" id="fit" src="/fit.svg" title="fit graph to window" @click="fit">
-      <img class="cybtn" id="rstzoom" src="/reset_zoom.svg" title="reset zoom" @click="reset_zoom">
+      <img class="cybtn" src="/save.svg" title="save to localStorage" @click="save">
+      <img class="cybtn" src="/upload.svg" title="upload to sonne" @click="upload">
+      <img class="cybtn" src="/layout.svg" title="do layout" @click="layout">
+      <img class="cybtn" src="/fit.svg" title="fit graph to window" @click="fit">
+      <img class="cybtn" src="/reset_zoom.svg" title="reset zoom" @click="reset_zoom">
     </div>
     <div class="cy" ref="cy"/>
   </div>
