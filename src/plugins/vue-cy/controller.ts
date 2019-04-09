@@ -90,6 +90,18 @@ export default class CyController {
       nodeDimensionsIncludeLabels: true,
       animate: 'end',
       animationDuration: 250,
+      ranker: 'network-simplex',
+      // ranker: 'tight-tree',
+      // ranker: 'longest-path',
+      minLen: ( e ) => {
+        if (e.target().data('component') === 'multi') {
+          return 0.5;
+        }
+        if (e.source().data('component') === 'multi') {
+          return 0.5;
+        }
+        return 1;
+      },
     }).run();
     this.cy.zoomingEnabled(true);
     // this.cy.one('layoutstop', () => (this.cy.center(this.activeNodes)));
