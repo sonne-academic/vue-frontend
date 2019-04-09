@@ -3,6 +3,7 @@ const style: cytoscape.Stylesheet[] = [
   {
     selector: 'edge',
     style: {
+      'font-family': 'sans-serif',
       // 'label': 'data(name)',
       'color': '#00c',
       'width': 3,
@@ -17,6 +18,7 @@ const style: cytoscape.Stylesheet[] = [
   {
     selector: 'node',
     style: {
+      'font-family': 'sans-serif',
       'background-color': '#e00',
       'label': 'data(name)',
       // 'text-wrap': 'wrap',
@@ -68,7 +70,7 @@ const style: cytoscape.Stylesheet[] = [
     style: {
       'line-color': 'deeppink',
       'z-index': 10,
-      'curve-style': 'haystack',
+      'curve-style': 'unbundled-bezier',
     },
   },
   {
