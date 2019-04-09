@@ -24,7 +24,11 @@ export default Vue.extend({
   data: () => ({
     nodeMenu: { destroy: () => { return; } },
     coreMenu: { destroy: () => { return; } },
-    cdnd: { enable: () => { return; }, disable: () => { return; }, destroy: () => { return; } },
+    cdnd: {
+      enable: () => { return; },
+      disable: () => { return; },
+      destroy: () => { return; },
+    },
     listener: null as evl | null,
   }),
   methods: {
@@ -55,7 +59,9 @@ export default Vue.extend({
       const cy = await this.$cy.instance;
       const data: any = cy.json();
       const uuid = this.current_graph_id();
-      const dataStr = JSON.stringify({ version: 1, elements: data.elements });
+      const version = 1;
+      const elements = data.elements;
+      const dataStr = JSON.stringify({ version, elements });
       if (!uuid) {
         const response = await this.$solr.upload_graph(dataStr);
         window.location.search = `${response.result.uuid}`;
