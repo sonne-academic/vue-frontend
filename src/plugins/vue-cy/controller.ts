@@ -70,6 +70,18 @@ export default class CyController {
     this.cy.fit(ele);
     // TODO
   }
+
+  public remove(eles: cytoscape.CollectionReturnValue) {
+    eles.unselect();
+    const removed = eles.remove();
+    this.cy.nodes('[component="multi"]').forEach((node) => {
+      if (node.successors('node').length === 0) {
+        removed.union(node.remove());
+      }
+    });
+    return removed;
+  }
+
   public layout() {
     this.cy.zoomingEnabled(false);
     this.cy.layout({

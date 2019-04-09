@@ -120,8 +120,7 @@ export default Vue.extend({
       } else if ('Delete' === ev.key) {
         this.$cy.instance.then((cy) => {
           const nodes = cy.$(':selected');
-          nodes.unselect();
-          nodes.remove();
+          this.$cy.controller.remove(nodes);
         });
       } else {
         // console.log(ev);
@@ -145,9 +144,8 @@ export default Vue.extend({
         commands: [
           {
             content: 'remove',
-            select(ele) {
-              ele.unselect();
-              ele.remove();
+            select: (ele) => {
+              this.$cy.controller.remove(ele);
             },
           },
           {
