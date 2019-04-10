@@ -76,7 +76,7 @@ export default Vue.extend({
     },
     autoSave: debounce(function(this: any) {
       if (null === this.current_graph_id) {
-        this.upload();
+        this.save();
       }
     }, 5000),
     autoUpload: debounce(function(this: any) {
