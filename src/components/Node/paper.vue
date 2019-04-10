@@ -69,7 +69,14 @@
         </template>
       </sidebar-detail>
     </template>
-    <template #footer>source: {{collection}}</template>
+    <template #footer>
+      source: {{collection}}
+      <div>
+        <textarea v-model="note"></textarea>
+
+      </div>
+      <button @click="saveNote">save note</button>
+    </template>
   </sidebar>
 </template>
 
@@ -99,6 +106,7 @@ export default Vue.extend({
     q_references: '',
     q_subq: '',
     filters: [],
+    note: '',
   }),
   methods: {
     log(msg: string) {
@@ -109,12 +117,17 @@ export default Vue.extend({
       this.title = node.data('name');
       this.collection = node.data('collection');
       this.paperid = node.data('pid');
+      this.note = node.data('note');
       const response = await this.$solr.get(this.collection, this.paperid);
       this.doc = response.result.doc as DocCommon;
       this.q_cited_by = `cited_by:${this.paperid}`;
       this.q_references = `references:${this.paperid}`;
       this.q_subq = `id:${this.paperid}`;
       this.$cy.controller.scratch.set(node.id(), '_paper_data', response.result.doc);
+    },
+    saveNote() {
+      const node = this.$cy.controller.getNodeById(this.nodeid);
+      node.data('note', this.note);
     },
   },
   watch: {
