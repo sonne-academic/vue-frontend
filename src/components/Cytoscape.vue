@@ -87,9 +87,9 @@ export default Vue.extend({
       } else if (1 === c.length) {
         const component = c.data('component');
         if ('multi' === component) {
-          c.unselect();
+          // c.unselect();
           c.incomers('node').select();
-          return;
+          // return;
         }
         const id = c.data('id');
         this.$emit('setactive', { component, id });
@@ -97,10 +97,10 @@ export default Vue.extend({
         const multi = c.filter('node[component="multi"]');
         if (0 < multi.length) {
           multi.forEach((m) => {
-            m.unselect();
+            // m.unselect();
             m.incomers('node').select();
           });
-          return;
+          // return;
         }
         const components: string[] = c.map((node) => {
           const f = node.data('component');
