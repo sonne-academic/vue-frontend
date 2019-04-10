@@ -18,6 +18,7 @@
 import Vue from 'vue';
 import { FacetResponse } from '../plugins/vue-solr/lib/responses/FacetResponse';
 import { RpcResponse, RpcResult } from '../plugins/vue-solr/lib/RpcInterface';
+import debounce from 'lodash/debounce';
 const activeComponents = ['search-results'];
 type evl = (ev: KeyboardEvent) => void;
 export default Vue.extend({
@@ -34,7 +35,7 @@ export default Vue.extend({
   methods: {
     save() {
       try {
-      this.$cy.controller.saveGraph();
+        this.$cy.controller.saveGraph();
       } catch {
         this.$store.dispatch('log', 'could not save graph, maybe it\'s too large for localStorage?');
       }
@@ -49,21 +50,10 @@ export default Vue.extend({
     reset_zoom() {
       this.$cy.controller.reset_zoom();
     },
-    current_graph_id(): string | null {
-      const deeplink = window.location.search;
-      if (deeplink) {
-        const split = deeplink.replace('?', '').split('=');
-        if (split.length === 1) {
-          const uuid = decodeURI(split[0]);
-          return uuid;
-        }
-      }
-      return null;
-    },
     async upload() {
       const cy = await this.$cy.instance;
       const data: any = cy.json();
-      const uuid = this.current_graph_id();
+      const uuid = this.current_graph_id;
       const version = 1;
       const elements = data.elements;
       const dataStr = JSON.stringify({ version, elements });
@@ -76,7 +66,7 @@ export default Vue.extend({
       }
     },
     async download() {
-      const uuid = this.current_graph_id();
+      const uuid = this.current_graph_id;
       if (!uuid) {
         return;
       }
@@ -84,6 +74,16 @@ export default Vue.extend({
       const cy = await this.$cy.instance;
       cy.add(response.result.graph.elements);
     },
+    autoSave: debounce(function(this: any) {
+      if (null === this.current_graph_id) {
+        this.upload();
+      }
+    }, 5000),
+    autoUpload: debounce(function(this: any) {
+      if (null !== this.current_graph_id) {
+        this.upload();
+      }
+    }, 5000),
     maybeEmit(ev: cytoscape.EventObject) {
       const c = ev.cy.$('node:selected');
       if (0 === c.length) {
@@ -132,6 +132,19 @@ export default Vue.extend({
       }
     },
   },
+  computed: {
+    current_graph_id(): string | null {
+      const deeplink = window.location.search;
+      if (deeplink) {
+        const split = deeplink.replace('?', '').split('=');
+        if (split.length === 1) {
+          const uuid = decodeURI(split[0]);
+          return uuid;
+        }
+      }
+      return null;
+    },
+  },
   created() {
     if (!this.listener) {
       this.listener = (ev) => this.keypress(ev);
@@ -173,6 +186,10 @@ export default Vue.extend({
       return this.$cy.instance;
     }).then((cy) => {
       this.maybeEmit({ cy } as cytoscape.EventObject);
+      cy.on('add remove data', 'node', (ev) => {
+        this.autoUpload();
+        this.autoSave();
+       });
     }).catch(console.error);
   },
   beforeDestroy() {
@@ -182,6 +199,7 @@ export default Vue.extend({
     this.$cy.instance.then((cy) => {
       cy.off('select');
       cy.off('unselect');
+      cy.off('add remove data');
       cy.unmount();
       this.nodeMenu.destroy();
       this.coreMenu.destroy();
