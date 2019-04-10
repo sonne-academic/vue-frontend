@@ -33,7 +33,12 @@ export default Vue.extend({
   }),
   methods: {
     save() {
+      try {
       this.$cy.controller.saveGraph();
+      } catch {
+        this.$store.dispatch('log', 'could not save graph, maybe it\'s too large for localStorage?');
+      }
+
     },
     layout() {
       this.$cy.controller.layout();
