@@ -1,10 +1,10 @@
 <template>
   <div class="sidebar">
     <header>
-      <h1> 
+      <h2>
         <img :src="icon">
         <slot name="heading"></slot>
-      </h1>
+      </h2>
     </header>
     <main>
       <slot name="main"></slot>
