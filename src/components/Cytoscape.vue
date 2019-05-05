@@ -125,7 +125,8 @@ export default Vue.extend({
       } else if ('Delete' === ev.key) {
         this.$cy.instance.then((cy) => {
           const nodes = cy.$(':selected');
-          this.$cy.controller.remove(nodes);
+          // TODO: make a button for this. When using DEL in a textfield, this would delete the node.
+          // this.$cy.controller.remove(nodes);
         });
       } else {
         // console.log(ev);
