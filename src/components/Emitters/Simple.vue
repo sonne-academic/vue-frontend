@@ -1,5 +1,8 @@
 <template>
-  <span class="emitter" @click="emit">{{name}}</span>
+  <span>
+    <img :src="icon" :title="hint" @click="emit"/>
+    <span>{{name}}</span>
+  </span>
 </template>
 
 <script lang="ts">
@@ -27,5 +30,23 @@ export default Vue.extend({
       this.$cy.controller.addLinkedToActive(simpleBuilder(this.field, this.collection, this.name));
     },
   },
+  computed: {
+    icon(): string {
+      return `/${this.field}.svg`;
+    },
+    hint(): string {
+      return `add ${this.field} to graph`;
+    },
+  },
 });
 </script>
+<style scoped>
+img {
+  height: 1em;
+  opacity: 0.5;
+}
+img:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+</style>
