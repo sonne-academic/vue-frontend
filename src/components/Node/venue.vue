@@ -2,16 +2,16 @@
   <sidebar iconName="venue">
     <template #heading> {{value}} </template>
     <template #main>
-      <sidebar-detail>
+      <sidebar-detail :alwaysLoad=true>
         <template #summary>Publications: {{docCount}}</template>
-        <template #detail> 
+        <template #detail>
           <embedded-search :query="embQuery" :filters="filters" :collection="collection" @numfound="docCount = $event"/>
         </template>
       </sidebar-detail>
-      <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
+      <simple-facet-box v-for="(facet, index) in facets" :key="facet"
         :filters="filters"
         :field="facet"
-        :collection="collection" 
+        :collection="collection"
         :friendlyName="friendlyNames[index]"
         :parentQuery="embQuery"
       />

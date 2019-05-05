@@ -2,7 +2,7 @@
   <sidebar iconName="journal">
     <template #heading>{{journalName}}</template>
     <template #main>
-      <sidebar-detail>
+      <sidebar-detail :alwaysLoad=true>
         <template #summary>Publications: {{docCount}}</template>
         <template #detail>
           <embedded-search
@@ -10,6 +10,7 @@
             :collection="collection"
             :filters="filters"
             @numfound="docCount = $event"
+
           />
         </template>
       </sidebar-detail>

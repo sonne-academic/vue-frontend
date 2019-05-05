@@ -2,14 +2,14 @@
   <sidebar iconName="keywords">
     <template #heading> {{value}} </template>
     <template #main>
-      <sidebar-detail>
+      <sidebar-detail :alwaysLoad=true>
         <template #summary> Publications: {{docCount}} </template>
         <template #detail> <embedded-search :filters="filters" :query="embQuery" :collection="collection" @numfound="docCount = $event"/> </template>
       </sidebar-detail>
 
-      <simple-facet-box v-for="(facet, index) in facets" :key="facet" 
+      <simple-facet-box v-for="(facet, index) in facets" :key="facet"
         :field="facet"
-        :collection="collection" 
+        :collection="collection"
         :friendlyName="friendlyNames[index]"
         :filters="filters"
         :parentQuery="embQuery"
@@ -71,4 +71,3 @@ export default Vue.extend({
   },
 });
 </script>
-
