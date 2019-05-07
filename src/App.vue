@@ -13,7 +13,7 @@ import Vue from 'vue';
 import GlobalLog from './components/GlobalLog.vue';
 import SearchBox from './components/SearchBox.vue';
 import cy from './components/Cytoscape.vue';
-import {detailComponents} from './components/Node';
+import {detailComponents} from './components/nodes';
 export default Vue.extend({
   name: 'app',
   components: {
