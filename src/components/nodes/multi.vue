@@ -16,7 +16,7 @@
       <simple-facet-box v-for="(facet, index) in facets" :key="facet"
         :field="facet"
         :collection="collection"
-        :friendlyName="friendlyNames[index]"
+        :friendlyName="facet"
         :filters="filters"
         :parentQuery="query"
       />
@@ -71,7 +71,6 @@ export default Vue.extend({
   },
   computed: {
     facets(): string[] {
-      return [];
       return this.$solr.facets(this.collection);
     },
   },
