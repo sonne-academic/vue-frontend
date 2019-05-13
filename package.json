@@ -1,6 +1,6 @@
 {
   "name": "sonne",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,7 +9,7 @@
     "postinstall_skip": "scripts/patch_cy.sh"
   },
   "dependencies": {
-    "cytoscape": "^3.5.2",
+    "cytoscape": "^3.6.0",
     "cytoscape-compound-drag-and-drop": "^1.0.0",
     "cytoscape-cxtmenu": "^3.1.0",
     "cytoscape-dagre": "^2.2.2",
@@ -20,13 +20,13 @@
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {
-    "@types/cytoscape": "^3.4.0",
+    "@types/cytoscape": "3.4.0",
     "@types/lodash": "^4.14.123",
     "@types/uuid": "^3.4.4",
-    "@vue/cli-plugin-typescript": "^3.5.3",
-    "@vue/cli-service": "^3.5.3",
+    "@vue/cli-plugin-typescript": "^3.7.0",
+    "@vue/cli-service": "^3.7.0",
     "k6": "0.0.0",
-    "typescript": "^3.4.2",
+    "typescript": "^3.4.5",
     "vue-template-compiler": "^2.6.10"
   }
 }
