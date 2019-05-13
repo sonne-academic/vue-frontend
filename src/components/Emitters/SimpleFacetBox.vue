@@ -155,6 +155,7 @@ export default Vue.extend({
           'debug': false,
           q,
           'facet': 'on',
+          'q.op': 'AND',
           'rows': 0,
           'facet.field': this.field,
         },
