@@ -96,13 +96,19 @@ export default Vue.extend({
     async getFacets(): Promise<FacetResponse> {
       const scratchspace = this.scratchspace;
       const node = this.getNode();
-      let result = node.scratch(scratchspace);
-      if (result) {
-        return result;
+      let result;
+      if (1 === node.length) {
+        // don't store in scratch, when multiple nodes are selected
+        result = node.scratch(scratchspace);
+        if (result) {
+          return result;
+        }
       }
       const d = await this.$solr.select({ collection: this.collection, payload: this.payload });
       result = d.result as FacetResponse;
-      node.scratch(scratchspace, result);
+      if (1 === node.length) {
+        node.scratch(scratchspace, result);
+      }
       return result;
     },
     async update() {
@@ -114,7 +120,8 @@ export default Vue.extend({
           const flds: FacetFields = result.facet_counts.facet_fields;
           Object.entries(flds)
             .forEach(([key, arr]) => (this.items = [...gen_pairs(arr)]));
-        } catch {
+        } catch (exc) {
+          console.error(exc);
           this.error = true;
         } finally {
           this.loading = false;
@@ -123,9 +130,6 @@ export default Vue.extend({
     },
     getNode() {
       const node = this.$cy.controller.activeNodes;
-      if (node.length !== 1) {
-        throw new Error('[SimpleFacetBox] cannot emit on multiple nodes');
-      }
       return node;
     },
     resetScratch() {
