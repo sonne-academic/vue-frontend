@@ -1,7 +1,11 @@
 <template>
   <div class="outer">
     <input type="text" v-model="q_filter" placeholder="filter harder">
-    <select-sort :collection="collection" @facetchanged="sortby = $event" @orderchanged="sortdir = $event"/>
+    <select-sort
+      :collection="collection"
+      @facetchanged="sortby = $event"
+      @orderchanged="sortdir = $event"
+    />
     <span v-if="0 !== pageCount">
       <input min="1" type="number" title="page" :max="pageCount" v-model="currentPage">
       / {{ pageCount }} ({{numFound}} hits)
@@ -72,8 +76,9 @@ export default Vue.extend({
           'fl': '*,sq:[subquery]',
           'sq.q': this.subquery,
           'sq.rows': this.rows,
-          'sq.start': this.start,
+          'sq.start': start,
           'sq.fq': '',
+          'sq.sort': this.activeSort,
           'sort': this.activeSort,
         },
       };
