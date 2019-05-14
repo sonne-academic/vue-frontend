@@ -44,36 +44,6 @@ const style: cytoscape.Stylesheet[] = [
     },
   },
   {
-    selector: '.hidden',
-    style: {
-      display: 'none',
-    },
-  },
-  {
-    selector: '.faded',
-    style: {
-      'events': 'no',
-      'opacity': 0.06,
-      'z-index': 1,
-    },
-  },
-  {
-    selector: 'node.tmp',
-    style: {
-      'background-color': 'deeppink',
-      'height': 'data(size)',
-      'width': 'data(size)',
-    },
-  },
-  {
-    selector: 'edge.tmp',
-    style: {
-      'line-color': 'deeppink',
-      'z-index': 10,
-      'curve-style': 'unbundled-bezier',
-    },
-  },
-  {
     selector: 'node:selected',
     style: {
       'background-color': '#ee0',
