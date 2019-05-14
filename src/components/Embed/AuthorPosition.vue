@@ -3,9 +3,9 @@
     <summary>author position in paper</summary>
     <spinner v-if="loading"/>
     <table v-else>
-      <th>position</th>
-      <th>count</th>
-      <th>senior</th>
+      <th title="the position of this person in the list of authors on their publications">position</th>
+      <th title="the amount of papers where the author was in this position">count</th>
+      <th title="the amount of papers where the author was mentioned last">last</th>
       <tr class="alternate" v-for="data in result" :key="data.position">
         <td class="right">{{data.position}}</td>
         <td class="right">{{data.count}}</td>
@@ -125,15 +125,15 @@ table {
   height: 1.2em;
 }
 .outerbar > .innerbar:hover {
-  background-color: black;
+  background-color: red;
 }
 .outerbar:hover > .innerbar:hover {
-  background-color: black;
+  background-color: green;
 }
 .outerbar:hover > .innerbar {
-  background-color: lightgray;
+  background-color: gray;
 }
 .outerbar:hover {
-  background-color: gray;
+  background-color: black;
 }
 </style>
