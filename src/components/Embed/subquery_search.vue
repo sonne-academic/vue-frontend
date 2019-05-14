@@ -1,6 +1,6 @@
 <template>
   <div class="outer">
-    <input type="text" v-model="q_filter" placeholder="filter harder">
+    <input type="text" v-model="q_filter" placeholder="filter by title, author, year">
     <select-sort
       :collection="collection"
       @facetchanged="sortby = $event"
