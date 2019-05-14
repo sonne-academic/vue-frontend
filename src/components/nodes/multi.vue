@@ -26,7 +26,9 @@
       />
     </template>
     <template #footer>
-      ignored:
+      <span v-if="ignored().length">
+        ignored:
+      </span>
       <div v-for="thing in ignored()" :key="thing.field+thing.value">
         <img :src="'/'+thing.field+'.svg'"> {{thing.value}}
       </div>
