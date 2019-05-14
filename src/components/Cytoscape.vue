@@ -102,7 +102,7 @@ export default Vue.extend({
         const multi = c.filter('node[component="multi"]');
         if (0 < multi.length) {
           multi.forEach((m) => {
-            // m.unselect();
+            m.unselect();
             m.incomers('node').select();
           });
           // return;
