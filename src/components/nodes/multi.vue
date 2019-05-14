@@ -1,6 +1,10 @@
 <template>
   <sidebar iconName="multi">
-    <template #heading> {{query}} </template>
+    <template #heading> Multiple Nodes:
+      <div v-for="thing in fieldvalues()" :key="thing.field+thing.value">
+        <img :src="'/'+thing.field+'.svg'"> {{thing.value}}
+      </div>
+    </template>
     <template #main>
       <sidebar-detail :alwaysLoad=true>
         <template #summary>Publications: {{docCount}}</template>
@@ -21,6 +25,12 @@
         :parentQuery="query"
       />
     </template>
+    <template #footer>
+      ignored:
+      <div v-for="thing in ignored()" :key="thing.field+thing.value">
+        <img :src="'/'+thing.field+'.svg'"> {{thing.value}}
+      </div>
+    </template>
   </sidebar>
 </template>
 
@@ -30,12 +40,18 @@ import {SimpleFacetBox} from '../Emitters';
 import {EmbeddedSearch} from '../Embed';
 import {Sidebar, SidebarDetail} from '../sidebar';
 
+interface FieldValue {
+  field: string;
+  value: string;
+}
+
 export default Vue.extend({
   name: 'MultiQuery',
   components: {SimpleFacetBox, EmbeddedSearch, Sidebar, SidebarDetail},
   data: () => ({
     friendlyNames: [],
     query: '',
+    header: '',
     docCount: 0,
     collection: '',
     filters: [],
@@ -62,6 +78,35 @@ export default Vue.extend({
         }
         return `${c}:"${n}"`;
       }).join(' ');
+    },
+    fieldvalues(): FieldValue[] {
+      const nodes = this.$cy.controller.activeNodes;
+      this.collection = nodes.data('collection');
+      const allowed = this.$solr.facets(this.collection);
+      return nodes.filter((node) => {
+          return 0 <= allowed.indexOf(node.data('component'));
+        })
+        .map((node) => {
+        const value = node.data('name');
+        const field = node.data('component');
+        return {field, value};
+      });
+    },
+    ignored(): FieldValue[] {
+      const nodes = this.$cy.controller.activeNodes;
+      this.collection = nodes.data('collection');
+      const allowed = this.$solr.facets(this.collection);
+      return nodes.filter((node) => {
+        const idx = allowed.indexOf(node.data('component'));
+        console.log(idx);
+        return 0 > allowed.indexOf(node.data('component'));
+        })
+        .map((node) => {
+        const value = node.data('name');
+        const field = node.data('component');
+        console.log(field + value);
+        return {field, value};
+      });
     },
   },
   watch: {
