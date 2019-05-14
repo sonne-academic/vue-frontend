@@ -20,7 +20,7 @@
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {
-    "@types/cytoscape": "3.4.0",
+    "@types/cytoscape": "^3.4.2",
     "@types/lodash": "^4.14.123",
     "@types/uuid": "^3.4.4",
     "@vue/cli-plugin-typescript": "^3.7.0",
