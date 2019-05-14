@@ -13,7 +13,7 @@
         </template>
       </sidebar-detail>
 
-      <simple-facet-box v-for="(facet, index) in facets" :key="facet"
+      <simple-facet-box v-for="facet in facets" :key="facet"
         :field="facet"
         :collection="collection"
         :friendlyName="facet"
