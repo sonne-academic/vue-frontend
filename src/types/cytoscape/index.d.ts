@@ -1,8 +1,7 @@
 import cytoscape, { LayoutOptions, Layouts } from 'cytoscape';
 import * as cm from 'cytoscape-cxtmenu';
 import * as cd from 'cytoscape-dagre';
-import * as cdnd from 'cytoscape-compound-drag-and-drop'
-
+import * as cdnd from 'cytoscape-compound-drag-and-drop';
 
 declare module 'cytoscape' {
   type LayoutExtensions = LayoutOptions | cd.DagreLayoutOptions;
@@ -24,11 +23,9 @@ declare module 'cytoscape' {
     createLayout(options: LayoutExtensions): Layouts;
   }
   namespace Css {
-    export interface Node extends Partial<Visibility> {
+    export interface Node {
       'events'?: 'no' | 'yes';
-      'text-events'?: 'no'|'yes';
+      'text-events'?: 'no' | 'yes';
     }
   }
-
-
 }
