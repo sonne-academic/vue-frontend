@@ -44,9 +44,11 @@ export default Vue.extend({
 img {
   height: 1em;
   opacity: 0.5;
+  background-color: rgb(255, 251, 0);
 }
 img:hover {
   opacity: 1;
   cursor: pointer;
+  background-color: white;
 }
 </style>
