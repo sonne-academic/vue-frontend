@@ -32,3 +32,8 @@ export default Vue.extend({
   },
 });
 </script>
+<style scoped>
+h2 > img {
+  height: 1em;
+}
+</style>
