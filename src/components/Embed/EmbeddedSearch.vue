@@ -164,6 +164,9 @@ export default Vue.extend({
     q_filter() {
       this.update();
     },
+    collection() {
+      this.update();
+    },
     currentPage() {
       if (this.activePage > this.pageCount) {
         return;
