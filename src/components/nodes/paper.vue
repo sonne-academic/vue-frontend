@@ -40,7 +40,7 @@
       </sidebar-detail>
       <sidebar-detail v-if="doc.references_count && collection === 's2'">
         <template #summary>
-          <strong>cites</strong>
+          <strong>references</strong>
           {{doc.references_count}} publications
         </template>
         <template #detail>
