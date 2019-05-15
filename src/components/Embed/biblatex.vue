@@ -1,5 +1,5 @@
 <template>
-  <div> 
+  <div>
     <div>@{{kind}}<span>{</span>{{id}}, </div>
     <div>title={{title}},</div>
     <div>author=<span>{</span>{{author}}<span>}</span>,</div>
@@ -16,7 +16,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { DocDBLP } from '@/plugins/vue-solr/lib/responses/SelectResponse';
-const quoted = (s: string) => '"' + s + '"';
+const quoted = (s: string) => '{' + s + '}';
 const DBLP = 'dblp';
 const S2 = 's2';
 const MAG = 'mag';
