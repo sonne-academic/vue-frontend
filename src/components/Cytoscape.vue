@@ -191,6 +191,12 @@ export default Vue.extend({
         this.autoUpload();
         this.autoSave();
        });
+      cy.on('mouseover', 'node', (ev) => {
+        this.$el.classList.add('point');
+      });
+      cy.on('mouseout', 'node', (ev) => {
+        this.$el.classList.remove('point');
+      });
     }).catch(console.error);
   },
   beforeDestroy() {
@@ -201,6 +207,7 @@ export default Vue.extend({
       cy.off('select');
       cy.off('unselect');
       cy.off('add remove data');
+      cy.off('mouseover mouseout');
       cy.unmount();
       this.nodeMenu.destroy();
       this.coreMenu.destroy();
@@ -226,6 +233,9 @@ export default Vue.extend({
   width: 1.5em;
   opacity: 0.25;
   border: solid 1px white;
+}
+.point {
+  cursor: pointer;
 }
 .cybtn:hover {
   opacity: 1;
