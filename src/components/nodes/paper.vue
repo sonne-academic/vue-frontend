@@ -49,7 +49,7 @@
       </sidebar-detail>
       <sidebar-detail v-if="doc.references_count && collection === 'mag'">
         <template #summary>
-          <strong>cites</strong>
+          <strong>references</strong>
           {{doc.references_count}} publications
         </template>
         <template #detail>
