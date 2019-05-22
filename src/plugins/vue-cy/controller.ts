@@ -1,5 +1,6 @@
 import { NodeData, uuidgen } from './nodes/base';
 import {DataNodes} from './nodes';
+import { timingSafeEqual } from 'crypto';
 
 interface LocalStore {version: number; elements: cytoscape.ElementDefinition; }
 
@@ -65,7 +66,14 @@ export default class CyController {
     const child = this.addNode(data);
     this.addEdge(parentNode.id(), child);
     this.layout();
+    return child;
   }
+  public selectNodeById(id: string) {
+    this.cy.elements().unselect();
+    const node = this.cy.$id(id).select();
+    this.cy.center(node);
+  }
+
   public enhance(ele: cytoscape.NodeSingular) {
     this.cy.fit(ele);
     // TODO

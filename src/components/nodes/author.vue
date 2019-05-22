@@ -32,7 +32,7 @@
           :key="facet"
           :field="facet"
           :collection="collection"
-          :friendlyName="friendlyNames[index]"
+          :friendlyName="facet"
           @filter="doFilter"
           :filters="filters"
           :parentQuery="embQuery"

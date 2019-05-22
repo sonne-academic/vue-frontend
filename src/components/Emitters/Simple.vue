@@ -1,8 +1,8 @@
 <template>
-  <span>
-    <img :src="icon" :title="hint" @click="emit"/>
+  <a :title="hint" @click.exact="emitActive" @click.ctrl="emit">
+    <img :src="icon" />
     <span>{{name}}</span>
-  </span>
+  </a>
 </template>
 
 <script lang="ts">
@@ -27,7 +27,12 @@ export default Vue.extend({
   },
   methods: {
     emit() {
-      this.$cy.controller.addLinkedToActive(simpleBuilder(this.field, this.collection, this.name));
+      const id = this.$cy.controller.addLinkedToActive(simpleBuilder(this.field, this.collection, this.name));
+      return id;
+    },
+    emitActive() {
+      const id = this.emit();
+      this.$cy.controller.selectNodeById(id);
     },
   },
   computed: {
@@ -35,7 +40,7 @@ export default Vue.extend({
       return `/${this.field}.svg`;
     },
     hint(): string {
-      return `add ${this.field} to graph`;
+      return `add ${this.field} to graph, hold control to remain in this view`;
     },
   },
 });
@@ -44,11 +49,16 @@ export default Vue.extend({
 img {
   height: 1em;
   opacity: 0.5;
-  background-color: rgb(255, 251, 0);
+  /* background-color: rgb(255, 251, 0); */
 }
-img:hover {
+a:hover > img {
   opacity: 1;
   cursor: pointer;
   background-color: white;
+}
+a:hover > span {
+  background-color: white;
+  color: blue;
+  cursor: pointer;
 }
 </style>
