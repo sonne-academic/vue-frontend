@@ -4,6 +4,7 @@ import store from '@/store';
 import { GetResponse } from './responses/GetResponse';
 import { Searcher } from './Searcher';
 import { AuthorPositionResponse } from './responses/AuthorPositionResponse';
+import { AuthorCitationsResponse } from './responses/AuthorCitationsResponse';
 
 interface RpcCallback<T> {
   onmessage: (d: RpcResult<T>) => void;
@@ -54,6 +55,9 @@ export default class WorkerWrapper {
   }
   public author_position(collection: string, author: string, rows: number) {
     return this.send<AuthorPositionResponse>('solr_author_position', { collection, author, rows });
+  }
+  public author_citations(collection: string, author: string) {
+    return this.send<AuthorCitationsResponse>('solr_author_citations', { collection, author });
   }
   public facets(collection: string) {
     const facets = this.coll.get(collection);

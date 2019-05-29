@@ -2,6 +2,7 @@
   <sidebar iconName="author">
     <template #heading>{{author}}</template>
     <template #main>
+      <div v-if="0<=hIndex"> h-index: {{hIndex}}</div>
       <div>
         Source:
         <collection-select @change="changeCollection" :initCollection="collection"/>
@@ -28,7 +29,7 @@
           <author-position :collection="collection" :author="author" :docCount="docCount"/>
         </span>
         <simple-facet-box
-          v-for="(facet, index) in facets"
+          v-for="facet in facets"
           :key="facet"
           :field="facet"
           :collection="collection"
@@ -86,6 +87,7 @@ export default Vue.extend({
     collection: '',
     embQuery: '',
     filters: new Array<string>(),
+    hIndex: -1,
   }),
   computed: {
     facets(): string[] {
@@ -112,6 +114,16 @@ export default Vue.extend({
     log(msg: string) {
       this.$store.dispatch('log', `[AuthorDetails] ${msg}`);
     },
+    async calcHindex() {
+      this.hIndex = -1;
+      if (this.collection === 'dblp') {
+        return;
+      }
+      const result = await this.$solr.author_citations(this.collection, this.author);
+      const mins = result.result.citation_count.map((count, index) => Math.min(count, index + 1));
+      this.hIndex = Math.max(...mins);
+      // console.log(result);
+    },
     update() {
       const node = this.getNode();
       this.author = node.data('name');
@@ -123,6 +135,7 @@ export default Vue.extend({
         this.filters = [];
       }
       this.embQuery = `${this.fieldname}:"${this.author}"`;
+      this.calcHindex();
     },
     changeCollection(ev: string) {
       this.getNode().data('collection', ev);
