@@ -63,3 +63,11 @@ This is also the main link between vue and cytoscape, it will catch all (relevan
 `Emitters/` are the elements that will place a new node on the canvas.
 
 `util/` contains the spinning hourglass that is used everywhere (and some unused stuff).
+
+### solr plugin
+
+TODO
+
+### cytoscape plugin
+
+TODO
