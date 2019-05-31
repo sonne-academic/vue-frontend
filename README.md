@@ -54,4 +54,12 @@ This is also the main link between vue and cytoscape, it will catch all (relevan
 
 `GlobalLog.vue` will show any errors that happen client or server side, it depends on the vue-ex store in `src/store`.
 
-`SearchBox.vue` is 
+`SearchBox.vue` is the little box that will emit new search nodes onto the cytoscape canvas.
+
+`nodes/` contains the detailed implementation of what is displayed in the sidebar. Depending on the selected cytoscape node(s) these do all the work and communication.
+
+`Embed/` contains the elements that are used by these nodes, most are there to show matching publications.
+
+`Emitters/` are the elements that will place a new node on the canvas.
+
+`util/` contains the spinning hourglass that is used everywhere (and some unused stuff).
