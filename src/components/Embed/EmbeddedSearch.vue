@@ -96,6 +96,9 @@ export default Vue.extend({
     },
     pageChanged() {
       const page = this.activePage;
+      if (isNaN(page)) {
+        return;
+      }
       if (this.pageDocs.has(page)) {
         const val = this.pageDocs.get(page);
         if (val) {
@@ -171,7 +174,7 @@ export default Vue.extend({
       this.update();
     },
     currentPage() {
-      if (this.activePage > this.pageCount) {
+      if (isNaN(this.activePage) || this.activePage > this.pageCount) {
         return;
       }
       const page = this.activePage;
