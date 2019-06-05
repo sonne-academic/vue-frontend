@@ -70,21 +70,8 @@ export default Vue.extend({
       this.getPageData(1);
     },
     getPageData(page: number) {
-      const start = (page - 1) * this.rows;
       this.searchInProgress.set(page, true);
-      const payload = {
-        params: {
-          'q': this.query,
-          'rows': this.rows,
-          start,
-          'sort': this.activeSort,
-          'defType': 'edismax',
-          'qf': 'suggest_lower^10 suggest_ngram',
-          'q.op': 'AND',
-          'debug': 'query',
-          'fq': '',
-        },
-      };
+      const payload = this.makePayload(page);
       if (this.filters) {
         payload.params.q += ' ' + this.filters.join(' ');
       }
@@ -128,7 +115,23 @@ export default Vue.extend({
       } else {
         this.submitSearch();
       }
-
+    },
+    makePayload(page: number = 1) {
+      const start = (page - 1) * this.rows;
+      return {
+        params: {
+          'q': this.query,
+          'rows': this.rows,
+          start,
+          'sort': this.activeSort,
+          'defType': 'edismax',
+          'qf': 'suggest_lower^10 suggest_ngram',
+          'q.op': 'AND',
+          'debug': 'query',
+          'fq': '',
+          'fl': 'author venue journal id title year cited_by_count score',
+        },
+      };
     },
   },
   computed: {
