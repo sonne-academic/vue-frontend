@@ -18,7 +18,7 @@
 import Vue from 'vue';
 import { FacetResponse } from '../plugins/vue-solr/lib/responses/FacetResponse';
 import { RpcResponse, RpcResult } from '../plugins/vue-solr/lib/RpcInterface';
-import debounce from 'lodash/debounce';
+import throttle from 'lodash/throttle';
 const activeComponents = ['search-results'];
 type evl = (ev: KeyboardEvent) => void;
 export default Vue.extend({
@@ -74,12 +74,12 @@ export default Vue.extend({
       const cy = await this.$cy.instance;
       cy.add(response.result.graph.elements);
     },
-    autoSave: debounce(function(this: any) {
+    autoSave: throttle(function(this: any) {
       if (null === this.current_graph_id) {
         this.save();
       }
     }, 5000),
-    autoUpload: debounce(function(this: any) {
+    autoUpload: throttle(function(this: any) {
       if (null !== this.current_graph_id) {
         this.upload();
       }
