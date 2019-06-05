@@ -21,7 +21,7 @@ export default Vue.extend({
   },
   computed: {
     facets(): string[] {
-      const sorts = ['year', 'title'];
+      const sorts = ['year', 'title', 'score'];
       if ('mag' === this.collection || 's2' === this.collection) {
         return [...sorts, 'cited_by_count'];
       } else {
