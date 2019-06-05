@@ -20,7 +20,8 @@ import { FacetResponse } from '../plugins/vue-solr/lib/responses/FacetResponse';
 import { RpcResponse, RpcResult } from '../plugins/vue-solr/lib/RpcInterface';
 import throttle from 'lodash/throttle';
 const activeComponents = ['search-results'];
-type evl = (ev: KeyboardEvent) => void;
+type kevl = (ev: KeyboardEvent) => void;
+type buevl = (ev: BeforeUnloadEvent) => void;
 export default Vue.extend({
   data: () => ({
     nodeMenu: { destroy: () => { return; } },
@@ -30,12 +31,15 @@ export default Vue.extend({
       disable: () => { return; },
       destroy: () => { return; },
     },
-    listener: null as evl | null,
+    listener: null as kevl | null,
+    beforeunloadhook: null as buevl|null,
+    dirty: false,
   }),
   methods: {
     save() {
       try {
         this.$cy.controller.saveGraph();
+        this.dirty = false;
       } catch {
         this.$store.dispatch('log', 'could not save graph, maybe it\'s too large for localStorage?');
       }
@@ -64,6 +68,7 @@ export default Vue.extend({
         const response = await this.$solr.upload_update(dataStr, uuid);
         console.log('sent update');
       }
+      this.dirty = false;
     },
     async download() {
       const uuid = this.current_graph_id;
@@ -151,6 +156,20 @@ export default Vue.extend({
       this.listener = (ev) => this.keypress(ev);
     }
     window.addEventListener('keyup', this.listener);
+    if (!this.beforeunloadhook) {
+      this.beforeunloadhook = (ev) => {
+        if (this.dirty) {
+          ev.preventDefault();
+          ev.returnValue = 'LOL SAVING';
+          if (null === this.current_graph_id) {
+            this.save();
+          } else {
+            this.upload();
+          }
+        }
+      };
+    }
+    window.addEventListener('beforeunload', this.beforeunloadhook);
   },
   mounted() {
     const r = this.$refs;
@@ -188,6 +207,7 @@ export default Vue.extend({
     }).then((cy) => {
       this.maybeEmit({ cy } as cytoscape.EventObject);
       cy.on('add remove data', 'node', (ev) => {
+        this.dirty = true;
         this.autoUpload();
         this.autoSave();
        });
@@ -202,6 +222,10 @@ export default Vue.extend({
   beforeDestroy() {
     if (this.listener) {
       window.removeEventListener('keyup', this.listener);
+    }
+    if (this.beforeunloadhook) {
+      window.removeEventListener('beforeunload', this.beforeunloadhook);
+      this.beforeunloadhook = null;
     }
     this.$cy.instance.then((cy) => {
       cy.off('select');
