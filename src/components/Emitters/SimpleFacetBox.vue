@@ -83,13 +83,6 @@ export default Vue.extend({
       // type: string[],
       default: new Array<string>(),
     },
-    op: {
-      type: String,
-      default: 'AND',
-    },
-    params: {
-      default: null,
-    },
   },
   data: () => ({
     open: false,
@@ -112,14 +105,7 @@ export default Vue.extend({
           return result;
         }
       }
-
-      let payload = this.payload;
-      if (this.params) {
-        payload = {params: {...this.payload.params, ...(this.params as any).params}};
-      }
-      console.log(payload);
-
-      const d = await this.$solr.select({ collection: this.collection, payload });
+      const d = await this.$solr.select({ collection: this.collection, payload: this.payload });
       result = d.result as FacetResponse;
       if (1 === node.length) {
         node.scratch(scratchspace, result);
@@ -170,7 +156,7 @@ export default Vue.extend({
           'debug': false,
           q,
           'facet': 'on',
-          'q.op': this.op,
+          'q.op': 'AND',
           'rows': 0,
           'facet.field': this.field,
         },

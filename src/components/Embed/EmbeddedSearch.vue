@@ -1,23 +1,6 @@
 <template>
   <div class="outer">
-      <sidebar-detail class="filters">
-        <template #summary>Filters</template>
-        <template #detail>
-          <simple-facet-box
-            v-for="facet in facets"
-            :params="makePayload(1)"
-            op="OR"
-            :key="facet"
-            :field="facet"
-            :collection="collection"
-            :friendlyName="facet"
-            :parentQuery="query"
-            :filters="filters"
-          />
-        </template>
-      </sidebar-detail>
-
-    <input type="text" id="filter" v-model="q_filter" placeholder="filter by title, author, year">
+    <input type="text" v-model="q_filter" placeholder="filter by title, author, year">
     <select-sort
       :collection="collection"
       @facetchanged="sortby = $event"
@@ -38,13 +21,11 @@ import Vue from 'vue';
 
 import { SearchResult } from '../Emitters';
 import { Spinner } from '../util';
-import { Sidebar, SidebarDetail } from '../sidebar';
-import { SimpleFacetBox } from '../Emitters';
 import debounce from 'lodash/debounce';
 import SelectSort from './SelectSort.vue';
 export default Vue.extend({
   name: 'EmbeddedSearch',
-  components: { SearchResult, Spinner, SelectSort, SidebarDetail, SimpleFacetBox },
+  components: { SearchResult, Spinner, SelectSort },
   props: {
     query: {
       type: String,
@@ -160,9 +141,6 @@ export default Vue.extend({
     debounce() {
       return !!process.env.VUE_APP_DEBOUNCE;
     },
-    facets(): string[] {
-      return this.$solr.facets(this.collection);
-    },
     pageCount(): number {
       if (this.numFound === 0) {
         return 0;
@@ -225,8 +203,5 @@ export default Vue.extend({
 <style scoped>
 .outer {
   margin-left: 2em;
-}
-#filter{
-  min-width: 15em;
 }
 </style>

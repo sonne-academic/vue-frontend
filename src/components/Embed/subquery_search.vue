@@ -74,7 +74,7 @@ export default Vue.extend({
         params: {
           'q': this.query,
           'fl': '*,sq:[subquery]',
-          'sq.q': this.subquery, // "{!terms f=id v=$row.references}"
+          'sq.q': this.subquery,
           'sq.rows': this.rows,
           'sq.start': start,
           'sq.fq': '',
@@ -92,7 +92,6 @@ export default Vue.extend({
       this.$solr.select({ collection: this.collection, payload })
         .then((d) => {
           this.result = d.result;
-          console.log(d);
           if (!d.result.response.docs[0]) {
             return;
           }
