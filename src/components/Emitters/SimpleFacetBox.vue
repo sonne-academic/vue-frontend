@@ -8,15 +8,16 @@
       <!-- year -->
       <table class="chart" v-else-if="field === 'year'">
         <th>year</th>
+        <th>count</th>
         <tr class="alternate"  v-for="data in sorted" :key="data.name">
           <td>{{data.name}}</td>
+          <td>{{data.count}}</td>
           <td :style="{width: '80%'}">
             <div
               class="bar"
               :title="data.count"
               :style="{width: 100*(data.count/maxCount)+'%'}"
             ></div>
-
           </td>
         </tr>
       </table>
