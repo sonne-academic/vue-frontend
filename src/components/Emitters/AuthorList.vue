@@ -30,6 +30,10 @@ export default Vue.extend({
       type: Number,
       default: 5,
     },
+    collection: {
+      type: String,
+      required: true,
+    },
   },
   computed: {
     nobreak(): any[] {

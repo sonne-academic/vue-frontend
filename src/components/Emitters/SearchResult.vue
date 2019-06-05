@@ -6,7 +6,7 @@
       <i v-else-if="doc.venue"><simple-emitter :collection="collection" field="venue" :name="doc.venue"/></i>
     </div>
     {{doc.year}} -
-    <author-list :authors="doc.author"/>
+    <author-list :authors="doc.author" :collection="collection"/>
     <div v-if="doc.cited_by_count">
       <strong>cited: </strong>{{doc.cited_by_count}}
     </div>

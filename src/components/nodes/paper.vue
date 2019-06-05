@@ -16,7 +16,7 @@
       </div>
       <!-- year and authors -->
       <strong>{{doc.year}}</strong> -
-      <author-list :authors="doc.author"/>
+      <author-list :authors="doc.author" :collection="collection"/>
       <!-- doi and urls -->
       <div v-if="doc.doi">
         <strong>DOI</strong>:
