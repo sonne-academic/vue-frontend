@@ -2,7 +2,6 @@ import Worker from 'worker-loader!./solr.worker';
 import { RpcRequest, RpcResponse, SelectRequestParams, RpcResult, RpcError } from './RpcInterface';
 import store from '@/store';
 import { GetResponse } from './responses/GetResponse';
-import { Searcher } from './Searcher';
 import { AuthorPositionResponse } from './responses/AuthorPositionResponse';
 import { AuthorCitationsResponse } from './responses/AuthorCitationsResponse';
 
@@ -44,10 +43,6 @@ export default class WorkerWrapper {
   public select(payload: SelectRequestParams) {
     // TODO remove any
     return this.send<{response: { numFound: number, docs: any[], start: number }}>('solr_select', payload);
-  }
-
-  public search(collection: string, query: string) {
-    return new Searcher(this, query, collection);
   }
 
   public get(collection: string, id: string) {
