@@ -16,10 +16,7 @@
       </div>
       <!-- year and authors -->
       <strong>{{doc.year}}</strong> -
-      <span v-for="(author, index) in doc.author" :key="author">
-        <simple-emitter :collection="collection" field="author" :name="author"/>
-        <span v-if="index+1 < doc.author.length">,</span>
-      </span>
+      <author-list :authors="doc.author"/>
       <!-- doi and urls -->
       <div v-if="doc.doi">
         <strong>DOI</strong>:
@@ -82,14 +79,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { SimpleEmitter } from '../Emitters';
+import { SimpleEmitter, AuthorList } from '../Emitters';
 import { DocCommon, DocS2, DocDBLP } from '@/plugins/vue-solr/lib/responses/SelectResponse';
 import { EmbeddedSearch, LaTeXFormatter, SubQuerySearch } from '../Embed';
 import { SidebarDetail, Sidebar } from '../sidebar';
 
 export default Vue.extend({
   name: 'PaperDetails',
-  components: { SimpleEmitter, EmbeddedSearch, LaTeXFormatter, SubQuerySearch, SidebarDetail, Sidebar },
+  components: { SimpleEmitter, AuthorList, EmbeddedSearch, LaTeXFormatter, SubQuerySearch, SidebarDetail, Sidebar },
   props: {
     nodeid: {
       required: true,

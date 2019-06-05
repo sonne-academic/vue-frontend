@@ -6,10 +6,7 @@
       <i v-else-if="doc.venue"><simple-emitter :collection="collection" field="venue" :name="doc.venue"/></i>
     </div>
     {{doc.year}} -
-    <span v-for="(author, index) in doc.author" :key="author">
-      <simple-emitter :collection="collection" field="author" :name="author"/>
-      <span v-if="index+1 < doc.author.length">, </span>
-    </span>
+    <author-list :authors="doc.author"/>
     <div v-if="doc.cited_by_count">
       <strong>cited: </strong>{{doc.cited_by_count}}
     </div>
@@ -20,10 +17,11 @@
 import Vue from 'vue';
 import SimpleEmitter from './Simple.vue';
 import PaperEmitter from './Paper.vue';
+import AuthorList from './AuthorList.vue';
 
 export default Vue.extend({
   name: 'SearchResult',
-  components: {SimpleEmitter, PaperEmitter},
+  components: {SimpleEmitter, PaperEmitter, AuthorList},
   props: {
     doc: {
       type: Object,
