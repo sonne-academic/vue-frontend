@@ -67,7 +67,11 @@
       </sidebar-detail>
     </template>
     <template #footer>
-      source: {{collection}}
+      <span v-if="collection === 'mag'"> source: <a v-bind:href="'https://academic.microsoft.com/paper/'+doc.id+'/reference'">{{collection}}</a> </span>
+      <span v-else-if="collection === 'dblp'"> source: <a v-bind:href="'https://dblp.org/rec/'+doc.id">{{collection}}</a> </span>
+      <span v-else-if="collection === 's2'"> source: <a v-bind:href="'https://www.semanticscholar.org/paper/'+doc.id">{{collection}}</a> </span>
+      <span v-else>source: {{collection}}</span>
+
       <div>
         <textarea v-model="note"></textarea>
 
