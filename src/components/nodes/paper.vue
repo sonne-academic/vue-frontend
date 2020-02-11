@@ -166,9 +166,6 @@ export default Vue.extend({
           urls.push(...d.urls.map((s: string) => new URL(s)));
         }
       }
-      for (const url of urls) {
-        console.log(url.host);
-      }
       return urls;
     },
   },
