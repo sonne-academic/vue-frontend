@@ -1,6 +1,5 @@
 import { NodeData, uuidgen } from './nodes/base';
 import {DataNodes} from './nodes';
-import { timingSafeEqual } from 'crypto';
 
 interface LocalStore {version: number; elements: cytoscape.ElementDefinition; }
 
