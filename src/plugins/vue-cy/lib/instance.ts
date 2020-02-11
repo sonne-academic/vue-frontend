@@ -18,8 +18,10 @@ export class Instance {
         // import('cytoscape-cola'),
         // import('cytoscape-cose-bilkent'),
       ]).then(([mod, ...exts]) => {
-        exts.forEach((ext: ModuleImport) => { mod.use(ext.default); });
-        this.cy = mod.default(cfg);
+        // TODO: make type defs for this instead of casting to any :(
+        // maybe use one Promise to load cy, then promise.all for the rest.
+        exts.forEach((ext: ModuleImport) => { (mod as any).use(ext.default); });
+        this.cy = (mod as any).default(cfg);
         if (this.cy) {
 
           resolve(this.cy);
