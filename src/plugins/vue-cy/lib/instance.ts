@@ -15,6 +15,7 @@ export class Instance {
         import('cytoscape-cxtmenu'),
         import('cytoscape-dagre'),
         import('cytoscape-compound-drag-and-drop'),
+        // import('cytoscape-edgehandles'),
         // import('cytoscape-cola'),
         // import('cytoscape-cose-bilkent'),
       ]).then(([mod, ...exts]) => {
