@@ -13,8 +13,6 @@ buildFrontend:
     - dist/
   only:
   - frontend
-  tags:
-  - mk4
 
 deployFrontend:
   stage: deploy
