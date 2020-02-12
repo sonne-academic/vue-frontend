@@ -3,6 +3,7 @@ stages:
   - deploy
 
 buildFrontend:
+  image: node
   stage: build
   script:
   - npm install
